@@ -1919,27 +1919,42 @@
                 }
             }
 
-            // Простые команды
+            // Простые команды со скобками: команда()
             const commandMatch = line.match(/^(\w+)\(\)$/);
-            if (!commandMatch) {
-                showMessage('Синтаксическая ошибка', `Неверный формат команды: "${line}"\nПравильный формат: команда() или команда(число)`);
-                return false;
+            if (commandMatch) {
+                const cmd = commandMatch[1];
+
+                switch (cmd) {
+                    case 'вправо': return move(1, 0);
+                    case 'влево': return move(-1, 0);
+                    case 'вверх': return move(0, -1);
+                    case 'вниз': return move(0, 1);
+                    case 'есть': return eat();
+                    case 'взять': return takeKey();
+                    case 'открыть': return openDoor();
+                    default:
+                        showMessage('Ошибка синтаксиса', `"${cmd}" — неизвестная команда!`);
+                        return false;
+                }
             }
 
-            const cmd = commandMatch[1];
-
-            switch (cmd) {
-                case 'вправо': return move(1, 0);
-                case 'влево': return move(-1, 0);
-                case 'вверх': return move(0, -1);
-                case 'вниз': return move(0, 1);
-                case 'есть': return eat();
-                case 'взять': return takeKey();
-                case 'открыть': return openDoor();
-                default:
-                    showMessage('Ошибка синтаксиса', `"${cmd}" — неизвестная команда!`);
-                    return false;
+            // Команды без скобок: просто вниз, вправо и т.д.
+            const simpleCmd = line.match(/^(вправо|влево|вверх|вниз|есть|взять|открыть)$/);
+            if (simpleCmd) {
+                const cmd = simpleCmd[1];
+                switch (cmd) {
+                    case 'вправо': return move(1, 0);
+                    case 'влево': return move(-1, 0);
+                    case 'вверх': return move(0, -1);
+                    case 'вниз': return move(0, 1);
+                    case 'есть': return eat();
+                    case 'взять': return takeKey();
+                    case 'открыть': return openDoor();
+                }
             }
+
+            showMessage('Синтаксическая ошибка', `Неверный формат команды: "${line}"\nПравильный формат: команда() или команда(число) или просто команда`);
+            return false;
         }
 
         // ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
