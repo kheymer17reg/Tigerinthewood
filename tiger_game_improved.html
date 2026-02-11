@@ -1,0 +1,2849 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐯 Тигрёнок в лесу - Игра для обучения программированию</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #f5f7fa;
+            --bg-secondary: #ffffff;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --border-color: #e0e0e0;
+            --primary-color: #2196f3;
+            --success-color: #4caf50;
+            --error-color: #f44336;
+            --warning-color: #ff9800;
+        }
+
+        body.dark-mode {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --text-primary: #ffffff;
+            --text-secondary: #cccccc;
+            --border-color: #444444;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+            background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary));
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--text-primary);
+            transition: background 0.3s;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: var(--primary-color);
+            text-shadow: 1px 1px 0 rgba(33, 150, 243, 0.2);
+            font-weight: 600;
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .theme-btn, .player-btn {
+            padding: 10px 20px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--primary-color);
+            border-radius: 8px;
+            color: var(--primary-color);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .theme-btn:hover, .player-btn:hover {
+            transform: translateY(-2px);
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .player-info {
+            padding: 10px 20px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--primary-color);
+            border-radius: 8px;
+            font-weight: 600;
+            color: var(--primary-color);
+            min-width: 200px;
+            text-align: center;
+        }
+
+        /* Модальное окно приветствия */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 500px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.5s;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal h2 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
+        .modal p {
+            font-size: 1.1em;
+            margin-bottom: 20px;
+            color: var(--text-secondary);
+        }
+
+        .modal input {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1em;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transition: border-color 0.3s;
+        }
+
+        .modal input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .modal-btn {
+            padding: 15px 40px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        .modal-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(33, 150, 243, 0.3);
+        }
+
+        /* Вкладки */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-primary);
+        }
+
+        .tab-btn.active {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .tab-btn:hover:not(.active) {
+            transform: translateY(-2px);
+            background: var(--bg-primary);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Уровни */
+        .levels {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .level-btn {
+            padding: 14px 20px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            cursor: pointer;
+            min-width: 100px;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .level-btn.completed {
+            background: var(--success-color);
+            border-color: var(--success-color);
+            color: white;
+        }
+
+        .level-btn.active {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            transform: scale(1.1);
+            color: white;
+        }
+
+        .level-btn:hover {
+            transform: translateY(-4px);
+        }
+
+        .level-icon {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        /* Контейнер игры */
+        .game-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 1200px) {
+            .game-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Игровое поле */
+        .game-board {
+            background: var(--bg-secondary);
+            padding: 25px;
+            border-radius: 15px;
+            border: 3px solid var(--primary-color);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        #game-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 60px);
+            grid-template-rows: repeat(8, 60px);
+            gap: 4px;
+            margin: 20px auto;
+            background: var(--bg-primary);
+            padding: 15px;
+            border-radius: 12px;
+            border: 2px solid var(--border-color);
+        }
+
+        .cell {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            transition: all 0.3s;
+            box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            user-select: none;
+            border: 2px solid var(--border-color);
+        }
+
+        .cell:hover {
+            transform: scale(1.05);
+        }
+
+        .empty {
+            background: var(--bg-primary);
+        }
+
+        .tiger {
+            background: #ff9800;
+            border-color: #f57c00;
+            animation: bounce 0.8s infinite alternate;
+        }
+
+        .wall {
+            background: #2e7d32;
+            border-color: #1b5e20;
+        }
+
+        .tree {
+            background: #388e3c;
+            border-color: #2e7d32;
+        }
+
+        .meat {
+            background: #ffb74d;
+            border-color: #ffa726;
+            animation: wiggle 1s infinite alternate;
+        }
+
+        .exit {
+            background: #4caf50;
+            border-color: #388e3c;
+            animation: glow 2s infinite;
+        }
+
+        .key {
+            background: #ffd54f;
+            border-color: #ffca28;
+            animation: sparkle 1.5s infinite alternate;
+        }
+
+        .door {
+            background: #ba68c8;
+            border-color: #ab47bc;
+        }
+
+        .locked-door {
+            background: #ba68c8;
+            border-color: #ab47bc;
+            position: relative;
+        }
+        
+        .locked-door::after {
+            content: "🔒";
+            position: absolute;
+            font-size: 16px;
+            bottom: 2px;
+            right: 2px;
+        }
+
+        .paw {
+            background: #ffcc80;
+            border-color: #ffb74d;
+        }
+
+        /* Панель кода */
+        .code-panel {
+            background: var(--bg-secondary);
+            padding: 25px;
+            border-radius: 15px;
+            border: 3px solid var(--primary-color);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            height: fit-content;
+        }
+
+        /* Задание уровня */
+        .level-task {
+            background: var(--bg-primary);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--primary-color);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .level-task h4 {
+            color: var(--primary-color);
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        /* Статистика */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat {
+            background: var(--bg-primary);
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid var(--border-color);
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .stat div:last-child {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 6px;
+        }
+
+        /* Кнопки управления */
+        .controls {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .button {
+            padding: 14px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+            min-width: 120px;
+            font-family: 'Segoe UI', sans-serif;
+            color: white;
+        }
+
+        .button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .run-btn {
+            background: var(--success-color);
+            flex: 2;
+        }
+
+        .run-btn.running {
+            background: var(--warning-color);
+            animation: pulse 1s infinite;
+        }
+
+        .reset-btn {
+            background: var(--error-color);
+        }
+
+        .undo-btn {
+            background: #673ab7;
+        }
+
+        /* Редактор кода */
+        #code-input {
+            width: 100%;
+            height: 200px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Courier New', monospace;
+            font-size: 15px;
+            padding: 15px;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            resize: none;
+            margin-bottom: 15px;
+            line-height: 1.6;
+            transition: border-color 0.3s;
+        }
+
+        #code-input.error {
+            border-color: var(--error-color);
+            background: rgba(244, 67, 54, 0.1);
+        }
+
+        #code-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        /* Управление со стрелками */
+        .arrow-controls {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 15px;
+            justify-items: center;
+            max-width: 200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .arrow-btn {
+            padding: 14px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            min-width: 60px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .arrow-btn:hover {
+            transform: scale(1.15);
+            background: #1976d2;
+        }
+
+        .arrow-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Цифры */
+        .number-buttons {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
+            margin-bottom: 15px;
+        }
+
+        .num-btn {
+            padding: 8px;
+            background: var(--warning-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .num-btn:hover {
+            transform: translateY(-2px);
+            background: #f57c00;
+        }
+
+        /* Команды */
+        .commands {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .cmd-btn {
+            padding: 12px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .cmd-btn:hover {
+            transform: translateY(-2px);
+            background: #1976d2;
+        }
+
+        .cmd-icon {
+            font-size: 20px;
+        }
+
+        /* История кода */
+        .code-history {
+            margin-top: 20px;
+            padding: 15px;
+            background: var(--bg-primary);
+            border-radius: 10px;
+            border: 2px solid var(--border-color);
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .code-history h4 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .history-item {
+            padding: 8px;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-size: 12px;
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .history-time {
+            color: var(--text-secondary);
+            font-size: 11px;
+        }
+
+        /* Подсказка */
+        .hint {
+            background: var(--bg-primary);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            border-left: 4px solid var(--primary-color);
+            font-size: 13px;
+        }
+
+        .hint h4 {
+            color: var(--primary-color);
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .hint p {
+            margin: 6px 0;
+            line-height: 1.4;
+        }
+
+        /* Сообщение */
+        .message-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--bg-secondary);
+            padding: 30px;
+            border-radius: 15px;
+            border: 3px solid var(--warning-color);
+            z-index: 1001;
+            min-width: 350px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        .message-modal.active {
+            display: block;
+            animation: slideIn 0.3s;
+        }
+
+        .message-title {
+            font-size: 1.8em;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .message-text {
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .ok-btn {
+            padding: 12px 30px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .ok-btn:hover {
+            transform: translateY(-2px);
+            background: #1976d2;
+        }
+
+        /* Песочница */
+        .sandbox-container {
+            background: var(--bg-secondary);
+            padding: 25px;
+            border-radius: 15px;
+            border: 3px solid #7e57c2;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .sandbox-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .sandbox-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .sandbox-btn {
+            padding: 10px 20px;
+            background: #7e57c2;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .sandbox-btn:hover {
+            transform: translateY(-2px);
+            background: #673ab7;
+        }
+
+        .sandbox-btn.green {
+            background: var(--success-color);
+        }
+
+        .sandbox-btn.green:hover {
+            background: #388e3c;
+        }
+
+        .sandbox-btn.orange {
+            background: var(--warning-color);
+        }
+
+        .sandbox-btn.orange:hover {
+            background: #f57c00;
+        }
+
+        .sandbox-btn.red {
+            background: var(--error-color);
+        }
+
+        .sandbox-btn.red:hover {
+            background: #d32f2f;
+        }
+
+        .size-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .size-btn {
+            padding: 8px 12px;
+            background: var(--bg-primary);
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .size-btn.active {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+
+        .size-btn:hover {
+            background: var(--bg-secondary);
+        }
+
+        .object-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .obj-btn {
+            padding: 12px;
+            background: var(--bg-primary);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+            font-size: 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            color: var(--text-primary);
+        }
+
+        .obj-btn:hover {
+            transform: scale(1.05);
+            background: var(--bg-secondary);
+        }
+
+        .obj-btn.active {
+            border-color: #7e57c2;
+            background: #ede7f6;
+            transform: scale(1.05);
+        }
+
+        #sandbox-grid {
+            display: grid;
+            gap: 4px;
+            margin: 20px auto;
+            background: var(--bg-primary);
+            padding: 15px;
+            border-radius: 12px;
+            border: 2px solid var(--border-color);
+            touch-action: none;
+            position: relative;
+            justify-content: center;
+        }
+
+        .sandbox-cell {
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            user-select: none;
+            touch-action: none;
+            transition: all 0.2s;
+            font-size: 24px;
+        }
+
+        .sandbox-cell:hover {
+            transform: scale(1.05);
+        }
+
+        /* Анимации */
+        @keyframes bounce {
+            from {
+                transform: translateY(0);
+            }
+            to {
+                transform: translateY(-5px);
+            }
+        }
+
+        @keyframes wiggle {
+            0%, 100% {
+                transform: rotate(-3deg);
+            }
+            50% {
+                transform: rotate(3deg);
+            }
+        }
+
+        @keyframes glow {
+            0%, 100% {
+                box-shadow: 0 0 10px #4caf50;
+            }
+            50% {
+                box-shadow: 0 0 20px #4caf50;
+            }
+        }
+
+        @keyframes sparkle {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1.1);
+                opacity: 0.8;
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            header {
+                flex-direction: column;
+            }
+
+            .game-layout {
+                grid-template-columns: 1fr;
+            }
+
+            #game-grid {
+                grid-template-columns: repeat(8, 50px);
+                grid-template-rows: repeat(8, 50px);
+                gap: 3px;
+            }
+
+            .cell {
+                width: 50px;
+                height: 50px;
+                font-size: 24px;
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .commands {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .arrow-controls {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .arrow-btn {
+                min-width: 50px;
+                min-height: 50px;
+                font-size: 20px;
+            }
+        }
+
+        /* АДМИН-ПАНЕЛЬ */
+        .admin-btn {
+            padding: 10px 20px;
+            background: #d32f2f;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: block;
+        }
+
+        .admin-btn:hover {
+            transform: translateY(-2px);
+            background: #b71c1c;
+        }
+
+        .admin-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .admin-modal.active {
+            display: flex;
+        }
+
+        .admin-modal-content {
+            background: var(--bg-secondary);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 400px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.5s;
+        }
+
+        .admin-modal-content h2 {
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
+        .admin-modal-content input {
+            width: 100%;
+            padding: 15px;
+            font-size: 1em;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .admin-modal-content button {
+            padding: 12px 30px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0 5px;
+            transition: all 0.3s;
+        }
+
+        .admin-modal-content button:hover {
+            transform: translateY(-2px);
+            background: #1976d2;
+        }
+
+        .admin-panel-content {
+            background: var(--bg-secondary);
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            max-width: 900px;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: slideIn 0.5s;
+        }
+
+        .admin-panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .admin-panel-header h2 {
+            font-size: 1.8em;
+            color: var(--primary-color);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: var(--text-primary);
+            transition: all 0.3s;
+        }
+
+        .close-btn:hover {
+            transform: scale(1.2);
+            color: var(--error-color);
+        }
+
+        .admin-tabs {
+            display: flex;
+            gap: 10px;
+            padding: 15px 20px;
+            border-bottom: 2px solid var(--border-color);
+            flex-wrap: wrap;
+        }
+
+        .admin-tab-btn {
+            padding: 10px 20px;
+            background: var(--bg-primary);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .admin-tab-btn.active {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+
+        .admin-tab-content {
+            display: none;
+            padding: 20px;
+        }
+
+        .admin-tab-content.active {
+            display: block;
+        }
+
+        .admin-section {
+            background: var(--bg-primary);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .admin-section h4 {
+            font-size: 1.1em;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+
+        .admin-section input[type="file"] {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            width: 100%;
+        }
+
+        .admin-section button {
+            padding: 10px 20px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-right: 10px;
+        }
+
+        .admin-section button:hover {
+            transform: translateY(-2px);
+            background: #1976d2;
+        }
+
+        .admin-level-item,
+        .admin-user-item {
+            background: var(--bg-secondary);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--success-color);
+        }
+
+        .admin-level-item strong,
+        .admin-user-item strong {
+            font-size: 1.1em;
+            color: var(--primary-color);
+        }
+
+        .admin-level-item p,
+        .admin-user-item p {
+            font-size: 0.9em;
+            color: var(--text-secondary);
+            margin: 5px 0;
+        }
+
+        .admin-level-item button,
+        .admin-user-item button {
+            padding: 8px 15px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-right: 5px;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+
+        .admin-level-item button:hover,
+        .admin-user-item button:hover {
+            transform: translateY(-2px);
+            background: #1976d2;
+        }
+    </style>
+</head>
+<body>
+    <!-- Модальное окно приветствия -->
+    <div id="welcome-modal" class="modal active">
+        <div class="modal-content">
+            <h2>🐯 Добро пожаловать!</h2>
+            <p>Помоги тигрёнку найти выход из лесу!</p>
+            <p style="font-size: 0.9em; color: var(--text-secondary);">Введи своё имя:</p>
+            <input type="text" id="player-name" placeholder="Твоё имя" maxlength="30">
+            <button class="modal-btn" onclick="startGame()">Начать игру! 🎮</button>
+        </div>
+    </div>
+
+    <!-- Модальное окно сообщений -->
+    <div id="message-modal" class="message-modal">
+        <div class="message-title" id="msg-title">УРА! 🎉</div>
+        <div class="message-text" id="msg-text"></div>
+        <button class="ok-btn" onclick="closeMessage()">Понятно!</button>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>🐯 Тигрёнок в лесу</h1>
+            <div class="header-controls">
+                <button class="theme-btn" onclick="toggleTheme()">☀️ Свет / 🌙 Темно</button>
+                <div class="player-info" id="player-info">Игрок: Гость</div>
+                <button class="admin-btn" onclick="openAdminPanel()">🔐 Админ</button>
+            </div>
+        </header>
+
+        <!-- Вкладки -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('levels')">
+                🎮 Уровни
+            </button>
+            <button class="tab-btn" onclick="switchTab('sandbox')">
+                🏗️ Песочница
+            </button>
+        </div>
+
+        <!-- Вкладка Уровни -->
+        <div id="levels" class="tab-content active">
+            <!-- Иконки уровней -->
+            <div class="levels" id="level-buttons">
+                <!-- Заполняется JavaScript -->
+            </div>
+
+            <!-- Игровой лейаут -->
+            <div class="game-layout">
+                <!-- Левая часть - Игровое поле -->
+                <div class="game-board">
+                    <div class="stats">
+                        <div class="stat">
+                            <div class="stat-value" id="score">0</div>
+                            <div>Очки</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value" id="steps">0</div>
+                            <div>Шаги</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value" id="meat">0/0</div>
+                            <div>Мясо 🍖</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value" id="keys">0</div>
+                            <div>Ключи 🔑</div>
+                        </div>
+                    </div>
+
+                    <div id="game-grid"></div>
+                </div>
+
+                <!-- Правая часть - Программирование -->
+                <div class="code-panel">
+                    <!-- Задание уровня -->
+                    <div class="level-task" id="level-task">
+                        <h4>📋 Задание:</h4>
+                        <div id="task-text"></div>
+                    </div>
+
+                    <div class="controls">
+                        <button class="button run-btn" id="run-btn" onclick="runCode()">▶ ЗАПУСТИТЬ</button>
+                        <button class="button undo-btn" id="undo-btn" onclick="undoCommand()" disabled>↶ ОТМЕНИТЬ</button>
+                        <button class="button reset-btn" id="reset-btn" onclick="resetGame()">🔄 СБРОС</button>
+                    </div>
+
+                    <!-- Управление стрелками (расположение как на клавиатуре) -->
+                    <div class="arrow-controls">
+                        <div></div>
+                        <button class="arrow-btn" onclick="addCommand('вверх()')" title="вверх()">
+                            <span style="font-size: 28px;">↑</span>
+                        </button>
+                        <div></div>
+                        
+                        <button class="arrow-btn" onclick="addCommand('влево()')" title="влево()">
+                            <span style="font-size: 28px;">←</span>
+                        </button>
+                        <button class="arrow-btn" onclick="addCommand('вниз()')" title="вниз()">
+                            <span style="font-size: 28px;">↓</span>
+                        </button>
+                        <button class="arrow-btn" onclick="addCommand('вправо()')" title="вправо()">
+                            <span style="font-size: 28px;">→</span>
+                        </button>
+                    </div>
+
+                    <!-- Цифры для количества шагов -->
+                    <div class="number-buttons">
+                        <button class="num-btn" onclick="addNumber('1')">1</button>
+                        <button class="num-btn" onclick="addNumber('2')">2</button>
+                        <button class="num-btn" onclick="addNumber('3')">3</button>
+                        <button class="num-btn" onclick="addNumber('4')">4</button>
+                        <button class="num-btn" onclick="addNumber('5')">5</button>
+                        <button class="num-btn" onclick="addNumber('6')">6</button>
+                        <button class="num-btn" onclick="addNumber('7')">7</button>
+                        <button class="num-btn" onclick="addNumber('8')">8</button>
+                        <button class="num-btn" onclick="addNumber('9')">9</button>
+                        <button class="num-btn" onclick="addNumber('0')">0</button>
+                    </div>
+
+                    <textarea id="code-input" placeholder="Или напиши программу вручную..."></textarea>
+
+                    <!-- Команды -->
+                    <div class="commands">
+                        <button class="cmd-btn" onclick="addCommand('есть()')">
+                            <span class="cmd-icon">🍖</span>
+                            <span>есть()</span>
+                        </button>
+                        <button class="cmd-btn" onclick="addCommand('взять()')">
+                            <span class="cmd-icon">🔑</span>
+                            <span>взять()</span>
+                        </button>
+                        <button class="cmd-btn" onclick="addCommand('открыть()')">
+                            <span class="cmd-icon">🚪</span>
+                            <span>открыть()</span>
+                        </button>
+                        <button class="cmd-btn" onclick="clearCode()">
+                            <span class="cmd-icon">🗑️</span>
+                            <span>Очистить</span>
+                        </button>
+                    </div>
+
+                    <!-- История кода -->
+                    <div class="code-history" id="code-history">
+                        <h4>📜 История попыток:</h4>
+                        <div id="history-list"></div>
+                    </div>
+
+                    <!-- Инструкция -->
+                    <div class="hint">
+                        <h4>💡 Все команды:</h4>
+                        <p><strong>Движение:</strong></p>
+                        <p>• <code>вправо()</code> - на 1 клетку вправо</p>
+                        <p>• <code>вправо(3)</code> - на 3 клетки вправо (напиши число в скобки или нажми цифру!)</p>
+                        <p>• <code>влево()</code>, <code>вверх()</code>, <code>вниз()</code> - аналогично</p>
+                        <p><strong>Действия:</strong></p>
+                        <p>• <code>🍖 есть()</code> - съесть мясо</p>
+                        <p>• <code>🔑 взять()</code> - взять ключ</p>
+                        <p>• <code>🚪 открыть()</code> - открыть дверь</p>
+                        <p><strong>Используй стрелки ↑↓←→, цифры, кнопки или пиши код вручную!</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Вкладка Песочница -->
+        <div id="sandbox" class="tab-content">
+            <div class="sandbox-container">
+                <div class="sandbox-header">
+                    <h2 style="color: #7e57c2; font-size: 24px;">🏗️ Конструктор уровней</h2>
+                    <div class="sandbox-controls">
+                        <button class="sandbox-btn" onclick="uploadSandboxLevel()">
+                            📤 Загрузить файл
+                        </button>
+                        <button class="sandbox-btn" onclick="downloadSandboxLevel()">
+                            📥 Скачать
+                        </button>
+                        <button class="sandbox-btn orange" onclick="playSandboxLevel()">
+                            ▶ Играть
+                        </button>
+                        <button class="sandbox-btn red" onclick="clearSandbox()">
+                            🗑️ Очистить
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Управление размером клеток -->
+                <div class="size-controls">
+                    <span>Размер поля:</span>
+                    <button class="size-btn" onclick="setSandboxSize(4)">4x4</button>
+                    <button class="size-btn" onclick="setSandboxSize(6)">6x6</button>
+                    <button class="size-btn active" onclick="setSandboxSize(8)">8x8</button>
+                    <button class="size-btn" onclick="setSandboxSize(10)">10x10</button>
+                    <button class="size-btn" onclick="setSandboxSize(12)">12x12</button>
+                </div>
+
+                <!-- Кнопки объектов -->
+                <div class="object-buttons">
+                    <button class="obj-btn active" onclick="selectSandboxObject('tiger')">
+                        🐯<span>Тигрёнок</span>
+                    </button>
+                    <button class="obj-btn" onclick="selectSandboxObject('exit')">
+                        🟢<span>Выход</span>
+                    </button>
+                    <button class="obj-btn" onclick="selectSandboxObject('wall')">
+                        🧱<span>Стена</span>
+                    </button>
+                    <button class="obj-btn" onclick="selectSandboxObject('tree')">
+                        🌳<span>Дерево</span>
+                    </button>
+                    <button class="obj-btn" onclick="selectSandboxObject('meat')">
+                        🍖<span>Мясо</span>
+                    </button>
+                    <button class="obj-btn" onclick="selectSandboxObject('key')">
+                        🔑<span>Ключ</span>
+                    </button>
+                    <button class="obj-btn" onclick="selectSandboxObject('door')">
+                        🚪<span>Дверь</span>
+                    </button>
+                    <button class="obj-btn" onclick="selectSandboxObject('empty')">
+                        🧹<span>Очистить</span>
+                    </button>
+                </div>
+
+                <div style="text-align: center; margin-bottom: 15px; color: var(--text-secondary); font-size: 14px;">
+                    <small>💡 Зажми левую кнопку мыши и тяни, чтобы рисовать несколько клеток!</small>
+                </div>
+
+                <div id="sandbox-grid"></div>
+
+                <div class="hint">
+                    <h4>🎯 Как пользоваться конструктором:</h4>
+                    <p>1. Выбери размер поля и объект для размещения</p>
+                    <p>2. Кликни на клетку или зажми мышь и тяни</p>
+                    <p>3. Сохрани уровень и переключись на вкладку "Уровни"</p>
+                    <p>4. Нажми "Играть" чтобы протестировать уровень</p>
+                    <p>5. Нажми "Скачать" чтобы сохранить уровень в файл и поделиться</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ
+        let game = {
+            level: 1,
+            tiger: { x: 0, y: 0 },
+            score: 0,
+            steps: 0,
+            meatCollected: 0,
+            totalMeat: 0,
+            keys: 0,
+            objects: [],
+            isRunning: false,
+            completedLevels: new Set(),
+            hasBeenRun: false,
+            startPosition: { x: 0, y: 0 },
+            moveHistory: [],
+            codeHistory: [],
+            isSandboxMode: false,
+            sandboxLevelData: null
+        };
+
+        let sandbox = {
+            selectedObject: 'tiger',
+            objects: [],
+            tigerPos: { x: 0, y: 0 },
+            exitPos: { x: 7, y: 7 },
+            isDrawing: false,
+            lastCell: null,
+            gridSize: 8,
+            cellSize: 60
+        };
+
+        let playerName = 'Гость';
+
+        const levels = {
+            1: {
+                name: "Первые шаги",
+                start: { x: 0, y: 4 },
+                exit: { x: 7, y: 4 },
+                objects: [],
+                task: "Используй стрелку → или команду <code>вправо()</code> чтобы дойти до выхода."
+            },
+            2: {
+                name: "Обход дерева",
+                start: { x: 0, y: 4 },
+                exit: { x: 7, y: 4 },
+                objects: [
+                    { type: 'tree', x: 3, y: 4 },
+                    { type: 'tree', x: 4, y: 4 }
+                ],
+                task: "Используй стрелки ↑ или ↓ чтобы обойти деревья."
+            },
+            3: {
+                name: "Лесная тропа",
+                start: { x: 0, y: 7 },
+                exit: { x: 7, y: 0 },
+                objects: [
+                    { type: 'tree', x: 2, y: 5 },
+                    { type: 'tree', x: 2, y: 6 },
+                    { type: 'tree', x: 5, y: 1 },
+                    { type: 'tree', x: 5, y: 2 }
+                ],
+                task: "Используй команды с числами: <code>вправо(2)</code>"
+            },
+            4: {
+                name: "Вкусное мясо",
+                start: { x: 0, y: 4 },
+                exit: { x: 7, y: 4 },
+                objects: [
+                    { type: 'meat', x: 2, y: 4 },
+                    { type: 'meat', x: 5, y: 4 },
+                    { type: 'tree', x: 3, y: 4 },
+                    { type: 'tree', x: 4, y: 4 }
+                ],
+                task: "Съешь мясо 🍖 командой <code>есть()</code>"
+            },
+            5: {
+                name: "Волшебный ключ",
+                start: { x: 0, y: 4 },
+                exit: { x: 7, y: 4 },
+                objects: [
+                    { type: 'key', x: 1, y: 4 },
+                    { type: 'door', x: 4, y: 4, locked: true },
+                    { type: 'meat', x: 6, y: 4 }
+                ],
+                task: "Возьми ключ 🔑 <code>взять()</code> и открой дверь 🚪 <code>открыть()</code>"
+            },
+            6: {
+                name: "Большое приключение",
+                start: { x: 0, y: 7 },
+                exit: { x: 7, y: 0 },
+                objects: [
+                    { type: 'meat', x: 1, y: 6 },
+                    { type: 'meat', x: 3, y: 4 },
+                    { type: 'meat', x: 5, y: 2 },
+                    { type: 'key', x: 2, y: 5 },
+                    { type: 'door', x: 4, y: 3, locked: true },
+                    { type: 'tree', x: 3, y: 2 },
+                    { type: 'tree', x: 5, y: 5 }
+                ],
+                task: "Собери мясо, возьми ключ и открой дверь!"
+            }
+        };
+
+        // ИНИЦИАЛИЗАЦИЯ ИГРЫ
+        function startGame() {
+            const nameInput = document.getElementById('player-name').value.trim();
+            if (nameInput) playerName = nameInput;
+            document.getElementById('welcome-modal').classList.remove('active');
+            document.getElementById('player-info').textContent = `Игрок: ${playerName}`;
+            initGame();
+            createLevelButtons();
+            
+            // Отслеживание пользователя
+            trackUser(playerName, 1, 0);
+        }
+
+        function createLevelButtons() {
+            const container = document.getElementById('level-buttons');
+            container.innerHTML = '';
+            const icons = ['🌱', '🍃', '🌿', '🌳', '🔑', '🏆'];
+            for (let i = 1; i <= 6; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'level-btn' + (i === 1 ? ' active' : '');
+                if (game.completedLevels.has(i)) btn.classList.add('completed');
+                btn.innerHTML = `<span class="level-icon">${icons[i - 1]}</span><span>Уровень ${i}</span>`;
+                btn.onclick = () => loadLevel(i);
+                container.appendChild(btn);
+            }
+        }
+
+        function initGame() {
+            const level = game.isSandboxMode && game.sandboxLevelData ? 
+                game.sandboxLevelData : 
+                levels[game.level];
+            
+            game.tiger = { ...level.start };
+            game.startPosition = { ...level.start };
+            game.score = 0;
+            game.steps = 0;
+            game.meatCollected = 0;
+            game.keys = 0;
+            game.objects = [...level.objects];
+            game.hasBeenRun = false;
+            game.moveHistory = [];
+            
+            game.totalMeat = game.objects.filter(obj => obj.type === 'meat').length;
+            renderBoard();
+            updateStats();
+            updateRunButton();
+            updateTask();
+        }
+
+        function renderBoard() {
+            const grid = document.getElementById('game-grid');
+            grid.innerHTML = '';
+            const level = game.isSandboxMode && game.sandboxLevelData ? 
+                game.sandboxLevelData : 
+                levels[game.level];
+            
+            const size = game.isSandboxMode ? sandbox.gridSize : 8;
+            const cellSize = game.isSandboxMode ? 50 : 60;
+
+            grid.style.gridTemplateColumns = `repeat(${size}, ${cellSize}px)`;
+            grid.style.gridTemplateRows = `repeat(${size}, ${cellSize}px)`;
+
+            for (let y = 0; y < size; y++) {
+                for (let x = 0; x < size; x++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell empty';
+                    cell.id = `cell-${x}-${y}`;
+                    cell.style.width = `${cellSize}px`;
+                    cell.style.height = `${cellSize}px`;
+                    cell.style.fontSize = `${cellSize * 0.4}px`;
+
+                    const obj = game.objects.find(o => o.x === x && o.y === y);
+                    const exit = level.exit;
+
+                    if (x === exit.x && y === exit.y) {
+                        cell.className = 'cell exit';
+                        cell.textContent = '🟢';
+                    } else if (obj) {
+                        if (obj.type === 'door' && obj.locked) {
+                            cell.className = 'cell locked-door';
+                            cell.textContent = '🚪';
+                        } else {
+                            cell.className = `cell ${obj.type}`;
+                            switch (obj.type) {
+                                case 'tree': cell.textContent = '🌳'; break;
+                                case 'meat': cell.textContent = '🍖'; break;
+                                case 'key': cell.textContent = '🔑'; break;
+                                case 'door': cell.textContent = '🚪'; break;
+                            }
+                        }
+                    } else if (x === game.tiger.x && y === game.tiger.y) {
+                        cell.className = 'cell tiger';
+                        cell.textContent = '🐯';
+                    }
+                    grid.appendChild(cell);
+                }
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('score').textContent = game.score;
+            document.getElementById('steps').textContent = game.steps;
+            document.getElementById('meat').textContent = `${game.meatCollected}/${game.totalMeat}`;
+            document.getElementById('keys').textContent = game.keys;
+        }
+
+        function updateTask() {
+            const taskElement = document.getElementById('task-text');
+            if (game.isSandboxMode && game.sandboxLevelData) {
+                taskElement.innerHTML = `
+                    <span>🏗️ Уровень из конструктора (${sandbox.gridSize}x${sandbox.gridSize})<br>
+                    Придумай свою программу для прохождения!</span>
+                `;
+            } else {
+                const level = levels[game.level];
+                taskElement.innerHTML = level.task;
+            }
+        }
+
+        function updateRunButton() {
+            const runBtn = document.getElementById('run-btn');
+            const undoBtn = document.getElementById('undo-btn');
+
+            if (game.hasBeenRun && !game.isRunning) {
+                runBtn.disabled = true;
+                runBtn.textContent = '▶ НАЖМИ "СБРОС"';
+            } else if (game.isRunning) {
+                runBtn.disabled = true;
+                runBtn.classList.add('running');
+                runBtn.textContent = '🐾 ИДЁТ...';
+            } else {
+                runBtn.disabled = false;
+                runBtn.classList.remove('running');
+                runBtn.textContent = '▶ ЗАПУСТИТЬ';
+            }
+
+            undoBtn.disabled = document.getElementById('code-input').value.length === 0 || game.isRunning;
+        }
+
+        function loadLevel(levelNum) {
+            game.isSandboxMode = false;
+            game.sandboxLevelData = null;
+            
+            document.querySelectorAll('.level-btn').forEach((btn, i) => {
+                const levelIndex = i + 1;
+                btn.classList.toggle('active', levelIndex === levelNum);
+                btn.classList.toggle('completed', game.completedLevels.has(levelIndex));
+            });
+
+            game.level = levelNum;
+            game.isRunning = false;
+            game.hasBeenRun = false;
+            initGame();
+            updateRunButton();
+            document.getElementById('code-input').value = '';
+            document.getElementById('code-input').classList.remove('error');
+        }
+
+        // КОМАНДЫ ИГРЫ
+        function canMove(dx, dy) {
+            const size = game.isSandboxMode ? sandbox.gridSize : 8;
+            const newX = game.tiger.x + dx;
+            const newY = game.tiger.y + dy;
+
+            if (newX < 0 || newX >= size || newY < 0 || newY >= size) return false;
+
+            const wall = game.objects.find(o => (o.type === 'wall' || o.type === 'tree') && o.x === newX && o.y === newY);
+            if (wall) return false;
+
+            const door = game.objects.find(o => o.type === 'door' && o.x === newX && o.y === newY);
+            if (door && door.locked) return false;
+
+            return true;
+        }
+
+        function move(dx, dy, count = 1) {
+            for (let i = 0; i < count; i++) {
+                if (!canMove(dx, dy)) {
+                    const obj = game.objects.find(o => o.x === game.tiger.x + dx && o.y === game.tiger.y + dy);
+                    if (obj && obj.type === 'door' && obj.locked) {
+                        showMessage('Дверь закрыта!', 'Найди ключ и открой дверь командой открыть()');
+                    } else {
+                        showMessage('Ой!', `Не могу пройти! Препятствие на шаге ${i + 1}.`);
+                    }
+                    return false;
+                }
+
+                const oldCell = document.getElementById(`cell-${game.tiger.x}-${game.tiger.y}`);
+                const level = game.isSandboxMode && game.sandboxLevelData ? 
+                    game.sandboxLevelData : 
+                    levels[game.level];
+                    
+                if (!oldCell.classList.contains('exit')) {
+                    oldCell.className = 'cell paw';
+                    oldCell.textContent = '🐾';
+                }
+
+                game.tiger.x += dx;
+                game.tiger.y += dy;
+                game.steps++;
+
+                const newCell = document.getElementById(`cell-${game.tiger.x}-${game.tiger.y}`);
+                newCell.className = 'cell tiger';
+                newCell.textContent = '🐯';
+
+                updateStats();
+
+                const exit = level.exit;
+                if (game.tiger.x === exit.x && game.tiger.y === exit.y) {
+                    setTimeout(checkWin, 500);
+                    return true;
+                }
+            }
+            return true;
+        }
+
+        function eat() {
+            const meatIndex = game.objects.findIndex(o => o.type === 'meat' && o.x === game.tiger.x && o.y === game.tiger.y);
+            if (meatIndex !== -1) {
+                game.objects.splice(meatIndex, 1);
+                game.score += 10;
+                game.meatCollected++;
+                const cell = document.getElementById(`cell-${game.tiger.x}-${game.tiger.y}`);
+                cell.textContent = '🐯';
+                updateStats();
+                return true;
+            }
+            showMessage('Э-э-э', 'Здесь нет мяса!');
+            return false;
+        }
+
+        function takeKey() {
+            const keyIndex = game.objects.findIndex(o => o.type === 'key' && o.x === game.tiger.x && o.y === game.tiger.y);
+            if (keyIndex !== -1) {
+                game.objects.splice(keyIndex, 1);
+                game.keys++;
+                const cell = document.getElementById(`cell-${game.tiger.x}-${game.tiger.y}`);
+                cell.textContent = '🐯';
+                updateStats();
+                return true;
+            }
+            showMessage('Ой', 'Здесь нет ключа!');
+            return false;
+        }
+
+        function openDoor() {
+            const directions = [{dx: 1, dy: 0}, {dx: -1, dy: 0}, {dx: 0, dy: 1}, {dx: 0, dy: -1}];
+            for (const dir of directions) {
+                const doorIndex = game.objects.findIndex(o => o.type === 'door' && o.x === game.tiger.x + dir.dx && o.y === game.tiger.y + dir.dy);
+                if (doorIndex !== -1) {
+                    const door = game.objects[doorIndex];
+                    if (door.locked) {
+                        if (game.keys > 0) {
+                            game.objects[doorIndex].locked = false;
+                            game.keys--;
+                            const doorCell = document.getElementById(`cell-${game.tiger.x + dir.dx}-${game.tiger.y + dir.dy}`);
+                            doorCell.className = 'cell door';
+                            doorCell.textContent = '🚪';
+                            updateStats();
+                            showMessage('Дверь открыта!', 'Теперь можно пройти через дверь!');
+                            return true;
+                        } else {
+                            showMessage('Нужен ключ!', 'Возьми ключ сначала! Без ключа дверь не откроется!');
+                            return false;
+                        }
+                    } else {
+                        return true;
+                    }
+                }
+            }
+            showMessage('Рядом нет двери', 'Подойди ближе к двери!');
+            return false;
+        }
+
+        // ЗАПУСК ПРОГРАММЫ
+        async function runCode() {
+            if (game.isRunning || game.hasBeenRun) return;
+
+            game.isRunning = true;
+            game.hasBeenRun = true;
+            updateRunButton();
+
+            const code = document.getElementById('code-input').value;
+            const codeInput = document.getElementById('code-input');
+            codeInput.classList.remove('error');
+
+            const now = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            game.codeHistory.unshift({
+                code: code.substring(0, 50) + (code.length > 50 ? '...' : ''),
+                time: now
+            });
+            if (game.codeHistory.length > 10) game.codeHistory.pop();
+            updateCodeHistory();
+
+            const lines = code.split('\n');
+
+            for (let i = 0; i < lines.length; i++) {
+                let line = lines[i].trim();
+                if (line === '' || line.startsWith('#')) continue;
+
+                const success = await executeCommand(line);
+                if (!success) {
+                    game.isRunning = false;
+                    game.hasBeenRun = true;
+                    codeInput.classList.add('error');
+                    updateRunButton();
+                    return;
+                }
+
+                await sleep(500);
+            }
+
+            game.isRunning = false;
+            updateRunButton();
+
+            const level = game.isSandboxMode && game.sandboxLevelData ? 
+                game.sandboxLevelData : 
+                levels[game.level];
+            const exit = level.exit;
+
+            if (game.tiger.x !== exit.x || game.tiger.y !== exit.y) {
+                showMessage('Программа завершена', 'Но тигрёнок ещё не у выхода!');
+            }
+        }
+
+        async function executeCommand(line) {
+            // Команды с числами: вправо(3)
+            const withNumber = line.match(/^(вправо|влево|вверх|вниз)\((\d+)\)$/);
+            
+            if (withNumber) {
+                const command = withNumber[1];
+                const count = parseInt(withNumber[2]);
+
+                if (count <= 0) {
+                    showMessage('Ошибка!', `Число должно быть больше 0: "${line}"`);
+                    return false;
+                }
+
+                switch (command) {
+                    case 'вправо': return move(1, 0, count);
+                    case 'влево': return move(-1, 0, count);
+                    case 'вверх': return move(0, -1, count);
+                    case 'вниз': return move(0, 1, count);
+                    default: return false;
+                }
+            }
+
+            // Простые команды
+            const commandMatch = line.match(/^(\w+)\(\)$/);
+            if (!commandMatch) {
+                showMessage('Синтаксическая ошибка', `Неверный формат команды: "${line}"\nПравильный формат: команда() или команда(число)`);
+                return false;
+            }
+
+            const cmd = commandMatch[1];
+
+            switch (cmd) {
+                case 'вправо': return move(1, 0);
+                case 'влево': return move(-1, 0);
+                case 'вверх': return move(0, -1);
+                case 'вниз': return move(0, 1);
+                case 'есть': return eat();
+                case 'взять': return takeKey();
+                case 'открыть': return openDoor();
+                default:
+                    showMessage('Ошибка синтаксиса', `"${cmd}" — неизвестная команда!`);
+                    return false;
+            }
+        }
+
+        // ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
+        function addCommand(cmd) {
+            const editor = document.getElementById('code-input');
+            const cursorPos = editor.selectionStart;
+            const textBefore = editor.value.substring(0, cursorPos);
+            const textAfter = editor.value.substring(cursorPos);
+
+            const prefix = (textBefore.trim() !== '' && !textBefore.endsWith('\n')) ? '\n' : '';
+            editor.value = textBefore + prefix + cmd + textAfter;
+
+            const newPos = cursorPos + prefix.length + cmd.length;
+            editor.setSelectionRange(newPos, newPos);
+            editor.focus();
+            editor.classList.remove('error');
+            updateRunButton();
+        }
+
+        function addNumber(num) {
+            const editor = document.getElementById('code-input');
+            const cursorPos = editor.selectionStart;
+            const textBefore = editor.value.substring(0, cursorPos);
+            const textAfter = editor.value.substring(cursorPos);
+
+            const lines = textBefore.split('\n');
+            const currentLine = lines[lines.length - 1];
+            const commandMatch = currentLine.match(/(вправо|влево|вверх|вниз)\(\)$/);
+
+            if (commandMatch) {
+                const command = commandMatch[1];
+                const lineStart = textBefore.lastIndexOf('\n') + 1;
+                const beforeCommand = textBefore.substring(0, lineStart);
+                const newText = beforeCommand + command + '(' + num + ')' + textAfter;
+                editor.value = newText;
+                editor.setSelectionRange(newText.length - textAfter.length, newText.length - textAfter.length);
+            } else {
+                editor.value = textBefore + num + textAfter;
+                editor.setSelectionRange(cursorPos + 1, cursorPos + 1);
+            }
+
+            editor.focus();
+            editor.classList.remove('error');
+            updateRunButton();
+        }
+
+        function undoCommand() {
+            const editor = document.getElementById('code-input');
+            if (editor.value.length === 0) return;
+            
+            editor.value = editor.value.slice(0, -1);
+            editor.focus();
+            editor.classList.remove('error');
+            updateRunButton();
+        }
+
+        function clearCode() {
+            document.getElementById('code-input').value = '';
+            document.getElementById('code-input').classList.remove('error');
+            updateRunButton();
+        }
+
+        function resetGame() {
+            game.isRunning = false;
+            game.hasBeenRun = false;
+            game.moveHistory = [];
+
+            const cells = document.querySelectorAll('.cell');
+            cells.forEach(cell => {
+                if (cell.classList.contains('paw')) {
+                    cell.className = 'cell empty';
+                    cell.textContent = '';
+                }
+            });
+
+            game.tiger = { ...game.startPosition };
+            initGame();
+            document.getElementById('code-input').classList.remove('error');
+            updateRunButton();
+        }
+
+        function updateCodeHistory() {
+            const historyList = document.getElementById('history-list');
+            historyList.innerHTML = '';
+            game.codeHistory.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'history-item';
+                div.innerHTML = `<div>${item.code}</div><div class="history-time">${item.time}</div>`;
+                historyList.appendChild(div);
+            });
+        }
+
+        function checkWin() {
+            const level = game.isSandboxMode && game.sandboxLevelData ? 
+                game.sandboxLevelData : 
+                levels[game.level];
+            
+            if (!game.isSandboxMode) {
+                game.completedLevels.add(game.level);
+            }
+
+            const meatBonus = (game.meatCollected === game.totalMeat) ? 50 : 0;
+            const stepBonus = Math.max(0, 100 - game.steps * 2);
+            const totalBonus = meatBonus + stepBonus;
+
+            game.score += totalBonus;
+            updateStats();
+
+            // Отслеживание завершенного уровня
+            trackCompletedLevel(playerName, game.level);
+
+            setTimeout(() => {
+                showMessage(
+                    `Молодец, ${playerName}! 🎉`,
+                    `Тигрёнок прошёл уровень!<br><br>🍖 Мяса: ${game.meatCollected}/${game.totalMeat}<br>🐾 Шагов: ${game.steps}<br>⭐ Бонусы: +${totalBonus}<br>🏆 Всего: ${game.score}`
+                );
+            }, 500);
+
+            if (!game.isSandboxMode) {
+                document.querySelectorAll('.level-btn').forEach((btn, i) => {
+                    const levelIndex = i + 1;
+                    if (game.completedLevels.has(levelIndex)) {
+                        btn.classList.add('completed');
+                    }
+                });
+            }
+        }
+
+        // ПЕСОЧНИЦА
+        function initSandbox() {
+            const grid = document.getElementById('sandbox-grid');
+            grid.innerHTML = '';
+            
+            grid.style.gridTemplateColumns = `repeat(${sandbox.gridSize}, ${sandbox.cellSize}px)`;
+            grid.style.gridTemplateRows = `repeat(${sandbox.gridSize}, ${sandbox.cellSize}px)`;
+            
+            let isMouseDown = false;
+            
+            grid.addEventListener('mousedown', function(e) {
+                isMouseDown = true;
+                sandbox.isDrawing = true;
+                const cell = e.target.closest('.sandbox-cell');
+                if (cell) {
+                    handleSandboxClick(cell);
+                }
+            });
+            
+            grid.addEventListener('mousemove', function(e) {
+                if (isMouseDown && sandbox.isDrawing) {
+                    const cell = e.target.closest('.sandbox-cell');
+                    if (cell) {
+                        handleSandboxClick(cell);
+                    }
+                }
+            });
+            
+            document.addEventListener('mouseup', function() {
+                isMouseDown = false;
+                sandbox.isDrawing = false;
+                sandbox.lastCell = null;
+            });
+            
+            for (let y = 0; y < sandbox.gridSize; y++) {
+                for (let x = 0; x < sandbox.gridSize; x++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'sandbox-cell empty';
+                    cell.dataset.x = x;
+                    cell.dataset.y = y;
+                    cell.style.width = `${sandbox.cellSize}px`;
+                    cell.style.height = `${sandbox.cellSize}px`;
+                    
+                    cell.addEventListener('click', function(e) {
+                        if (!sandbox.isDrawing) {
+                            const x = parseInt(this.dataset.x);
+                            const y = parseInt(this.dataset.y);
+                            placeSandboxObject(x, y);
+                        }
+                    });
+                    
+                    grid.appendChild(cell);
+                }
+            }
+            updateSandbox();
+        }
+        
+        function handleSandboxClick(cell) {
+            const x = parseInt(cell.dataset.x);
+            const y = parseInt(cell.dataset.y);
+            placeSandboxObject(x, y);
+        }
+        
+        function setSandboxSize(size) {
+            sandbox.gridSize = size;
+            
+            if (size <= 6) {
+                sandbox.cellSize = 70;
+            } else if (size <= 10) {
+                sandbox.cellSize = 50;
+            } else {
+                sandbox.cellSize = 40;
+            }
+            
+            document.querySelectorAll('.size-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            sandbox.tigerPos = {x: 0, y: 0};
+            sandbox.exitPos = {x: size-1, y: size-1};
+            sandbox.objects = [];
+            
+            initSandbox();
+        }
+        
+        function selectSandboxObject(objectType) {
+            sandbox.selectedObject = objectType;
+            sandbox.isDrawing = false;
+            
+            document.querySelectorAll('.obj-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            event.target.classList.add('active');
+        }
+        
+        function placeSandboxObject(x, y) {
+            if (sandbox.selectedObject === 'tiger') {
+                sandbox.tigerPos = {x, y};
+            } else if (sandbox.selectedObject === 'exit') {
+                sandbox.exitPos = {x, y};
+            } else if (sandbox.selectedObject === 'empty') {
+                sandbox.objects = sandbox.objects.filter(obj => !(obj.x === x && obj.y === y));
+                if (sandbox.tigerPos.x === x && sandbox.tigerPos.y === y) {
+                    sandbox.tigerPos = {x: 0, y: 0};
+                }
+                if (sandbox.exitPos.x === x && sandbox.exitPos.y === y) {
+                    sandbox.exitPos = {x: sandbox.gridSize-1, y: sandbox.gridSize-1};
+                }
+            } else if (sandbox.selectedObject !== 'tiger' && sandbox.selectedObject !== 'exit') {
+                if ((sandbox.tigerPos.x === x && sandbox.tigerPos.y === y) || 
+                    (sandbox.exitPos.x === x && sandbox.exitPos.y === y)) {
+                    return;
+                }
+                
+                const existingIndex = sandbox.objects.findIndex(obj => obj.x === x && obj.y === y);
+                if (existingIndex !== -1) {
+                    sandbox.objects[existingIndex].type = sandbox.selectedObject;
+                } else {
+                    sandbox.objects.push({
+                        type: sandbox.selectedObject,
+                        x: x,
+                        y: y
+                    });
+                }
+            }
+            updateSandbox();
+        }
+        
+        function updateSandbox() {
+            const cells = document.querySelectorAll('.sandbox-cell');
+            cells.forEach(cell => {
+                const x = parseInt(cell.dataset.x);
+                const y = parseInt(cell.dataset.y);
+                
+                cell.className = 'sandbox-cell empty';
+                cell.textContent = '';
+                cell.style.background = '';
+                cell.style.borderColor = '';
+                
+                if (sandbox.tigerPos.x === x && sandbox.tigerPos.y === y) {
+                    cell.textContent = '🐯';
+                    cell.style.background = '#ff9800';
+                    cell.style.borderColor = '#f57c00';
+                } else if (sandbox.exitPos.x === x && sandbox.exitPos.y === y) {
+                    cell.textContent = '🟢';
+                    cell.style.background = '#4caf50';
+                    cell.style.borderColor = '#388e3c';
+                } else {
+                    const obj = sandbox.objects.find(o => o.x === x && o.y === y);
+                    if (obj) {
+                        switch(obj.type) {
+                            case 'wall': 
+                                cell.textContent = '🧱';
+                                cell.style.background = '#2e7d32';
+                                cell.style.borderColor = '#1b5e20';
+                                break;
+                            case 'tree': 
+                                cell.textContent = '🌳';
+                                cell.style.background = '#388e3c';
+                                cell.style.borderColor = '#2e7d32';
+                                break;
+                            case 'meat': 
+                                cell.textContent = '🍖';
+                                cell.style.background = '#ffb74d';
+                                cell.style.borderColor = '#ffa726';
+                                break;
+                            case 'key': 
+                                cell.textContent = '🔑';
+                                cell.style.background = '#ffd54f';
+                                cell.style.borderColor = '#ffca28';
+                                break;
+                            case 'door': 
+                                cell.textContent = '🚪';
+                                cell.style.background = '#ba68c8';
+                                cell.style.borderColor = '#ab47bc';
+                                break;
+                        }
+                    } else {
+                        cell.style.background = '';
+                        cell.style.borderColor = '';
+                    }
+                }
+            });
+        }
+        
+        function clearSandbox() {
+            if (confirm('Очистить конструктор? Все несохраненные изменения будут потеряны.')) {
+                sandbox.objects = [];
+                sandbox.tigerPos = {x: 0, y: 0};
+                sandbox.exitPos = {x: sandbox.gridSize-1, y: sandbox.gridSize-1};
+                sandbox.selectedObject = 'tiger';
+                updateSandbox();
+                
+                // Обновляем активную кнопку объекта
+                document.querySelectorAll('.obj-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                document.querySelector('.obj-btn[onclick="selectSandboxObject(\'tiger\')"]').classList.add('active');
+                
+                console.log('Конструктор очищен');
+                showMessage('✅ Конструктор очищен', 'Панель очищена. Теперь ты можешь создать новый уровень!');
+            }
+        }
+        
+        function playSandboxLevel() {
+            // Проверяем, что тигрёнок и выход не в одной клетке
+            if (sandbox.tigerPos.x === sandbox.exitPos.x && sandbox.tigerPos.y === sandbox.exitPos.y) {
+                showMessage('❌ Ошибка', 'Тигрёнок и выход не могут находиться в одной клетке!');
+                return;
+            }
+            
+            // Проверяем, что тигрёнок не совпадает с объектом
+            const tigerOnObject = sandbox.objects.find(obj => obj.x === sandbox.tigerPos.x && obj.y === sandbox.tigerPos.y);
+            if (tigerOnObject) {
+                showMessage('❌ Ошибка', 'Тигрёнок не может находиться на объекте!');
+                return;
+            }
+            
+            // Проверяем, что выход не совпадает с объектом
+            const exitOnObject = sandbox.objects.find(obj => obj.x === sandbox.exitPos.x && obj.y === sandbox.exitPos.y);
+            if (exitOnObject) {
+                showMessage('❌ Ошибка', 'Выход не может находиться на объекте!');
+                return;
+            }
+            
+            const levelData = {
+                name: 'Конструктор',
+                start: sandbox.tigerPos,
+                exit: sandbox.exitPos,
+                objects: [...sandbox.objects],
+                hint: 'Уровень создан в конструкторе!',
+                gridSize: sandbox.gridSize
+            };
+            
+            console.log('Запускаю уровень из конструктора:', levelData);
+            
+            switchTab('levels');
+            
+            game.isSandboxMode = true;
+            game.sandboxLevelData = levelData;
+            game.level = 0;
+            game.isRunning = false;
+            game.hasBeenRun = false;
+            
+            initGame();
+            updateRunButton();
+            
+            document.getElementById('code-input').value = '';
+            game.codeHistory = [];
+            updateCodeHistory();
+            
+            showMessage('✅ Уровень запущен!', 'Теперь напиши программу для тигрёнка и нажми "ЗАПУСТИТЬ".');
+        }
+        
+        function uploadSandboxLevel() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                console.log('Загружаю файл:', file.name);
+                
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    try {
+                        console.log('Содержимое файла:', event.target.result);
+                        
+                        const levelData = JSON.parse(event.target.result);
+                        console.log('Распарсенные данные:', levelData);
+                        
+                        // Проверяем обязательные поля
+                        if (!levelData.start) {
+                            showMessage('❌ Ошибка', 'Отсутствует поле "start" (начальная позиция тигра)');
+                            return;
+                        }
+                        if (!levelData.exit) {
+                            showMessage('❌ Ошибка', 'Отсутствует поле "exit" (позиция выхода)');
+                            return;
+                        }
+                        if (!levelData.objects) {
+                            showMessage('❌ Ошибка', 'Отсутствует поле "objects" (объекты на уровне)');
+                            return;
+                        }
+                        if (!levelData.gridSize) {
+                            showMessage('❌ Ошибка', 'Отсутствует поле "gridSize" (размер сетки)');
+                            return;
+                        }
+                        
+                        // Проверяем, что start и exit - это объекты с x и y
+                        if (typeof levelData.start.x !== 'number' || typeof levelData.start.y !== 'number') {
+                            showMessage('❌ Ошибка', 'Поле "start" должно содержать x и y координаты');
+                            return;
+                        }
+                        if (typeof levelData.exit.x !== 'number' || typeof levelData.exit.y !== 'number') {
+                            showMessage('❌ Ошибка', 'Поле "exit" должно содержать x и y координаты');
+                            return;
+                        }
+                        
+                        // Проверяем, что objects - это массив
+                        if (!Array.isArray(levelData.objects)) {
+                            showMessage('❌ Ошибка', 'Поле "objects" должно быть массивом');
+                            return;
+                        }
+                        
+                        // Проверяем, что gridSize - это число
+                        if (typeof levelData.gridSize !== 'number' || levelData.gridSize < 4 || levelData.gridSize > 12) {
+                            showMessage('❌ Ошибка', 'Размер сетки должен быть от 4 до 12');
+                            return;
+                        }
+                        
+                        // Загружаем уровень
+                        sandbox.gridSize = levelData.gridSize;
+                        
+                        // Устанавливаем размер сетки
+                        if (sandbox.gridSize <= 6) {
+                            sandbox.cellSize = 70;
+                        } else if (sandbox.gridSize <= 10) {
+                            sandbox.cellSize = 50;
+                        } else {
+                            sandbox.cellSize = 40;
+                        }
+                        
+                        sandbox.tigerPos = levelData.start;
+                        sandbox.exitPos = levelData.exit;
+                        sandbox.objects = levelData.objects || [];
+                        
+                        // Обновляем кнопки размера
+                        document.querySelectorAll('.size-btn').forEach(btn => {
+                            btn.classList.remove('active');
+                        });
+                        document.querySelector(`.size-btn[onclick="setSandboxSize(${sandbox.gridSize})"]`).classList.add('active');
+                        
+                        // Пересоздаем сетку
+                        initSandbox();
+                        
+                        console.log('Уровень успешно загружен');
+                        showMessage('✅ Уровень загружен!', `Уровень "${levelData.name || 'Без названия'}" успешно загружен!\n\nРазмер: ${levelData.gridSize}x${levelData.gridSize}\nОбъектов: ${levelData.objects.length}`);
+                    } catch (e) {
+                        console.error('Ошибка при загрузке:', e);
+                        showMessage('❌ Ошибка при загрузке', `Не удалось загрузить файл:\n\n${e.message}\n\nУбедись, что это правильный JSON файл уровня с полями: start, exit, objects, gridSize`);
+                    }
+                };
+                
+                reader.onerror = function(error) {
+                    console.error('Ошибка чтения файла:', error);
+                    showMessage('❌ Ошибка', 'Не удалось прочитать файл. Попробуй еще раз.');
+                };
+                
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+        
+        function downloadSandboxLevel() {
+            const levelName = prompt('Назови свой уровень:', 'Мой уровень') || 'Мой уровень';
+            
+            const levelData = {
+                name: levelName,
+                start: sandbox.tigerPos,
+                exit: sandbox.exitPos,
+                objects: [...sandbox.objects],
+                hint: 'Уровень создан в конструкторе!',
+                gridSize: sandbox.gridSize,
+                isSandboxLevel: true,
+                savedAt: new Date().toISOString()
+            };
+            
+            try {
+                const blob = new Blob([JSON.stringify(levelData, null, 2)], {type: 'application/json'});
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `уровень_${levelName.replace(/\s+/g, '_')}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                console.log('Уровень скачан:', a.download);
+                showMessage('✅ Уровень скачан!', `Файл "${a.download}" сохранен на компьютер.\n\nТеперь ты можешь загрузить его в админ-панель или поделиться с друзьями!`);
+            } catch (e) {
+                console.error('Ошибка при скачивании:', e);
+                showMessage('❌ Ошибка', 'Не удалось скачать файл. Попробуй еще раз.');
+            }
+        }
+
+        // ОБЩИЕ ФУНКЦИИ
+        function showMessage(title, text) {
+            document.getElementById('msg-title').textContent = title;
+            document.getElementById('msg-text').innerHTML = text.replace(/\n/g, '<br>');
+            document.getElementById('message-modal').classList.add('active');
+        }
+
+        function closeMessage() {
+            document.getElementById('message-modal').classList.remove('active');
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(tabName).classList.add('active');
+            document.querySelector(`.tab-btn[onclick="switchTab('${tabName}')"]`).classList.add('active');
+            
+            if (tabName === 'sandbox') {
+                setTimeout(initSandbox, 10);
+            }
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // ИНИЦИАЛИЗАЦИЯ
+        window.onload = function() {
+            const theme = localStorage.getItem('theme');
+            if (theme === 'dark') {
+                document.body.classList.add('dark-mode');
+            }
+
+            const nameInput = document.getElementById('player-name');
+            nameInput.focus();
+            nameInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') startGame();
+            });
+            
+            initSandbox();
+            initAdminPanel();
+        };
+
+        // ===== АДМИН-ПАНЕЛЬ =====
+        const ADMIN_PASSWORD = "admin123";
+        const ADMIN_KEY = "tiger_admin_logged_in";
+
+        function initAdminPanel() {
+            const isLoggedIn = sessionStorage.getItem(ADMIN_KEY);
+            if (!isLoggedIn) {
+                // Скрываем кнопку админ-панели по умолчанию
+            } else {
+                document.querySelector('.admin-btn').style.display = 'block';
+            }
+        }
+
+        function openAdminPanel() {
+            const isLoggedIn = sessionStorage.getItem(ADMIN_KEY);
+            if (!isLoggedIn) {
+                showAdminLoginModal();
+                return;
+            }
+            showAdminPanelContent();
+        }
+
+        function showAdminLoginModal() {
+            const modal = document.createElement('div');
+            modal.id = 'admin-login-modal';
+            modal.className = 'admin-modal active';
+            modal.innerHTML = `
+                <div class="admin-modal-content">
+                    <h2>🔐 Админ-панель</h2>
+                    <p>Введи пароль для доступа</p>
+                    <input type="password" id="admin-password" placeholder="Пароль" />
+                    <button onclick="adminLogin()">Войти</button>
+                    <button onclick="closeAdminLogin()" style="background: #999;">Отмена</button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            document.getElementById('admin-password').focus();
+        }
+
+        function adminLogin() {
+            const password = document.getElementById('admin-password').value;
+            if (password === ADMIN_PASSWORD) {
+                sessionStorage.setItem(ADMIN_KEY, 'true');
+                document.querySelector('.admin-btn').style.display = 'block';
+                const modal = document.getElementById('admin-login-modal');
+                if (modal) modal.remove();
+                showAdminPanelContent();
+            } else {
+                alert('❌ Неверный пароль!');
+                document.getElementById('admin-password').value = '';
+            }
+        }
+
+        function closeAdminLogin() {
+            const modal = document.getElementById('admin-login-modal');
+            if (modal) modal.remove();
+        }
+
+        function showAdminPanelContent() {
+            const panel = document.createElement('div');
+            panel.id = 'admin-panel-modal';
+            panel.className = 'admin-modal active';
+            panel.innerHTML = `
+                <div class="admin-panel-content">
+                    <div class="admin-panel-header">
+                        <h2>⚙️ Админ-панель</h2>
+                        <button onclick="closeAdminPanel()" class="close-btn">✕</button>
+                    </div>
+                    
+                    <div class="admin-tabs">
+                        <button class="admin-tab-btn active" onclick="switchAdminTab('levels')">📋 Уровни</button>
+                        <button class="admin-tab-btn" onclick="switchAdminTab('users')">👥 Пользователи</button>
+                        <button class="admin-tab-btn" onclick="switchAdminTab('stats')">📊 Статистика</button>
+                    </div>
+                    
+                    <div id="admin-levels-tab" class="admin-tab-content active">
+                        <h3>📋 Управление уровнями</h3>
+                        <div class="admin-section">
+                            <h4>Загрузить уровень</h4>
+                            <input type="file" id="admin-level-upload" accept=".json" />
+                            <button onclick="adminUploadLevel()">Загрузить</button>
+                        </div>
+                        <div class="admin-section">
+                            <h4>Уровни пользователей</h4>
+                            <div id="admin-user-levels-list"></div>
+                        </div>
+                    </div>
+                    
+                    <div id="admin-users-tab" class="admin-tab-content">
+                        <h3>👥 Управление пользователями</h3>
+                        <div class="admin-section">
+                            <h4>Активные пользователи</h4>
+                            <div id="admin-users-list"></div>
+                        </div>
+                    </div>
+                    
+                    <div id="admin-stats-tab" class="admin-tab-content">
+                        <h3>📊 Статистика</h3>
+                        <div class="admin-section">
+                            <p>Всего пользователей: <strong id="admin-total-users">0</strong></p>
+                            <p>Всего уровней: <strong id="admin-total-levels">0</strong></p>
+                            <p>Пройдено уровней: <strong id="admin-completed-levels">0</strong></p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(panel);
+            loadAdminData();
+        }
+
+        function closeAdminPanel() {
+            const panel = document.getElementById('admin-panel-modal');
+            if (panel) panel.remove();
+        }
+
+        function switchAdminTab(tabName) {
+            document.querySelectorAll('.admin-tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.admin-tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            document.getElementById('admin-' + tabName + '-tab').classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function loadAdminData() {
+            loadUserLevels();
+            loadUsersList();
+            loadStats();
+        }
+
+        function loadUserLevels() {
+            const userLevels = JSON.parse(localStorage.getItem('user_levels') || '[]');
+            const list = document.getElementById('admin-user-levels-list');
+            
+            if (userLevels.length === 0) {
+                list.innerHTML = '<p>Нет загруженных уровней</p>';
+                return;
+            }
+            
+            list.innerHTML = userLevels.map((level, index) => `
+                <div class="admin-level-item">
+                    <strong>${level.name}</strong>
+                    <p>Автор: ${level.author || 'Неизвестно'}</p>
+                    <p>Размер: ${level.gridSize}x${level.gridSize}</p>
+                    <button onclick="adminDeleteLevel(${index})">Удалить</button>
+                    <button onclick="adminDownloadLevel(${index})">Скачать</button>
+                </div>
+            `).join('');
+        }
+
+        function loadUsersList() {
+            const users = JSON.parse(localStorage.getItem('users_list') || '[]');
+            const list = document.getElementById('admin-users-list');
+            
+            if (users.length === 0) {
+                list.innerHTML = '<p>Нет активных пользователей</p>';
+                return;
+            }
+            
+            list.innerHTML = users.map((user, index) => `
+                <div class="admin-user-item">
+                    <strong>${user.name}</strong>
+                    <p>Уровень: ${user.level}</p>
+                    <p>Очки: ${user.score}</p>
+                    <p>Время: ${user.lastActive}</p>
+                    <button onclick="adminDeleteUser(${index})">Удалить</button>
+                </div>
+            `).join('');
+        }
+
+        function loadStats() {
+            const users = JSON.parse(localStorage.getItem('users_list') || '[]');
+            const userLevels = JSON.parse(localStorage.getItem('user_levels') || '[]');
+            
+            document.getElementById('admin-total-users').textContent = users.length;
+            document.getElementById('admin-total-levels').textContent = userLevels.length;
+            
+            let completedCount = 0;
+            users.forEach(user => {
+                if (user.completedLevels) {
+                    completedCount += user.completedLevels.length;
+                }
+            });
+            document.getElementById('admin-completed-levels').textContent = completedCount;
+        }
+
+        function adminUploadLevel() {
+            const fileInput = document.getElementById('admin-level-upload');
+            
+            // Если файл не выбран, открываем диалог выбора файла
+            if (!fileInput.files || fileInput.files.length === 0) {
+                fileInput.click();
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('Выбери файл!');
+                return;
+            }
+            
+            console.log('Загружаю файл:', file.name);
+            
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                try {
+                    console.log('Содержимое файла:', e.target.result);
+                    
+                    const levelData = JSON.parse(e.target.result);
+                    
+                    console.log('Распарсенные данные:', levelData);
+                    
+                    // Проверяем структуру уровня
+                    if (!levelData.start || !levelData.exit) {
+                        alert('❌ Ошибка: в файле должны быть поля "start" и "exit"!');
+                        return;
+                    }
+                    
+                    if (!levelData.objects) {
+                        levelData.objects = [];
+                    }
+                    
+                    if (!levelData.gridSize) {
+                        levelData.gridSize = 8;
+                    }
+                    
+                    if (!levelData.name) {
+                        levelData.name = file.name.replace('.json', '');
+                    }
+                    
+                    levelData.author = playerName || 'Неизвестно';
+                    levelData.uploadedAt = new Date().toISOString();
+                    
+                    // Сохраняем в localStorage
+                    const userLevels = JSON.parse(localStorage.getItem('user_levels') || '[]');
+                    userLevels.push(levelData);
+                    localStorage.setItem('user_levels', JSON.stringify(userLevels));
+                    
+                    console.log('Уровень сохранен. Всего уровней:', userLevels.length);
+                    
+                    alert('✅ Уровень "' + levelData.name + '" загружен успешно!\n\nАвтор: ' + levelData.author + '\nРазмер: ' + levelData.gridSize + 'x' + levelData.gridSize);
+                    
+                    fileInput.value = '';
+                    loadUserLevels();
+                    loadStats();
+                } catch (error) {
+                    console.error('Ошибка при загрузке:', error);
+                    alert('❌ Ошибка при загрузке файла:\n\n' + error.message + '\n\nУбедись, что это правильный JSON файл уровня!');
+                }
+            };
+            
+            reader.onerror = function(error) {
+                console.error('Ошибка чтения файла:', error);
+                alert('❌ Ошибка при чтении файла!');
+            };
+            
+            reader.readAsText(file);
+        }
+
+        function adminDeleteLevel(index) {
+            if (confirm('Удалить этот уровень?')) {
+                const userLevels = JSON.parse(localStorage.getItem('user_levels') || '[]');
+                userLevels.splice(index, 1);
+                localStorage.setItem('user_levels', JSON.stringify(userLevels));
+                loadUserLevels();
+            }
+        }
+
+        function adminDownloadLevel(index) {
+            const userLevels = JSON.parse(localStorage.getItem('user_levels') || '[]');
+            const level = userLevels[index];
+            
+            const blob = new Blob([JSON.stringify(level, null, 2)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `level_${level.name}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function adminDeleteUser(index) {
+            if (confirm('Удалить этого пользователя?')) {
+                const users = JSON.parse(localStorage.getItem('users_list') || '[]');
+                users.splice(index, 1);
+                localStorage.setItem('users_list', JSON.stringify(users));
+                loadUsersList();
+            }
+        }
+
+        function trackUser(name, level, score) {
+            const users = JSON.parse(localStorage.getItem('users_list') || '[]');
+            let user = users.find(u => u.name === name);
+            
+            if (!user) {
+                user = {
+                    name: name,
+                    level: level,
+                    score: score,
+                    completedLevels: [],
+                    lastActive: new Date().toLocaleString('ru-RU')
+                };
+                users.push(user);
+            } else {
+                user.level = level;
+                user.score = score;
+                user.lastActive = new Date().toLocaleString('ru-RU');
+            }
+            
+            localStorage.setItem('users_list', JSON.stringify(users));
+        }
+
+        function trackCompletedLevel(playerName, levelNumber) {
+            const users = JSON.parse(localStorage.getItem('users_list') || '[]');
+            let user = users.find(u => u.name === playerName);
+            
+            if (user) {
+                if (!user.completedLevels) {
+                    user.completedLevels = [];
+                }
+                if (!user.completedLevels.includes(levelNumber)) {
+                    user.completedLevels.push(levelNumber);
+                }
+                localStorage.setItem('users_list', JSON.stringify(users));
+            }
+        }
+    </script>
+</body>
+</html>

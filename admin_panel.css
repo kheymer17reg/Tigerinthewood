@@ -1,0 +1,308 @@
+/* Стили для админ-панели */
+
+/* Кнопка админ-панели */
+.admin-btn {
+    padding: 10px 20px;
+    background: #d32f2f;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+    display: none;
+}
+
+.admin-btn:hover {
+    transform: translateY(-2px);
+    background: #b71c1c;
+}
+
+/* Модальное окно админ-панели */
+.admin-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+}
+
+.admin-modal.active {
+    display: flex;
+}
+
+/* Содержимое модального окна входа */
+.admin-modal-content {
+    background: var(--bg-secondary);
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 400px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    animation: slideIn 0.5s;
+}
+
+.admin-modal-content h2 {
+    font-size: 2em;
+    margin-bottom: 20px;
+    color: var(--primary-color);
+}
+
+.admin-modal-content p {
+    font-size: 1.1em;
+    margin-bottom: 20px;
+    color: var(--text-secondary);
+}
+
+.admin-modal-content input {
+    width: 100%;
+    padding: 15px;
+    font-size: 1em;
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    margin-bottom: 20px;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+.admin-modal-content input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.admin-modal-content button {
+    padding: 12px 30px;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    margin: 0 5px;
+    transition: all 0.3s;
+}
+
+.admin-modal-content button:hover {
+    transform: translateY(-2px);
+    background: #1976d2;
+}
+
+/* Содержимое админ-панели */
+.admin-panel-content {
+    background: var(--bg-secondary);
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    max-width: 900px;
+    max-height: 80vh;
+    overflow-y: auto;
+    animation: slideIn 0.5s;
+}
+
+.admin-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.admin-panel-header h2 {
+    font-size: 1.8em;
+    color: var(--primary-color);
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    cursor: pointer;
+    color: var(--text-primary);
+    transition: all 0.3s;
+}
+
+.close-btn:hover {
+    transform: scale(1.2);
+    color: var(--error-color);
+}
+
+/* Вкладки админ-панели */
+.admin-tabs {
+    display: flex;
+    gap: 10px;
+    padding: 15px 20px;
+    border-bottom: 2px solid var(--border-color);
+    flex-wrap: wrap;
+}
+
+.admin-tab-btn {
+    padding: 10px 20px;
+    background: var(--bg-primary);
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-primary);
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.admin-tab-btn.active {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+.admin-tab-btn:hover {
+    transform: translateY(-2px);
+}
+
+/* Содержимое вкладок */
+.admin-tab-content {
+    display: none;
+    padding: 20px;
+}
+
+.admin-tab-content.active {
+    display: block;
+}
+
+.admin-tab-content h3 {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+    color: var(--primary-color);
+}
+
+/* Секции админ-панели */
+.admin-section {
+    background: var(--bg-primary);
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.admin-section h4 {
+    font-size: 1.1em;
+    margin-bottom: 10px;
+    color: var(--text-primary);
+}
+
+.admin-section input[type="file"] {
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    width: 100%;
+}
+
+.admin-section button {
+    padding: 10px 20px;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+    margin-right: 10px;
+}
+
+.admin-section button:hover {
+    transform: translateY(-2px);
+    background: #1976d2;
+}
+
+.admin-section label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-size: 1.1em;
+}
+
+.admin-section input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+/* Элементы списков */
+.admin-level-item,
+.admin-user-item {
+    background: var(--bg-secondary);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    border-left: 4px solid var(--success-color);
+}
+
+.admin-level-item strong,
+.admin-user-item strong {
+    font-size: 1.1em;
+    color: var(--primary-color);
+}
+
+.admin-level-item p,
+.admin-user-item p {
+    font-size: 0.9em;
+    color: var(--text-secondary);
+    margin: 5px 0;
+}
+
+.admin-level-item button,
+.admin-user-item button {
+    padding: 8px 15px;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9em;
+    margin-right: 5px;
+    margin-top: 10px;
+    transition: all 0.3s;
+}
+
+.admin-level-item button:hover,
+.admin-user-item button:hover {
+    transform: translateY(-2px);
+    background: #1976d2;
+}
+
+/* Анимация */
+@keyframes slideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .admin-panel-content {
+        max-width: 95vw;
+        max-height: 90vh;
+    }
+    
+    .admin-tabs {
+        flex-direction: column;
+    }
+    
+    .admin-tab-btn {
+        width: 100%;
+    }
+    
+    .admin-modal-content {
+        max-width: 90vw;
+        padding: 20px;
+    }
+}

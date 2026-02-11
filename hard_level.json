@@ -1,0 +1,58 @@
+{
+  "name": "Сложный уровень",
+  "start": {
+    "x": 0,
+    "y": 7
+  },
+  "exit": {
+    "x": 7,
+    "y": 0
+  },
+  "objects": [
+    {
+      "type": "meat",
+      "x": 1,
+      "y": 6
+    },
+    {
+      "type": "meat",
+      "x": 3,
+      "y": 4
+    },
+    {
+      "type": "meat",
+      "x": 5,
+      "y": 2
+    },
+    {
+      "type": "key",
+      "x": 2,
+      "y": 5
+    },
+    {
+      "type": "door",
+      "x": 4,
+      "y": 3,
+      "locked": true
+    },
+    {
+      "type": "tree",
+      "x": 3,
+      "y": 2
+    },
+    {
+      "type": "tree",
+      "x": 5,
+      "y": 5
+    },
+    {
+      "type": "wall",
+      "x": 2,
+      "y": 3
+    }
+  ],
+  "hint": "Собери мясо, возьми ключ и открой дверь!",
+  "gridSize": 8,
+  "isSandboxLevel": true,
+  "savedAt": "2024-01-01T12:00:00.000Z"
+}
