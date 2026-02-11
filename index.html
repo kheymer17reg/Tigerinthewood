@@ -1899,7 +1899,7 @@
 
         async function executeCommand(line) {
             // Команды с числами: вправо(3)
-            const withNumber = line.match(/^(вправо|влево|вверх|вниз)\((\d+)\)$/);
+            const withNumber = line.match(/^(вправо|влево|вверх|вниз|шаг|вперед)\((\d+)\)$/);
             
             if (withNumber) {
                 const command = withNumber[1];
@@ -1911,7 +1911,9 @@
                 }
 
                 switch (command) {
-                    case 'вправо': return move(1, 0, count);
+                    case 'вправо':
+                    case 'шаг':
+                    case 'вперед': return move(1, 0, count);
                     case 'влево': return move(-1, 0, count);
                     case 'вверх': return move(0, -1, count);
                     case 'вниз': return move(0, 1, count);
@@ -1920,12 +1922,15 @@
             }
 
             // Простые команды со скобками: команда()
-            const commandMatch = line.match(/^(\w+)\(\)$/);
+            // Используем [а-яёА-ЯЁ] для поддержки русских букв
+            const commandMatch = line.match(/^([а-яёА-ЯЁ]+)\(\)$/);
             if (commandMatch) {
                 const cmd = commandMatch[1];
 
                 switch (cmd) {
-                    case 'вправо': return move(1, 0);
+                    case 'вправо':
+                    case 'шаг':
+                    case 'вперед': return move(1, 0);
                     case 'влево': return move(-1, 0);
                     case 'вверх': return move(0, -1);
                     case 'вниз': return move(0, 1);
@@ -1939,11 +1944,13 @@
             }
 
             // Команды без скобок: просто вниз, вправо и т.д.
-            const simpleCmd = line.match(/^(вправо|влево|вверх|вниз|есть|взять|открыть)$/);
+            const simpleCmd = line.match(/^(вправо|влево|вверх|вниз|есть|взять|открыть|шаг|вперед)$/);
             if (simpleCmd) {
                 const cmd = simpleCmd[1];
                 switch (cmd) {
-                    case 'вправо': return move(1, 0);
+                    case 'вправо':
+                    case 'шаг':
+                    case 'вперед': return move(1, 0);
                     case 'влево': return move(-1, 0);
                     case 'вверх': return move(0, -1);
                     case 'вниз': return move(0, 1);
