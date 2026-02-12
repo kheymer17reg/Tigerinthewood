@@ -351,6 +351,46 @@
             background: #ff9800;
             border-color: #f57c00;
             animation: bounce 0.8s infinite alternate;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tiger:hover {
+            transform: scale(1.1);
+        }
+
+        /* Анимация прыжка при клике */
+        @keyframes tigerJump {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-15px);
+            }
+        }
+
+        /* Анимация танца при победе */
+        @keyframes tigerDance {
+            0%, 100% {
+                transform: translateX(0) rotate(0deg);
+            }
+            25% {
+                transform: translateX(-8px) rotate(-3deg);
+            }
+            50% {
+                transform: translateX(8px) rotate(3deg);
+            }
+            75% {
+                transform: translateX(-8px) rotate(-3deg);
+            }
+        }
+
+        .tiger.jump {
+            animation: tigerJump 0.6s ease-in-out !important;
+        }
+
+        .tiger.dance {
+            animation: tigerDance 0.8s infinite !important;
         }
 
         .wall {
@@ -536,6 +576,25 @@
         #code-input:focus {
             outline: none;
             border-color: var(--primary-color);
+        }
+
+        /* Подсветка ошибочной строки */
+        #error-highlighter {
+            display: none;
+            background: rgba(244, 67, 54, 0.15);
+            border-left: 4px solid #f44336;
+            animation: errorPulse 0.6s ease-in-out;
+        }
+
+        @keyframes errorPulse {
+            0% {
+                background: rgba(244, 67, 54, 0.3);
+                box-shadow: 0 0 10px rgba(244, 67, 54, 0.5);
+            }
+            100% {
+                background: rgba(244, 67, 54, 0.15);
+                box-shadow: 0 0 0 rgba(244, 67, 54, 0);
+            }
         }
 
         /* Управление со стрелками */
@@ -950,6 +1009,40 @@
             }
         }
 
+        /* Фейерверк */
+        .fireworks {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        .firework {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        @keyframes explode {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--tx), var(--ty)) scale(0);
+            }
+        }
+
+        .firework {
+            animation: explode 1s ease-out forwards;
+        }
+
         @media (max-width: 768px) {
             h1 {
                 font-size: 1.8em;
@@ -1251,6 +1344,12 @@
             <h1>🐯 Тигрёнок в лесу</h1>
             <div class="header-controls">
                 <button class="theme-btn" onclick="toggleTheme()">☀️ Свет / 🌙 Темно</button>
+                <button class="theme-btn" id="sound-btn" onclick="toggleSound()">🔊 Звук</button>
+                <select id="speed-select" class="theme-btn" onchange="changeSpeed(this.value)" style="padding: 10px 15px; font-weight: 600; cursor: pointer; border: 2px solid var(--primary-color); border-radius: 8px; background: var(--bg-secondary); color: var(--primary-color);">
+                    <option value="100">⚡ Быстро</option>
+                    <option value="300" selected>🐢 Нормально</option>
+                    <option value="600">🐌 Медленно</option>
+                </select>
                 <div class="player-info" id="player-info">Игрок: Гость</div>
                 <button class="admin-btn" onclick="openAdminPanel()">🔐 Админ</button>
             </div>
@@ -1486,7 +1585,9 @@
             moveHistory: [],
             codeHistory: [],
             isSandboxMode: false,
-            sandboxLevelData: null
+            sandboxLevelData: null,
+            soundEnabled: true,
+            moveSpeed: 300 // Скорость перемещения в миллисекундах (300ms = нормально, 100ms = быстро)
         };
 
         let sandbox = {
@@ -1501,6 +1602,125 @@
         };
 
         let playerName = 'Гость';
+
+        // Звуки (тестовые - используем Web Audio API)
+        const sounds = {
+            step: null,
+            jump: null,
+            levelComplete: null,
+            eat: null,
+            key: null,
+            door: null
+        };
+
+        // Глобальный AudioContext для всех звуков
+        let globalAudioContext = null;
+        
+        function getAudioContext() {
+            if (!globalAudioContext) {
+                globalAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            return globalAudioContext;
+        }
+
+        function playSound(soundType) {
+            if (!game.soundEnabled) return;
+            
+            const audioContext = getAudioContext();
+            const now = audioContext.currentTime;
+            
+            switch(soundType) {
+                case 'step':
+                    // Вариант 4: Звон колокольчика (мягкий)
+                    const osc4 = audioContext.createOscillator();
+                    const gain4 = audioContext.createGain();
+                    osc4.connect(gain4);
+                    gain4.connect(audioContext.destination);
+                    osc4.type = 'triangle';
+                    osc4.frequency.value = 800;
+                    gain4.gain.setValueAtTime(0.08, now);
+                    gain4.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+                    osc4.start(now);
+                    osc4.stop(now + 0.15);
+                    break;
+                    
+                case 'jump':
+                    // Вариант 2: Пружинка
+                    const osc2 = audioContext.createOscillator();
+                    const gain2 = audioContext.createGain();
+                    osc2.connect(gain2);
+                    gain2.connect(audioContext.destination);
+                    osc2.frequency.setValueAtTime(200, now);
+                    osc2.frequency.exponentialRampToValueAtTime(600, now + 0.25);
+                    gain2.gain.setValueAtTime(0.15, now);
+                    gain2.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+                    osc2.start(now);
+                    osc2.stop(now + 0.25);
+                    break;
+                    
+                case 'levelComplete':
+                    // Только фанфара - Вариант 1: Классическая фанфара
+                    [400, 500, 600, 700, 800].forEach((freq, i) => {
+                        const osc = audioContext.createOscillator();
+                        const gain = audioContext.createGain();
+                        osc.connect(gain);
+                        gain.connect(audioContext.destination);
+                        osc.type = 'square';
+                        osc.frequency.value = freq;
+                        gain.gain.setValueAtTime(0.2, now + i * 0.1);
+                        gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.1 + 0.2);
+                        osc.start(now + i * 0.1);
+                        osc.stop(now + i * 0.1 + 0.2);
+                    });
+                    break;
+                    
+                case 'eat':
+                    // Вариант 4: Булькающий звук
+                    [600, 500].forEach((freq, i) => {
+                        const osc = audioContext.createOscillator();
+                        const gain = audioContext.createGain();
+                        osc.connect(gain);
+                        gain.connect(audioContext.destination);
+                        osc.frequency.value = freq;
+                        gain.gain.setValueAtTime(0.12, now + i * 0.08);
+                        gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.08 + 0.1);
+                        osc.start(now + i * 0.08);
+                        osc.stop(now + i * 0.08 + 0.1);
+                    });
+                    break;
+                    
+                case 'key':
+                    // Вариант 3: Восходящий звон
+                    [800, 1000, 1200].forEach((freq, i) => {
+                        const osc = audioContext.createOscillator();
+                        const gain = audioContext.createGain();
+                        osc.connect(gain);
+                        gain.connect(audioContext.destination);
+                        osc.frequency.value = freq;
+                        gain.gain.setValueAtTime(0.15, now + i * 0.08);
+                        gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.08 + 0.18);
+                        osc.start(now + i * 0.08);
+                        osc.stop(now + i * 0.08 + 0.18);
+                    });
+                    break;
+                    
+                case 'door':
+                    // Вариант 4: Звон замка
+                    [600, 800].forEach((freq, i) => {
+                        const osc = audioContext.createOscillator();
+                        const gain = audioContext.createGain();
+                        osc.connect(gain);
+                        gain.connect(audioContext.destination);
+                        osc.type = 'sine';
+                        osc.frequency.value = freq;
+                        gain.gain.setValueAtTime(0.15, now + i * 0.12);
+                        gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.12 + 0.25);
+                        osc.start(now + i * 0.12);
+                        osc.stop(now + i * 0.12 + 0.25);
+                    });
+                    break;
+            }
+        }
 
         const levels = {
             1: {
@@ -1664,7 +1884,14 @@
                         }
                     } else if (x === game.tiger.x && y === game.tiger.y) {
                         cell.className = 'cell tiger';
-                        cell.textContent = '🐯';
+                        cell.textContent = '🐅';
+                        cell.style.fontSize = `${cellSize * 0.7}px`; // Тигр больше
+                        cell.style.cursor = 'pointer';
+                        cell.addEventListener('click', function() {
+                            this.classList.remove('jump');
+                            void this.offsetWidth; // Перезагрузить анимацию
+                            this.classList.add('jump');
+                        });
                     }
                     grid.appendChild(cell);
                 }
@@ -1747,7 +1974,10 @@
             return true;
         }
 
-        function move(dx, dy, count = 1) {
+        async function move(dx, dy, count = 1) {
+            const size = game.isSandboxMode ? sandbox.gridSize : 8;
+            const cellSize = game.isSandboxMode ? 50 : 60;
+            
             for (let i = 0; i < count; i++) {
                 if (!canMove(dx, dy)) {
                     const obj = game.objects.find(o => o.x === game.tiger.x + dx && o.y === game.tiger.y + dy);
@@ -1759,6 +1989,8 @@
                     return false;
                 }
 
+                playSound('step'); // Звук шага
+
                 const oldCell = document.getElementById(`cell-${game.tiger.x}-${game.tiger.y}`);
                 const level = game.isSandboxMode && game.sandboxLevelData ? 
                     game.sandboxLevelData : 
@@ -1767,6 +1999,7 @@
                 if (!oldCell.classList.contains('exit')) {
                     oldCell.className = 'cell paw';
                     oldCell.textContent = '🐾';
+                    oldCell.style.fontSize = `${cellSize * 0.3}px`; // Следы маленькие
                 }
 
                 game.tiger.x += dx;
@@ -1775,7 +2008,15 @@
 
                 const newCell = document.getElementById(`cell-${game.tiger.x}-${game.tiger.y}`);
                 newCell.className = 'cell tiger';
-                newCell.textContent = '🐯';
+                newCell.textContent = '🐅';
+                newCell.style.fontSize = `${cellSize * 0.7}px`; // Тигр больше
+                newCell.style.cursor = 'pointer';
+                newCell.addEventListener('click', function() {
+                    this.classList.remove('jump');
+                    void this.offsetWidth;
+                    this.classList.add('jump');
+                    playSound('jump'); // Звук прыжка
+                });
 
                 updateStats();
 
@@ -1784,18 +2025,26 @@
                     setTimeout(checkWin, 500);
                     return true;
                 }
+
+                // Задержка между шагами для контроля скорости
+                if (i < count - 1) {
+                    await sleep(game.moveSpeed);
+                }
             }
             return true;
         }
 
         function eat() {
+            const cellSize = game.isSandboxMode ? 50 : 60;
             const meatIndex = game.objects.findIndex(o => o.type === 'meat' && o.x === game.tiger.x && o.y === game.tiger.y);
             if (meatIndex !== -1) {
+                playSound('eat'); // Звук еды
                 game.objects.splice(meatIndex, 1);
                 game.score += 10;
                 game.meatCollected++;
                 const cell = document.getElementById(`cell-${game.tiger.x}-${game.tiger.y}`);
-                cell.textContent = '🐯';
+                cell.textContent = '🐅';
+                cell.style.fontSize = `${cellSize * 0.7}px`; // Тигр больше
                 updateStats();
                 return true;
             }
@@ -1804,12 +2053,15 @@
         }
 
         function takeKey() {
+            const cellSize = game.isSandboxMode ? 50 : 60;
             const keyIndex = game.objects.findIndex(o => o.type === 'key' && o.x === game.tiger.x && o.y === game.tiger.y);
             if (keyIndex !== -1) {
+                playSound('key'); // Звук ключа
                 game.objects.splice(keyIndex, 1);
                 game.keys++;
                 const cell = document.getElementById(`cell-${game.tiger.x}-${game.tiger.y}`);
-                cell.textContent = '🐯';
+                cell.textContent = '🐅';
+                cell.style.fontSize = `${cellSize * 0.7}px`; // Тигр больше
                 updateStats();
                 return true;
             }
@@ -1825,6 +2077,7 @@
                     const door = game.objects[doorIndex];
                     if (door.locked) {
                         if (game.keys > 0) {
+                            playSound('door'); // Звук двери
                             game.objects[doorIndex].locked = false;
                             game.keys--;
                             const doorCell = document.getElementById(`cell-${game.tiger.x + dir.dx}-${game.tiger.y + dir.dy}`);
@@ -1857,6 +2110,7 @@
             const code = document.getElementById('code-input').value;
             const codeInput = document.getElementById('code-input');
             codeInput.classList.remove('error');
+            clearErrorHighlight();
 
             const now = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
             game.codeHistory.unshift({
@@ -1867,16 +2121,19 @@
             updateCodeHistory();
 
             const lines = code.split('\n');
+            let lineNumber = 0;
 
             for (let i = 0; i < lines.length; i++) {
                 let line = lines[i].trim();
                 if (line === '' || line.startsWith('#')) continue;
 
+                lineNumber++;
                 const success = await executeCommand(line);
                 if (!success) {
                     game.isRunning = false;
                     game.hasBeenRun = true;
                     codeInput.classList.add('error');
+                    highlightErrorLine(i, line);
                     updateRunButton();
                     return;
                 }
@@ -1897,9 +2154,117 @@
             }
         }
 
+        function highlightErrorLine(lineIndex, errorLine) {
+            const codeInput = document.getElementById('code-input');
+            const lines = codeInput.value.split('\n');
+            
+            // Вычисляем позицию начала и конца ошибочной строки
+            let startPos = 0;
+            for (let i = 0; i < lineIndex; i++) {
+                startPos += lines[i].length + 1; // +1 для символа новой строки
+            }
+            const endPos = startPos + lines[lineIndex].length;
+            
+            // Создаём контейнер для подсветки
+            let highlighter = document.getElementById('error-highlighter');
+            if (!highlighter) {
+                highlighter = document.createElement('div');
+                highlighter.id = 'error-highlighter';
+                highlighter.style.cssText = `
+                    position: absolute;
+                    pointer-events: none;
+                    background: rgba(244, 67, 54, 0.2);
+                    border-left: 4px solid #f44336;
+                    z-index: 1;
+                `;
+                codeInput.parentElement.style.position = 'relative';
+                codeInput.parentElement.insertBefore(highlighter, codeInput);
+            }
+            
+            // Вычисляем координаты строки
+            const textBeforeError = codeInput.value.substring(0, startPos);
+            const lineCount = textBeforeError.split('\n').length - 1;
+            const lineHeight = parseInt(window.getComputedStyle(codeInput).lineHeight);
+            const top = lineHeight * lineCount;
+            
+            highlighter.style.top = top + 'px';
+            highlighter.style.height = lineHeight + 'px';
+            highlighter.style.width = '100%';
+            highlighter.style.display = 'block';
+            
+            // Показываем сообщение об ошибке с номером строки
+            showMessage('❌ Ошибка на строке ' + (lineIndex + 1), 
+                `Неверная команда: "${errorLine}"\n\nПроверь синтаксис и попробуй снова!`);
+        }
+
+        function clearErrorHighlight() {
+            const highlighter = document.getElementById('error-highlighter');
+            if (highlighter) {
+                highlighter.style.display = 'none';
+            }
+        }
+
+        function createFireworks() {
+            // Создаём контейнер для фейерверка
+            let fireworksContainer = document.getElementById('fireworks-container');
+            if (!fireworksContainer) {
+                fireworksContainer = document.createElement('div');
+                fireworksContainer.id = 'fireworks-container';
+                fireworksContainer.className = 'fireworks';
+                document.body.appendChild(fireworksContainer);
+            }
+
+            // Очищаем старые фейерверки
+            fireworksContainer.innerHTML = '';
+
+            // Создаём несколько взрывов в разных местах
+            const explosions = 8;
+            for (let i = 0; i < explosions; i++) {
+                setTimeout(() => {
+                    const x = Math.random() * window.innerWidth;
+                    const y = Math.random() * window.innerHeight * 0.6;
+                    
+                    // Создаём частицы для каждого взрыва
+                    const particleCount = 30;
+                    for (let j = 0; j < particleCount; j++) {
+                        const particle = document.createElement('div');
+                        particle.className = 'firework';
+                        
+                        // Случайный цвет
+                        const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff', '#ffa500', '#ff69b4'];
+                        const color = colors[Math.floor(Math.random() * colors.length)];
+                        particle.style.backgroundColor = color;
+                        
+                        // Случайное направление
+                        const angle = (Math.PI * 2 * j) / particleCount;
+                        const velocity = 3 + Math.random() * 5;
+                        const tx = Math.cos(angle) * velocity * 50;
+                        const ty = Math.sin(angle) * velocity * 50;
+                        
+                        particle.style.left = x + 'px';
+                        particle.style.top = y + 'px';
+                        particle.style.setProperty('--tx', tx + 'px');
+                        particle.style.setProperty('--ty', ty + 'px');
+                        
+                        fireworksContainer.appendChild(particle);
+                    }
+                }, i * 200);
+            }
+
+            // Удаляем контейнер через 3 секунды
+            setTimeout(() => {
+                if (fireworksContainer) {
+                    fireworksContainer.innerHTML = '';
+                }
+            }, 3000);
+        }
+
         async function executeCommand(line) {
-            // Команды с числами: вправо(3)
-            const withNumber = line.match(/^(вправо|влево|вверх|вниз|шаг|вперед)\((\d+)\)$/);
+            // Очищаем пробелы в начале и конце
+            line = line.trim();
+            
+            // Команды с числами: вправо(3) или вправо ( 3 )
+            const withNumber = line.match(/^(вправо|влево|вверх|вниз|шаг|вперед)\s*\(\s*(\d+)\s*\)$/);
             
             if (withNumber) {
                 const command = withNumber[1];
@@ -1921,9 +2286,8 @@
                 }
             }
 
-            // Простые команды со скобками: команда()
-            // Используем [а-яёА-ЯЁ] для поддержки русских букв
-            const commandMatch = line.match(/^([а-яёА-ЯЁ]+)\(\)$/);
+            // Простые команды со скобками: команда() или команда ( )
+            const commandMatch = line.match(/^(вправо|влево|вверх|вниз|есть|взять|открыть|шаг|вперед)\s*\(\s*\)$/);
             if (commandMatch) {
                 const cmd = commandMatch[1];
 
@@ -1957,6 +2321,9 @@
                     case 'есть': return eat();
                     case 'взять': return takeKey();
                     case 'открыть': return openDoor();
+                    default:
+                        showMessage('Ошибка синтаксиса', `"${cmd}" — неизвестная команда!`);
+                        return false;
                 }
             }
 
@@ -2063,6 +2430,8 @@
                 game.completedLevels.add(game.level);
             }
 
+            playSound('levelComplete'); // Звук победы
+
             const meatBonus = (game.meatCollected === game.totalMeat) ? 50 : 0;
             const stepBonus = Math.max(0, 100 - game.steps * 2);
             const totalBonus = meatBonus + stepBonus;
@@ -2072,6 +2441,12 @@
 
             // Отслеживание завершенного уровня
             trackCompletedLevel(playerName, game.level);
+
+            // Танец тигрёнка при победе
+            const tigerCell = document.getElementById(`cell-${game.tiger.x}-${game.tiger.y}`);
+            if (tigerCell) {
+                tigerCell.classList.add('dance');
+            }
 
             setTimeout(() => {
                 showMessage(
@@ -2088,6 +2463,11 @@
                     }
                 });
             }
+
+            // Фейерверк при победе
+            setTimeout(() => {
+                createFireworks();
+            }, 1500);
         }
 
         // ПЕСОЧНИЦА
@@ -2230,9 +2610,11 @@
                 cell.textContent = '';
                 cell.style.background = '';
                 cell.style.borderColor = '';
+                cell.style.fontSize = ''; // Убираем переопределение размера
                 
                 if (sandbox.tigerPos.x === x && sandbox.tigerPos.y === y) {
-                    cell.textContent = '🐯';
+                    cell.textContent = '🐅';
+                    cell.style.fontSize = `${sandbox.cellSize * 0.7}px`; // Тигр больше в песочнице
                     cell.style.background = '#ff9800';
                     cell.style.borderColor = '#f57c00';
                 } else if (sandbox.exitPos.x === x && sandbox.exitPos.y === y) {
@@ -2496,6 +2878,18 @@
             localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
         }
 
+        function toggleSound() {
+            game.soundEnabled = !game.soundEnabled;
+            const btn = document.getElementById('sound-btn');
+            btn.textContent = game.soundEnabled ? '🔊 Звук' : '🔇 Без звука';
+            localStorage.setItem('soundEnabled', game.soundEnabled);
+        }
+
+        function changeSpeed(speed) {
+            game.moveSpeed = parseInt(speed);
+            localStorage.setItem('moveSpeed', game.moveSpeed);
+        }
+
         function switchTab(tabName) {
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
@@ -2520,6 +2914,20 @@
             const theme = localStorage.getItem('theme');
             if (theme === 'dark') {
                 document.body.classList.add('dark-mode');
+            }
+
+            // Восстанавливаем состояние звука
+            const soundEnabled = localStorage.getItem('soundEnabled');
+            if (soundEnabled === 'false') {
+                game.soundEnabled = false;
+                document.getElementById('sound-btn').textContent = '🔇 Без звука';
+            }
+
+            // Восстанавливаем скорость
+            const moveSpeed = localStorage.getItem('moveSpeed');
+            if (moveSpeed) {
+                game.moveSpeed = parseInt(moveSpeed);
+                document.getElementById('speed-select').value = moveSpeed;
             }
 
             const nameInput = document.getElementById('player-name');
