@@ -1,0 +1,168 @@
+// ИИ Чат с Google Gemini 2.0 Flash API
+const AI_CONFIG = {
+    apiKey: 'AIzaSyAG97eXSEAW_qZZiiW498uhbzao1x2qqaA',
+    model: 'gemini-2.0-flash',
+    apiUrl: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent'
+};
+
+let aiChatHistory = [];
+let aiChatEnabled = true;
+
+// Загружаем состояние ИИ чата из localStorage
+function loadAIChatState() {
+    const saved = localStorage.getItem('ai_chat_enabled');
+    if (saved !== null) {
+        aiChatEnabled = JSON.parse(saved);
+    }
+    const checkbox = document.getElementById('ai-enabled-checkbox');
+    if (checkbox) {
+        checkbox.checked = aiChatEnabled;
+    }
+}
+
+// Переключаем видимость чата
+function toggleAIChatWidget() {
+    const widget = document.getElementById('ai-chat-widget');
+    if (widget) {
+        widget.classList.toggle('active');
+        if (widget.classList.contains('active')) {
+            document.getElementById('ai-chat-input').focus();
+        }
+    }
+}
+
+// Отправляем сообщение в ИИ
+async function sendAIChatMessage() {
+    const input = document.getElementById('ai-chat-input');
+    const message = input.value.trim();
+    
+    if (!message) return;
+    if (!aiChatEnabled) {
+        showAIChatMessage('ИИ помощник отключен администратором', 'assistant');
+        return;
+    }
+    
+    // Добавляем сообщение пользователя
+    showAIChatMessage(message, 'user');
+    input.value = '';
+    
+    // Показываем индикатор загрузки
+    showAIChatMessage('Думаю...', 'loading');
+    
+    try {
+        // Формируем контекст из истории
+        let conversationContext = `Ты помощник для игры "Тигрёнок в лесу" - образовательной игры для обучения программированию на русском языке. 
+Помогай игрокам с советами по программированию, объясняй команды игры, помогай решать уровни.
+Команды игры: вправо(), влево(), вверх(), вниз(), есть(), взять(), открыть().
+Ответы давай кратко и понятно, на русском языке.
+
+История разговора:
+`;
+        
+        aiChatHistory.forEach(msg => {
+            conversationContext += `${msg.role === 'user' ? 'Пользователь' : 'Помощник'}: ${msg.content}\n`;
+        });
+        
+        conversationContext += `Пользователь: ${message}`;
+        
+        const response = await fetch(`${AI_CONFIG.apiUrl}?key=${AI_CONFIG.apiKey}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                contents: [{
+                    parts: [{
+                        text: conversationContext
+                    }]
+                }],
+                generationConfig: {
+                    temperature: 0.7,
+                    maxOutputTokens: 500,
+                    topP: 0.95,
+                    topK: 40
+                }
+            })
+        });
+        
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error?.message || 'Ошибка API Gemini');
+        }
+        
+        const data = await response.json();
+        const assistantMessage = data.candidates[0].content.parts[0].text;
+        
+        // Удаляем сообщение "Думаю..."
+        removeLastAIChatMessage();
+        
+        // Добавляем ответ ИИ
+        showAIChatMessage(assistantMessage, 'assistant');
+        
+        // Сохраняем в историю
+        aiChatHistory.push({ role: 'user', content: message });
+        aiChatHistory.push({ role: 'assistant', content: assistantMessage });
+        
+        // Ограничиваем историю последними 10 сообщениями
+        if (aiChatHistory.length > 20) {
+            aiChatHistory = aiChatHistory.slice(-20);
+        }
+        
+    } catch (error) {
+        console.error('Ошибка ИИ чата:', error);
+        removeLastAIChatMessage();
+        showAIChatMessage(`❌ Ошибка: ${error.message}`, 'assistant');
+    }
+}
+
+// Показываем сообщение в чате
+function showAIChatMessage(text, role) {
+    const messagesContainer = document.getElementById('ai-chat-messages');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `ai-chat-message ${role}`;
+    messageDiv.textContent = text;
+    messagesContainer.appendChild(messageDiv);
+    
+    // Скролим вниз
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+// Удаляем последнее сообщение (для удаления "Думаю...")
+function removeLastAIChatMessage() {
+    const messagesContainer = document.getElementById('ai-chat-messages');
+    const lastMessage = messagesContainer.lastChild;
+    if (lastMessage) {
+        lastMessage.remove();
+    }
+}
+
+// Очищаем историю чата
+function clearAIChatHistory() {
+    aiChatHistory = [];
+    const messagesContainer = document.getElementById('ai-chat-messages');
+    if (messagesContainer) {
+        messagesContainer.innerHTML = '';
+    }
+}
+
+// Обработчик Enter в поле ввода
+document.addEventListener('DOMContentLoaded', function() {
+    const input = document.getElementById('ai-chat-input');
+    if (input) {
+        input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendAIChatMessage();
+            }
+        });
+    }
+    
+    // Загружаем состояние ИИ
+    loadAIChatState();
+    
+    // Показываем приветственное сообщение
+    setTimeout(() => {
+        showAIChatMessage('👋 Привет! Я ИИ помощник. Задай мне вопрос о игре или программировании!', 'assistant');
+    }, 500);
+});
+
+console.log('✅ ИИ чат загружен');

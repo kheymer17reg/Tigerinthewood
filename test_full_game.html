@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🐯 Тигрёнок в лесу - Игра для обучения программированию</title>
+    <title>🐯 Тигрёнок в лесу - ТЕСТ (Игра для обучения программированию)</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
@@ -34,12 +34,12 @@
             font-size: 16px;
         }
         /* Стандартные размеры шрифтов */
-        h1 { font-size: 2.2em; }
-        h2 { font-size: 1.8em; }
-        h3 { font-size: 1.5em; }
-        h4 { font-size: 1.2em; }
-        p { font-size: 1.05em; }
-        small { font-size: 0.9em; }
+        h1 { font-size: 2em; }
+        h2 { font-size: 1.5em; }
+        h3 { font-size: 1.3em; }
+        h4 { font-size: 1.1em; }
+        p { font-size: 1em; }
+        small { font-size: 0.875em; }
         .container { max-width: 1400px; margin: 0 auto; }
         header {
             text-align: center;
@@ -66,7 +66,6 @@
             color: var(--primary-color);
             cursor: pointer;
             font-weight: 600;
-            font-size: 16px;
             transition: all 0.3s;
         }
         .theme-btn:hover, .player-btn:hover {
@@ -80,7 +79,6 @@
             border: 2px solid var(--primary-color);
             border-radius: 8px;
             font-weight: 600;
-            font-size: 16px;
             color: var(--primary-color);
             min-width: 200px;
             text-align: center;
@@ -138,14 +136,13 @@
             width: 100%;
         }
         .modal-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(33, 150, 243, 0.3); }
-        .button-row { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-        .tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; margin-top: 20px; }
+        .tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
         .tab-btn {
             padding: 12px 24px;
             background: var(--bg-secondary);
             border: 2px solid var(--border-color);
             border-radius: 10px;
-            font-size: 17px;
+            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
@@ -259,20 +256,20 @@
             border-radius: 10px;
             margin-bottom: 20px;
             border-left: 4px solid var(--primary-color);
-            font-size: 16px;
-            line-height: 1.6;
+            font-size: 14px;
+            line-height: 1.5;
         }
-        .level-task h4 { color: var(--primary-color); margin-bottom: 8px; font-size: 1.3em; }
+        .level-task h4 { color: var(--primary-color); margin-bottom: 8px; font-size: 16px; }
         .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
         .stat { background: var(--bg-primary); padding: 12px; border-radius: 10px; text-align: center; border: 2px solid var(--border-color); }
-        .stat-value { font-size: 32px; font-weight: bold; color: var(--primary-color); }
-        .stat div:last-child { font-size: 15px; color: var(--text-secondary); margin-top: 6px; }
+        .stat-value { font-size: 28px; font-weight: bold; color: var(--primary-color); }
+        .stat div:last-child { font-size: 14px; color: var(--text-secondary); margin-top: 6px; }
         .controls { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
         .button {
             padding: 14px 24px;
             border: none;
             border-radius: 10px;
-            font-size: 15px;
+            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
@@ -344,7 +341,7 @@
             border: none;
             border-radius: 8px;
             font-family: 'Courier New', monospace;
-            font-size: 14px;
+            font-size: 13px;
             cursor: pointer;
             transition: all 0.3s;
             display: flex;
@@ -355,12 +352,12 @@
         .cmd-btn:hover { transform: translateY(-2px); background: #1976d2; }
         .cmd-icon { font-size: 20px; }
         .code-history { margin-top: 20px; padding: 15px; background: var(--bg-primary); border-radius: 10px; border: 2px solid var(--border-color); max-height: 150px; overflow-y: auto; }
-        .code-history h4 { color: var(--primary-color); margin-bottom: 10px; font-size: 1.1em; }
-        .history-item { padding: 8px; background: var(--bg-secondary); border-radius: 6px; margin-bottom: 8px; font-size: 13px; border-left: 3px solid var(--primary-color); }
-        .history-time { color: var(--text-secondary); font-size: 12px; }
-        .hint { background: var(--bg-primary); padding: 15px; border-radius: 10px; margin-top: 15px; border-left: 4px solid var(--primary-color); font-size: 14px; }
-        .hint h4 { color: var(--primary-color); margin-bottom: 8px; font-size: 1.1em; }
-        .hint p { margin: 6px 0; line-height: 1.5; }
+        .code-history h4 { color: var(--primary-color); margin-bottom: 10px; font-size: 14px; }
+        .history-item { padding: 8px; background: var(--bg-secondary); border-radius: 6px; margin-bottom: 8px; font-size: 12px; border-left: 3px solid var(--primary-color); }
+        .history-time { color: var(--text-secondary); font-size: 11px; }
+        .hint { background: var(--bg-primary); padding: 15px; border-radius: 10px; margin-top: 15px; border-left: 4px solid var(--primary-color); font-size: 13px; }
+        .hint h4 { color: var(--primary-color); margin-bottom: 8px; font-size: 14px; }
+        .hint p { margin: 6px 0; line-height: 1.4; }
         /* ПЕСОЧНИЦА */
         .sandbox-container {
             background: var(--bg-secondary);
@@ -779,161 +776,6 @@
                 opacity: 0;
             }
         }
-        /* ИИ ЧАТ */
-        .ai-chat-btn {
-            position: fixed;
-            bottom: 90px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: #9c27b0;
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-size: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            z-index: 998;
-            transition: all 0.3s;
-            font-weight: bold;
-        }
-        .ai-chat-btn:hover {
-            background: #7b1fa2;
-            transform: scale(1.1);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
-        }
-        .ai-chat-btn:active {
-            transform: scale(0.95);
-        }
-        .ai-chat-widget {
-            position: fixed;
-            bottom: 90px;
-            right: 20px;
-            width: 350px;
-            height: 500px;
-            background: var(--bg-secondary);
-            border-radius: 15px;
-            border: 3px solid #9c27b0;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            z-index: 997;
-            display: none;
-            flex-direction: column;
-            animation: slideInRight 0.3s;
-        }
-        .ai-chat-widget.active {
-            display: flex;
-        }
-        .ai-chat-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px;
-            border-bottom: 2px solid #9c27b0;
-            background: linear-gradient(135deg, #9c27b0, #7b1fa2);
-            color: white;
-            border-radius: 12px 12px 0 0;
-        }
-        .ai-chat-header h3 {
-            margin: 0;
-            font-size: 1.1em;
-        }
-        .ai-chat-close {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5em;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .ai-chat-close:hover {
-            transform: scale(1.2);
-        }
-        .ai-chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .ai-chat-message {
-            padding: 12px;
-            border-radius: 10px;
-            max-width: 90%;
-            word-wrap: break-word;
-            line-height: 1.4;
-            font-size: 14px;
-        }
-        .ai-chat-message.user {
-            align-self: flex-end;
-            background: #9c27b0;
-            color: white;
-            border-bottom-right-radius: 2px;
-        }
-        .ai-chat-message.assistant {
-            align-self: flex-start;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            border-bottom-left-radius: 2px;
-            border: 1px solid var(--border-color);
-        }
-        .ai-chat-message.loading {
-            align-self: flex-start;
-            background: var(--bg-primary);
-            color: var(--text-secondary);
-            border: 1px solid var(--border-color);
-            font-style: italic;
-        }
-        .ai-chat-input-area {
-            display: flex;
-            gap: 8px;
-            padding: 12px;
-            border-top: 2px solid var(--border-color);
-            background: var(--bg-primary);
-            border-radius: 0 0 12px 12px;
-        }
-        #ai-chat-input {
-            flex: 1;
-            padding: 10px;
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            background: var(--bg-secondary);
-            color: var(--text-primary);
-            font-size: 13px;
-            transition: border-color 0.3s;
-        }
-        #ai-chat-input:focus {
-            outline: none;
-            border-color: #9c27b0;
-        }
-        .ai-chat-send {
-            padding: 10px 15px;
-            background: #9c27b0;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-            font-size: 14px;
-        }
-        .ai-chat-send:hover {
-            background: #7b1fa2;
-            transform: translateY(-2px);
-        }
-        .ai-chat-send:active {
-            transform: translateY(0);
-        }
-        @media (max-width: 480px) {
-            .ai-chat-widget {
-                width: calc(100vw - 40px);
-                height: 400px;
-                bottom: 80px;
-            }
-        }
         /* TUTORIAL STYLES */
         .tutorial-cmd-btn {
             padding: 15px;
@@ -952,8 +794,6 @@
         .tutorial-cmd-btn:hover {
             background: var(--primary-color);
             color: white;
-        }
-        .tutorial-cmd-btn:active {
             transform: translateY(-3px);
             box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
         }
@@ -971,36 +811,6 @@
     </style>
 </head>
 <body>
-<script>
-    // Clear corrupted stats on page load
-    try {
-        const stats = JSON.parse(localStorage.getItem('gameStats') || '{}');
-        let shouldClear = false;
-        
-        // Check for corrupted data
-        if (stats.levelStats) {
-            for (let i = 1; i <= 6; i++) {
-                if (stats.levelStats[i]) {
-                    if (stats.levelStats[i].time > 1000 || isNaN(stats.levelStats[i].time)) {
-                        shouldClear = true;
-                        break;
-                    }
-                }
-            }
-        }
-        
-        // Check for NaN in totals
-        if (isNaN(stats.totalAttempts) || isNaN(stats.totalScore) || isNaN(stats.totalSteps)) {
-            shouldClear = true;
-        }
-        
-        if (shouldClear) {
-            localStorage.clear();
-        }
-    } catch (e) {
-        localStorage.clear();
-    }
-</script>
 <div id="welcome-modal" class="modal active">
     <div class="modal-content">
         <h2>🐯 Добро пожаловать!</h2>
@@ -1138,105 +948,23 @@
     <div class="message-text" id="msg-text"></div>
     <button class="ok-btn" onclick="closeMessage()">Понятно!</button>
 </div>
-
-<!-- Statistics Modal -->
-<div id="stats-modal" class="modal" style="z-index: 5500;">
-    <div class="modal-content" style="max-width: 700px; max-height: 80vh; overflow-y: auto; background: var(--bg-secondary);">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h2 style="color: var(--primary-color); margin: 0;">📊 Статистика</h2>
-            <button class="close-btn" onclick="closeStats()">✕</button>
-        </div>
-        <div id="stats-content"></div>
-    </div>
-</div>
-
-<!-- Rating Modal for Sandbox Levels -->
-<div id="rating-modal" class="modal" style="z-index: 3000;">
-    <div class="modal-content" style="max-width: 500px; background: var(--bg-secondary);">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h2 style="color: var(--primary-color); margin: 0;">⭐ Оцени уровень</h2>
-            <button class="close-btn" onclick="document.getElementById('rating-modal').classList.remove('active')">✕</button>
-        </div>
-        <div style="text-align: center; padding: 20px;">
-            <p id="rating-level-name" style="font-size: 1.2em; font-weight: 600; margin-bottom: 20px;"></p>
-            <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 20px;">
-                <button onclick="setRating(1)" style="font-size: 2em; background: none; border: none; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">☆</button>
-                <button onclick="setRating(2)" style="font-size: 2em; background: none; border: none; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">☆</button>
-                <button onclick="setRating(3)" style="font-size: 2em; background: none; border: none; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">☆</button>
-                <button onclick="setRating(4)" style="font-size: 2em; background: none; border: none; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">☆</button>
-                <button onclick="setRating(5)" style="font-size: 2em; background: none; border: none; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">☆</button>
-            </div>
-            <button onclick="document.getElementById('rating-modal').classList.remove('active')" style="padding: 12px 30px; background: var(--primary-color); color: white; border: none; border-radius: 10px; font-size: 1em; font-weight: 600; cursor: pointer;">Готово</button>
-        </div>
-    </div>
-</div>
-
-<!-- Settings Modal -->
-<div id="settings-modal" class="modal" style="z-index: 3000;">
-    <div class="modal-content" style="max-width: 500px; background: var(--bg-secondary);">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h2 style="color: var(--primary-color); margin: 0;">⚙️ Настройки</h2>
-            <button class="close-btn" onclick="document.getElementById('settings-modal').classList.remove('active')">✕</button>
-        </div>
-        <div style="padding: 20px;">
-            <div style="background: var(--bg-primary); padding: 15px; border-radius: 10px; margin-bottom: 15px;">
-                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 1.1em;">
-                    <input type="checkbox" id="theme-toggle" onchange="toggleTheme()" style="width: 20px; height: 20px; cursor: pointer;">
-                    ☀️ Свет / 🌙 Темно
-                </label>
-            </div>
-            
-            <div style="background: var(--bg-primary); padding: 15px; border-radius: 10px; margin-bottom: 15px;">
-                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 1.1em;">
-                    <input type="checkbox" id="sound-toggle" checked onchange="toggleSound()" style="width: 20px; height: 20px; cursor: pointer;">
-                    <span id="sound-label">🔊 Звук включен</span>
-                </label>
-            </div>
-            
-            <div style="background: var(--bg-primary); padding: 15px; border-radius: 10px; margin-bottom: 15px;">
-                <label style="display: block; font-size: 1.1em; margin-bottom: 10px;">🎮 Режим игры:</label>
-                <div style="display: flex; gap: 10px;">
-                    <button onclick="setGameMode('tutorial')" style="flex: 1; padding: 10px; background: var(--bg-secondary); border: 2px solid var(--primary-color); border-radius: 8px; color: var(--text-primary); font-weight: 600; cursor: pointer; transition: all 0.3s;" id="mode-tutorial">📚 Обучающий</button>
-                    <button onclick="setGameMode('advanced')" style="flex: 1; padding: 10px; background: var(--bg-secondary); border: 2px solid var(--primary-color); border-radius: 8px; color: var(--text-primary); font-weight: 600; cursor: pointer; transition: all 0.3s;" id="mode-advanced">🎯 Продвинутый</button>
-                </div>
-                <div style="font-size: 0.9em; color: var(--text-secondary); margin-top: 10px;">
-                    <div id="mode-description">📚 Обучающий: бесконечные попытки</div>
-                </div>
-            </div>
-            
-            <div style="background: var(--bg-primary); padding: 15px; border-radius: 10px; margin-bottom: 15px;">
-                <label style="display: block; font-size: 1.1em; margin-bottom: 10px;">🐢 Скорость движения тигра:</label>
-                <select id="speed-select" onchange="changeSpeed(this.value)" style="width: 100%; padding: 10px; border: 2px solid var(--primary-color); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary); font-size: 1em;">
-                    <option value="100">⚡ Быстро</option>
-                    <option value="300" selected>🐢 Нормально</option>
-                    <option value="600">🐌 Медленно</option>
-                </select>
-            </div>
-            
-            <button onclick="document.getElementById('settings-modal').classList.remove('active')" style="width: 100%; padding: 12px; background: var(--primary-color); color: white; border: none; border-radius: 10px; font-size: 1em; font-weight: 600; cursor: pointer;">Закрыть</button>
-        </div>
-    </div>
-</div>
-
 <div class="container">
     <header>
-        <h1>Тигрёнок в лесу</h1>
-        <div style="display: flex; align-items: center; gap: 15px; position: absolute; top: 20px; right: 20px;">
-            <div class="player-info" id="player-info" style="font-size: 1.1em; padding: 12px 25px;">Игрок: Гость</div>
-            <button class="theme-btn" onclick="changePlayer()" title="Сменить игрока" style="padding: 12px 25px; font-size: 1em;">👤 Сменить</button>
-            <button class="theme-btn" onclick="document.getElementById('settings-modal').classList.add('active')" title="Настройки" style="padding: 12px 25px; font-size: 1em;">⚙️ Настройки</button>
+        <h1>Тигрёнок в лесу [ТЕСТ]</h1>
+        <div class="header-controls">
+            <button class="theme-btn" onclick="toggleTheme()">☀️ Свет / 🌙 Темно</button>
+            <button class="theme-btn" id="sound-btn" onclick="toggleSound()">🔊 Звук</button>
+            <select id="speed-select" class="theme-btn" onchange="changeSpeed(this.value)" style="padding: 10px 15px; font-weight: 600; cursor: pointer; border: 2px solid var(--primary-color); border-radius: 8px; background: var(--bg-secondary); color: var(--primary-color);">
+                <option value="100">⚡ Быстро</option>
+                <option value="300" selected>🐢 Нормально</option>
+                <option value="600">🐌 Медленно</option>
+            </select>
+            <div class="player-info" id="player-info">Игрок: Гость</div>
+            <button class="theme-btn" onclick="changePlayer()" title="Сменить игрока">👤 Сменить</button>
+            <button class="theme-btn" onclick="showStorySelection()" title="Смотреть истории">📖 Истории</button>
+            <button class="theme-btn" onclick="document.getElementById('tutorial-modal').classList.add('active')" title="Как играть">📚 Как играть?</button>
         </div>
     </header>
-    
-    <div class="button-row">
-        <button class="theme-btn" onclick="showStorySelection()" title="Смотреть истории">📖 Истории</button>
-        <button class="theme-btn" onclick="document.getElementById('tutorial-modal').classList.add('active')" title="Как играть">📚 Как играть?</button>
-        <button class="theme-btn" onclick="showStats()" title="Статистика">📊 Статистика</button>
-        <button class="theme-btn" onclick="showSandboxRating()" title="Рейтинг песочницы">🏗️ Рейтинг</button>
-        <button class="theme-btn" onclick="showPublishedLevels()" title="Опубликованные уровни">🚀 Новые уровни</button>
-        <button class="theme-btn" onclick="resetGameProgress()" title="Очистить прогресс" style="background: #ff9800; color: white; border-color: #ff9800;">🔄 Сброс прогресса</button>
-    </div>
-    
     <div class="tabs">
         <button class="tab-btn active" onclick="switchTab('levels')">🎮 Уровни</button>
         <button class="tab-btn" onclick="switchTab('sandbox')">🏗️ Песочница</button>
@@ -1250,20 +978,16 @@
                     <div class="stat"><div class="stat-value" id="steps">0</div><div>Шаги</div></div>
                     <div class="stat"><div class="stat-value" id="meat">0/0</div><div>Мясо 🍖</div></div>
                     <div class="stat"><div class="stat-value" id="keys">0</div><div>Ключи 🔑</div></div>
-                    <div class="stat"><div style="font-size: 32px; font-weight: bold; color: var(--primary-color); line-height: 1;" id="lives-display">∞</div><div>Попытки</div></div>
                 </div>
                 <div id="game-grid"></div>
             </div>
             <div class="code-panel">
                 <div class="level-task" id="level-task"><h4>📋 Задание:</h4><div id="task-text"></div></div>
-                <div style="background: var(--bg-primary); padding: 10px; border-radius: 8px; margin-bottom: 15px; text-align: center; font-weight: 600; color: var(--primary-color); font-size: 1.1em;">
-                    <span id="current-step-indicator"></span>
-                </div>
                 <div class="controls">
                     <button class="button run-btn" id="run-btn" onclick="runCode()">▶ ЗАПУСТИТЬ</button>
-                    <button class="button undo-btn" id="undo-btn" onclick="undoCommand()" disabled>↶ Отменить шаг</button>
-                    <button class="button reset-btn" id="reset-btn" onclick="resetGame()">🔄 Вернуть тигра</button>
-                    <button class="button" style="background: #9c27b0;" onclick="clearCode()">🗑️ Очистить программу</button>
+                    <button class="button undo-btn" id="undo-btn" onclick="undoCommand()" disabled>↶ ОТМЕНИТЬ</button>
+                    <button class="button reset-btn" id="reset-btn" onclick="resetGame()">🔄 СБРОС</button>
+                    <button class="button" style="background: #9c27b0;" onclick="clearCode()">🗑️ Очистить</button>
                 </div>
                 <div class="arrow-controls">
                     <div></div>
@@ -1359,7 +1083,6 @@
         </div>
         <div class="admin-tabs">
             <button class="admin-tab-btn active" onclick="switchAdminTab('levels')">📋 Уровни</button>
-            <button class="admin-tab-btn" onclick="switchAdminTab('edit-levels')">✏️ Редактирование</button>
             <button class="admin-tab-btn" onclick="switchAdminTab('users')">👥 Пользователи</button>
             <button class="admin-tab-btn" onclick="switchAdminTab('notifications')">📢 Уведомления</button>
             <button class="admin-tab-btn" onclick="switchAdminTab('stats')">📊 Статистика</button>
@@ -1375,56 +1098,6 @@
             <div class="admin-section">
                 <h4>Загруженные уровни</h4>
                 <div id="admin-user-levels-list"></div>
-            </div>
-        </div>
-        <div id="admin-edit-levels-tab" class="admin-tab-content">
-            <h3>✏️ Редактирование встроенных уровней</h3>
-            <div class="admin-section">
-                <h4>Выбери уровень для редактирования</h4>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; margin-bottom: 20px;">
-                    <button class="size-btn" onclick="editLevelFull(1)">Уровень 1</button>
-                    <button class="size-btn" onclick="editLevelFull(2)">Уровень 2</button>
-                    <button class="size-btn" onclick="editLevelFull(3)">Уровень 3</button>
-                    <button class="size-btn" onclick="editLevelFull(4)">Уровень 4</button>
-                    <button class="size-btn" onclick="editLevelFull(5)">Уровень 5</button>
-                    <button class="size-btn" onclick="editLevelFull(6)">Уровень 6</button>
-                </div>
-            </div>
-            <div id="level-edit-form" style="display: none;">
-                <div class="admin-section">
-                    <h4 id="edit-level-title">Редактирование уровня 1</h4>
-                    
-                    <label>Название уровня:</label>
-                    <input type="text" id="edit-level-name" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 2px solid var(--border-color); border-radius: 8px; background: var(--bg-primary); color: var(--text-primary);">
-                    
-                    <label>Описание задания:</label>
-                    <textarea id="edit-level-task" style="width: 100%; height: 60px; padding: 10px; margin-bottom: 10px; border: 2px solid var(--border-color); border-radius: 8px; background: var(--bg-primary); color: var(--text-primary); resize: vertical;"></textarea>
-                    
-                    <label>Выбери объект для расстановки:</label>
-                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px;">
-                        <button class="obj-btn" onclick="selectEditObject('tiger')" style="padding: 10px; background: var(--bg-primary); border: 2px solid var(--border-color); border-radius: 8px; cursor: pointer;">🐯 Тигр</button>
-                        <button class="obj-btn" onclick="selectEditObject('exit')" style="padding: 10px; background: var(--bg-primary); border: 2px solid var(--border-color); border-radius: 8px; cursor: pointer;">🟢 Выход</button>
-                        <button class="obj-btn" onclick="selectEditObject('meat')" style="padding: 10px; background: var(--bg-primary); border: 2px solid var(--border-color); border-radius: 8px; cursor: pointer;">🍖 Мясо</button>
-                        <button class="obj-btn" onclick="selectEditObject('key')" style="padding: 10px; background: var(--bg-primary); border: 2px solid var(--border-color); border-radius: 8px; cursor: pointer;">🔑 Ключ</button>
-                        <button class="obj-btn" onclick="selectEditObject('tree')" style="padding: 10px; background: var(--bg-primary); border: 2px solid var(--border-color); border-radius: 8px; cursor: pointer;">🌳 Дерево</button>
-                        <button class="obj-btn" onclick="selectEditObject('wall')" style="padding: 10px; background: var(--bg-primary); border: 2px solid var(--border-color); border-radius: 8px; cursor: pointer;">🧱 Стена</button>
-                        <button class="obj-btn" onclick="selectEditObject('door')" style="padding: 10px; background: var(--bg-primary); border: 2px solid var(--border-color); border-radius: 8px; cursor: pointer;">🚪 Дверь</button>
-                        <button class="obj-btn" onclick="selectEditObject('empty')" style="padding: 10px; background: var(--bg-primary); border: 2px solid var(--border-color); border-radius: 8px; cursor: pointer;">🧹 Очистить</button>
-                    </div>
-                    
-                    <label>Сетка уровня (кликни для расстановки):</label>
-                    <div id="edit-level-grid" style="display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; margin-bottom: 15px; background: var(--bg-primary); padding: 10px; border-radius: 8px; width: fit-content;"></div>
-                    
-                    <label>Сложность (1-5):</label>
-                    <input type="number" id="edit-level-difficulty" min="1" max="5" style="width: 100%; padding: 10px; margin-bottom: 15px; border: 2px solid var(--border-color); border-radius: 8px; background: var(--bg-primary); color: var(--text-primary);">
-                    
-                    <div style="display: flex; gap: 10px; margin-top: 15px;">
-                        <button onclick="saveLevelEditFull()" style="flex: 1; padding: 12px; background: var(--success-color); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">💾 Сохранить</button>
-                        <button onclick="downloadEditedLevel()" style="flex: 1; padding: 12px; background: #2196f3; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">📥 Скачать</button>
-                        <button onclick="resetLevelEditFull()" style="flex: 1; padding: 12px; background: var(--warning-color); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">🔄 Сбросить</button>
-                        <button onclick="cancelLevelEditFull()" style="flex: 1; padding: 12px; background: var(--error-color); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">✕ Отмена</button>
-                    </div>
-                </div>
             </div>
         </div>
         <div id="admin-users-tab" class="admin-tab-content">
@@ -1466,28 +1139,9 @@
     </div>
 </div>
 
-<!-- ИИ Чат -->
-<div id="ai-chat-widget" class="ai-chat-widget">
-    <div class="ai-chat-header">
-        <h3>🤖 ИИ Помощник</h3>
-        <button class="ai-chat-close" onclick="toggleAIChatWidget()">✕</button>
-    </div>
-    <div class="ai-chat-messages" id="ai-chat-messages"></div>
-    <div class="ai-chat-input-area">
-        <input type="text" id="ai-chat-input" placeholder="Задай вопрос помощнику..." maxlength="500">
-        <button class="ai-chat-send" onclick="sendAIChatMessage()">📤</button>
-    </div>
-</div>
-
-<button class="ai-chat-btn" onclick="toggleAIChatWidget()" title="ИИ Помощник">🤖</button>
 <button class="admin-btn-floating" onclick="openAdminPanel()" title="Админ-панель (🔐)">🔐</button>
-<script src="test_game.js?v=22"></script>
-<script src="test_story.js?v=9"></script>
-<script src="test_admin_panel.js?v=9"></script>
-<script src="ai_chat.js?v=7"></script>
-<script src="stats_system.js?v=17"></script>
-<script src="game_modes.js?v=3"></script>
-<script src="achievements_display.js?v=1"></script>
-<script src="levels_admin.js?v=3"></script>
+<script src="test_game.js"></script>
+<script src="test_story.js"></script>
+<script src="test_admin_panel.js"></script>
 </body>
 </html>
