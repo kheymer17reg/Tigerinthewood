@@ -400,17 +400,24 @@ function closeStory() {
                 }
             }
             
-            // Show tutorial after intro story
+            // Show tutorial after intro story (если не пропущен для админа)
             if (window.currentStory && window.currentStory.isIntroStory) {
-                setTimeout(() => {
-                    const tutorialModal = document.getElementById('tutorial-modal');
-                    if (tutorialModal) {
-                        tutorialModal.classList.add('active');
-                        console.log('✅ Tutorial modal shown');
-                    } else {
-                        console.error('❌ Tutorial modal not found');
-                    }
-                }, 500);
+                const tutorialSkipped = sessionStorage.getItem('tutorial_skipped');
+                
+                if (!tutorialSkipped) {
+                    setTimeout(() => {
+                        const tutorialModal = document.getElementById('tutorial-modal');
+                        if (tutorialModal) {
+                            tutorialModal.classList.add('active');
+                            console.log('✅ Tutorial modal shown');
+                        } else {
+                            console.error('❌ Tutorial modal not found');
+                        }
+                    }, 500);
+                } else {
+                    // Очищаем флаг пропуска
+                    sessionStorage.removeItem('tutorial_skipped');
+                }
             }
         }, 300);
     }

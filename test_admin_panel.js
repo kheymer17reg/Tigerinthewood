@@ -29,6 +29,10 @@ function show2FAModal() {
     
     if (answer.toLowerCase().trim() === 'симба') {
         sessionStorage.setItem(ADMIN_KEY, 'true');
+        
+        // Пропускаем историю и туториал для админа
+        skipStoryAndTutorial();
+        
         showAdminPanelContent();
     } else {
         alert('❌ Неверный ответ! Попробуй ещё раз.');
@@ -47,14 +51,27 @@ function closeAdminPanel() {
 }
 
 function switchAdminTab(tabName) {
+    // Скрываем все вкладки
     document.querySelectorAll('.admin-tab-content').forEach(tab => {
         tab.classList.remove('active');
     });
+    
+    // Убираем активный класс со всех кнопок
     document.querySelectorAll('.admin-tab-btn').forEach(btn => {
         btn.classList.remove('active');
     });
-    document.getElementById('admin-' + tabName + '-tab').classList.add('active');
-    event.target.classList.add('active');
+    
+    // Показываем нужную вкладку
+    const tabElement = document.getElementById('admin-' + tabName + '-tab');
+    if (tabElement) {
+        tabElement.classList.add('active');
+    }
+    
+    // Делаем кнопку активной по data-атрибуту
+    const activeBtn = document.querySelector(`.admin-tab-btn[data-tab="${tabName}"]`);
+    if (activeBtn) {
+        activeBtn.classList.add('active');
+    }
 }
 
 function loadAdminData() {
@@ -932,4 +949,111 @@ function adminUploadLevelFile() {
         reader.readAsText(file);
     };
     input.click();
+}
+
+
+// ⚡ ФУНКЦИЯ ПРОПУСКА ИСТОРИИ И ТУТОРИАЛА ДЛЯ АДМИНА
+function skipStoryAndTutorial() {
+    // Устанавливаем флаги, чтобы пропустить историю и туториал
+    sessionStorage.setItem('story_skipped', 'true');
+    sessionStorage.setItem('tutorial_skipped', 'true');
+    
+    // Устанавливаем имя игрока и тигра
+    playerName = 'Админ';
+    tigerName = 'Тигра';
+    
+    // Сохраняем в localStorage
+    localStorage.setItem('playerName', playerName);
+    localStorage.setItem('tigerName', tigerName);
+    
+    // Закрываем модальные окна истории и туториала, если они открыты
+    const storyModal = document.getElementById('story-modal');
+    const tutorialModal = document.getElementById('tutorial-modal');
+    
+    if (storyModal) storyModal.classList.remove('active');
+    if (tutorialModal) tutorialModal.classList.remove('active');
+    
+    // Загружаем первый уровень
+    game.level = 1;
+    loadLevel(1);
+    
+    // Показываем сообщение
+    showMessage('⚡ Админ режим', 'История и туториал пропущены. Добро пожаловать, админ!');
+}
+
+
+// ⚡ ОБРАБОТЧИК КЛИКА НА ФОН АДМИН ПАНЕЛИ
+document.addEventListener('DOMContentLoaded', function() {
+    const adminModal = document.getElementById('admin-modal');
+    
+    if (adminModal) {
+        // Закрываем админ панель при клике на фон (но не на саму панель)
+        adminModal.addEventListener('click', function(e) {
+            // Если клик был на самом модальном окне (фон), а не на содержимом
+            if (e.target === adminModal) {
+                closeAdminPanel();
+            }
+        });
+    }
+});
+
+
+// ⚡ ФУНКЦИИ ДЛЯ БЫСТРОЙ ПРОВЕРКИ ИСТОРИЙ И УРОВНЕЙ
+
+// Показать историю из админ панели БЕЗ закрытия панели
+function adminViewStory(storyKey) {
+    // Получаем данные истории из STORY_DATA
+    const storyMap = {
+        'intro': 'intro',
+        'level1': 'level1',
+        'level2': 'level2',
+        'level3': 'level3',
+        'level4': 'level4',
+        'level5': 'level5',
+        'level6': 'level6',
+        'ending': 'ending'
+    };
+    
+    const key = storyMap[storyKey];
+    if (!key || !STORY_DATA[key]) {
+        console.error('История не найдена:', storyKey);
+        return;
+    }
+    
+    const story = STORY_DATA[key];
+    
+    // Показываем историю в модальном окне (используем существующую функцию showStoryModal)
+    showStoryModal(story.title, story.scenes, false, key);
+}
+
+// Показать историю из админ панели (старая версия - закрывает панель)
+function adminShowStory(storyKey) {
+    // Закрываем админ панель
+    closeAdminPanel();
+    
+    // Показываем историю
+    if (storyKey === 'intro') {
+        showStory('intro', 'Админ', 'Тигра');
+    } else if (storyKey === 'tutorial') {
+        document.getElementById('tutorial-modal').classList.add('active');
+    } else if (storyKey === 'ending') {
+        showStory('ending', 'Админ', 'Тигра');
+    }
+    
+    showMessage('📚 История', `Показываю историю: ${storyKey}`);
+}
+
+// Играть в уровень из админ панели
+function adminPlayLevel(levelNum) {
+    // Закрываем админ панель
+    closeAdminPanel();
+    
+    // Переходим на вкладку уровней
+    switchTab('levels');
+    
+    // Загружаем уровень
+    game.level = levelNum;
+    loadLevel(levelNum);
+    
+    showMessage('🎮 Уровень', `Загружаю уровень ${levelNum}...`);
 }

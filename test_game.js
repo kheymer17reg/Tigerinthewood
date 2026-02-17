@@ -22,75 +22,7 @@ let playerName = 'Гость';
 let tigerName = 'Тигра';
 let globalAudioContext = null;
 
-const levels = {
-    1: {
-        name: "Первые шаги",
-        start: { x: 0, y: 4 },
-        exit: { x: 7, y: 4 },
-        objects: [],
-        task: "Используй стрелку → или команду <code>вправо()</code> чтобы дойти до выхода."
-    },
-    2: {
-        name: "Обход дерева",
-        start: { x: 0, y: 4 },
-        exit: { x: 7, y: 4 },
-        objects: [
-            { type: 'tree', x: 3, y: 4 },
-            { type: 'tree', x: 4, y: 4 }
-        ],
-        task: "Используй стрелки ↑ или ↓ чтобы обойти деревья."
-    },
-    3: {
-        name: "Лесная тропа",
-        start: { x: 0, y: 7 },
-        exit: { x: 7, y: 0 },
-        objects: [
-            { type: 'tree', x: 2, y: 5 },
-            { type: 'tree', x: 2, y: 6 },
-            { type: 'tree', x: 5, y: 1 },
-            { type: 'tree', x: 5, y: 2 }
-        ],
-        task: "Используй команды с числами: <code>вправо(2)</code>"
-    },
-    4: {
-        name: "Вкусное мясо",
-        start: { x: 0, y: 4 },
-        exit: { x: 7, y: 4 },
-        objects: [
-            { type: 'meat', x: 2, y: 4 },
-            { type: 'meat', x: 5, y: 4 },
-            { type: 'tree', x: 3, y: 4 },
-            { type: 'tree', x: 4, y: 4 }
-        ],
-        task: "Съешь мясо 🍖 командой <code>есть()</code>"
-    },
-    5: {
-        name: "Волшебный ключ",
-        start: { x: 0, y: 4 },
-        exit: { x: 7, y: 4 },
-        objects: [
-            { type: 'key', x: 1, y: 4 },
-            { type: 'door', x: 4, y: 4, locked: true },
-            { type: 'meat', x: 6, y: 4 }
-        ],
-        task: "Возьми ключ 🔑 <code>взять()</code> и открой дверь 🚪 <code>открыть()</code>"
-    },
-    6: {
-        name: "Большое приключение",
-        start: { x: 0, y: 7 },
-        exit: { x: 7, y: 0 },
-        objects: [
-            { type: 'meat', x: 1, y: 6 },
-            { type: 'meat', x: 3, y: 4 },
-            { type: 'meat', x: 5, y: 2 },
-            { type: 'key', x: 2, y: 5 },
-            { type: 'door', x: 4, y: 3, locked: true },
-            { type: 'tree', x: 3, y: 2 },
-            { type: 'tree', x: 5, y: 5 }
-        ],
-        task: "Собери мясо, возьми ключ и открой дверь!"
-    }
-};
+const levels = improvedLevels;
 
 function getAudioContext() {
     if (!globalAudioContext) {
@@ -197,8 +129,13 @@ function confirmTigerName() {
     // Initialize statistics system
     initStats();
     
-    // Показываем вводную историю
-    showStory('intro', playerName, tigerName);
+    // Проверяем, нужно ли пропустить историю (для админа)
+    const storySkipped = sessionStorage.getItem('story_skipped');
+    
+    if (!storySkipped) {
+        // Показываем вводную историю
+        showStory('intro', playerName, tigerName);
+    }
     
     initGame();
     createLevelButtons();
@@ -348,7 +285,12 @@ function renderBoard() {
                 
                 if (x === exit.x && y === exit.y) {
                     cell.className = 'cell exit';
-                    cell.textContent = '🟢';
+                    // На последнем уровне показываем домик вместо выхода
+                    if (level.isHome) {
+                        cell.textContent = '🏠';
+                    } else {
+                        cell.textContent = '🟢';
+                    }
                 } else if (obj) {
                     if (obj.type === 'door' && obj.locked) {
                         cell.className = 'cell locked-door';
@@ -892,7 +834,23 @@ function checkWin() {
     
     const tigerCell = document.getElementById(`cell-${game.tiger.x}-${game.tiger.y}`);
     if (tigerCell) {
-        tigerCell.classList.add('dance');
+        // На последнем уровне - постоянный прыжок, на остальных - танец
+        if (level.isHome) {
+            tigerCell.classList.add('jump');
+            // Повторяем прыжок каждые 0.6 секунды
+            const jumpInterval = setInterval(() => {
+                if (tigerCell && tigerCell.classList.contains('jump')) {
+                    tigerCell.classList.remove('jump');
+                    setTimeout(() => {
+                        if (tigerCell) tigerCell.classList.add('jump');
+                    }, 50);
+                } else {
+                    clearInterval(jumpInterval);
+                }
+            }, 600);
+        } else {
+            tigerCell.classList.add('dance');
+        }
     }
     
     // Фейерверк при победе
@@ -1031,6 +989,11 @@ function switchTab(tabName) {
     });
     document.getElementById(tabName).classList.add('active');
     document.querySelector(`.tab-btn[onclick="switchTab('${tabName}')"]`).classList.add('active');
+    
+    // Отобразить уровни пользователей при переключении на вкладку
+    if (tabName === 'userlevels') {
+        displayUserLevelsInTab();
+    }
 }
 
 function sleep(ms) {
@@ -1303,7 +1266,25 @@ function downloadSandboxLevel() {
     
     try {
         // Сохранить в систему рейтинга
-        saveSandboxLevel(levelName, levelData);
+        const savedLevel = saveSandboxLevel(levelName, levelData);
+        
+        // Добавить в опубликованные уровни
+        loadPublishedLevels();
+        const publishedLevels = getPublishedLevels();
+        const publishedLevel = {
+            id: savedLevel.id,
+            name: levelName,
+            description: 'Уровень из песочницы',
+            data: levelData,
+            rating: 0,
+            plays: 0,
+            downloads: 0,
+            publishedBy: 'Я',
+            publishedAt: new Date().toLocaleString('ru-RU'),
+            difficulty: 'Средняя'
+        };
+        publishedLevels.push(publishedLevel);
+        savePublishedLevels();
         
         const blob = new Blob([JSON.stringify(levelData, null, 2)], {type: 'application/json'});
         const url = URL.createObjectURL(blob);
@@ -1314,7 +1295,10 @@ function downloadSandboxLevel() {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-        showMessage('✅ Уровень скачан!', `Файл "${a.download}" сохранен на компьютер и добавлен в рейтинг!`);
+        showMessage('✅ Уровень скачан!', `Файл "${a.download}" сохранен и добавлен в рейтинг!`);
+        
+        // Обновить отображение уровней пользователей
+        displayUserLevelsInTab();
     } catch (e) {
         showMessage('❌ Ошибка', 'Не удалось скачать файл. Попробуй еще раз.');
     }
@@ -1350,6 +1334,12 @@ function uploadSandboxLevel() {
                 sandbox.tigerPos = levelData.start;
                 sandbox.exitPos = levelData.exit;
                 sandbox.objects = levelData.objects || [];
+                
+                // Если это опубликованный уровень, увеличить счетчик скачиваний
+                if (levelData.id !== undefined) {
+                    incrementDownloadCount(levelData.id);
+                    displayUserLevelsInTab();
+                }
                 
                 document.querySelectorAll('.size-btn').forEach(btn => {
                     btn.classList.remove('active');
@@ -1936,3 +1926,250 @@ function showEndingCelebration() {
 document.addEventListener('DOMContentLoaded', function() {
     initLevelsAdmin();
 });
+
+
+// ⚡ ФУНКЦИЯ АВТОПРОХОЖДЕНИЯ УРОВНЯ (для админа)
+async function autoCompleteLevel(levelNum) {
+    // Загружаем уровень
+    const levelData = getEditedLevelData(levelNum) || levels[levelNum - 1];
+    if (!levelData) {
+        showMessage('❌ Ошибка', `Уровень ${levelNum} не найден!`);
+        return;
+    }
+    
+    // Закрываем админ панель
+    closeAdminPanel();
+    
+    // Переходим на вкладку уровней
+    switchTab('levels');
+    
+    // Устанавливаем уровень
+    game.level = levelNum;
+    game.tiger = { x: levelData.start.x, y: levelData.start.y };
+    game.startPosition = { ...levelData.start };
+    game.score = 0;
+    game.steps = 0;
+    game.meatCollected = 0;
+    game.totalMeat = 0;
+    game.keys = 0;
+    game.objects = JSON.parse(JSON.stringify(levelData.objects || []));
+    game.moveHistory = [];
+    game.hasBeenRun = false;
+    
+    // Подсчитываем мясо
+    game.totalMeat = game.objects.filter(obj => obj.type === 'meat').length;
+    
+    // Отрисовываем доску
+    renderBoard();
+    updateStats();
+    
+    // Показываем сообщение
+    showMessage('⚡ Автопрохождение', `Начинаю прохождение уровня ${levelNum}...`);
+    
+    // Генерируем оптимальный путь
+    const path = generateOptimalPath(levelData);
+    
+    // Выполняем путь с задержкой
+    await executeAutoPath(path, levelData);
+}
+
+// Генерируем оптимальный путь для прохождения уровня
+function generateOptimalPath(levelData) {
+    const path = [];
+    const start = levelData.start;
+    const exit = levelData.exit;
+    
+    // Простой алгоритм: идем к мясу, потом к ключам, потом к выходу
+    const meatPositions = levelData.objects
+        .filter(obj => obj.type === 'meat')
+        .map(obj => obj.pos);
+    
+    const keyPositions = levelData.objects
+        .filter(obj => obj.type === 'key')
+        .map(obj => obj.pos);
+    
+    const doorPositions = levelData.objects
+        .filter(obj => obj.type === 'door')
+        .map(obj => obj.pos);
+    
+    let currentPos = { ...start };
+    
+    // Идем к каждому мясу
+    for (const meatPos of meatPositions) {
+        const moves = findPath(currentPos, meatPos, levelData);
+        path.push(...moves);
+        path.push('есть()');
+        currentPos = { ...meatPos };
+    }
+    
+    // Идем к каждому ключу
+    for (const keyPos of keyPositions) {
+        const moves = findPath(currentPos, keyPos, levelData);
+        path.push(...moves);
+        path.push('взять()');
+        currentPos = { ...keyPos };
+    }
+    
+    // Открываем двери
+    for (const doorPos of doorPositions) {
+        const moves = findPath(currentPos, doorPos, levelData);
+        path.push(...moves);
+        path.push('открыть()');
+        currentPos = { ...doorPos };
+    }
+    
+    // Идем к выходу
+    const finalMoves = findPath(currentPos, exit, levelData);
+    path.push(...finalMoves);
+    
+    return path;
+}
+
+// Простой поиск пути (BFS)
+function findPath(from, to, levelData) {
+    const path = [];
+    const dx = to.x - from.x;
+    const dy = to.y - from.y;
+    
+    // Идем вправо/влево
+    if (dx > 0) {
+        for (let i = 0; i < dx; i++) path.push('вправо()');
+    } else if (dx < 0) {
+        for (let i = 0; i < Math.abs(dx); i++) path.push('влево()');
+    }
+    
+    // Идем вверх/вниз
+    if (dy > 0) {
+        for (let i = 0; i < dy; i++) path.push('вниз()');
+    } else if (dy < 0) {
+        for (let i = 0; i < Math.abs(dy); i++) path.push('вверх()');
+    }
+    
+    return path;
+}
+
+// Выполняем автоматический путь
+async function executeAutoPath(path, levelData) {
+    for (const command of path) {
+        // Выполняем команду
+        if (command === 'вправо()') {
+            moveRight();
+        } else if (command === 'влево()') {
+            moveLeft();
+        } else if (command === 'вверх()') {
+            moveUp();
+        } else if (command === 'вниз()') {
+            moveDown();
+        } else if (command === 'есть()') {
+            eatMeat();
+        } else if (command === 'взять()') {
+            takeKey();
+        } else if (command === 'открыть()') {
+            openDoor();
+        }
+        
+        // Ждем перед следующей командой
+        await new Promise(resolve => setTimeout(resolve, 200));
+        
+        // Проверяем, достигли ли выхода
+        if (game.tiger.x === levelData.exit.x && game.tiger.y === levelData.exit.y) {
+            break;
+        }
+    }
+    
+    // Проверяем победу
+    if (game.tiger.x === levelData.exit.x && game.tiger.y === levelData.exit.y) {
+        showMessage('✅ Уровень пройден!', `Уровень ${game.level} успешно пройден автоматически!`);
+        playSound('victory');
+        triggerFireworks();
+        
+        // Отмечаем уровень как пройденный
+        game.completedLevels.add(game.level);
+        saveGameProgress();
+        
+        // Переходим на следующий уровень через 2 секунды
+        setTimeout(() => {
+            if (game.level < levels.length) {
+                game.level++;
+                loadLevel(game.level);
+            }
+        }, 2000);
+    }
+}
+
+// Вспомогательные функции движения
+function moveRight() {
+    if (game.tiger.x < 11) {
+        game.tiger.x++;
+        game.steps++;
+        playSound('step');
+        renderBoard();
+        updateStats();
+    }
+}
+
+function moveLeft() {
+    if (game.tiger.x > 0) {
+        game.tiger.x--;
+        game.steps++;
+        playSound('step');
+        renderBoard();
+        updateStats();
+    }
+}
+
+function moveUp() {
+    if (game.tiger.y > 0) {
+        game.tiger.y--;
+        game.steps++;
+        playSound('step');
+        renderBoard();
+        updateStats();
+    }
+}
+
+function moveDown() {
+    if (game.tiger.y < 11) {
+        game.tiger.y++;
+        game.steps++;
+        playSound('step');
+        renderBoard();
+        updateStats();
+    }
+}
+
+function eatMeat() {
+    const obj = game.objects.find(o => o.pos.x === game.tiger.x && o.pos.y === game.tiger.y && o.type === 'meat');
+    if (obj) {
+        game.objects = game.objects.filter(o => o !== obj);
+        game.meatCollected++;
+        game.score += 10;
+        playSound('eat');
+        renderBoard();
+        updateStats();
+    }
+}
+
+function takeKey() {
+    const obj = game.objects.find(o => o.pos.x === game.tiger.x && o.pos.y === game.tiger.y && o.type === 'key');
+    if (obj) {
+        game.objects = game.objects.filter(o => o !== obj);
+        game.keys++;
+        game.score += 20;
+        playSound('key');
+        renderBoard();
+        updateStats();
+    }
+}
+
+function openDoor() {
+    const obj = game.objects.find(o => o.pos.x === game.tiger.x && o.pos.y === game.tiger.y && o.type === 'door');
+    if (obj && game.keys > 0) {
+        game.objects = game.objects.filter(o => o !== obj);
+        game.keys--;
+        game.score += 15;
+        playSound('door');
+        renderBoard();
+        updateStats();
+    }
+}
