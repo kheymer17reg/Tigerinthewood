@@ -1,8 +1,8 @@
-// ИИ Чат с DeepSeek API
+// ИИ Чат с Google Gemini 2.0 Flash API
 const AI_CONFIG = {
-    apiKey: 'sk-09a7b73c5aa24670917de52f4d615423',
-    model: 'deepseek-chat',
-    apiUrl: 'https://api.deepseek.com/chat/completions'
+    apiKey: 'AIzaSyAG97eXSEAW_qZZiiW498uhbzao1x2qqaA',
+    model: 'gemini-2.0-flash',
+    apiUrl: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent'
 };
 
 let aiChatHistory = [];
@@ -51,49 +51,47 @@ async function sendAIChatMessage() {
     
     try {
         // Формируем контекст из истории
-        const systemPrompt = `Ты помощник для игры "Тигрёнок в лесу" - образовательной игры для обучения программированию на русском языке. 
+        let conversationContext = `Ты помощник для игры "Тигрёнок в лесу" - образовательной игры для обучения программированию на русском языке. 
 Помогай игрокам с советами по программированию, объясняй команды игры, помогай решать уровни.
 Команды игры: вправо(), влево(), вверх(), вниз(), есть(), взять(), открыть().
-Ответы давай кратко и понятно, на русском языке.`;
+Ответы давай кратко и понятно, на русском языке.
+
+История разговора:
+`;
         
-        // Формируем сообщения для DeepSeek API
-        const messages = [
-            { role: 'system', content: systemPrompt }
-        ];
-        
-        // Добавляем историю
         aiChatHistory.forEach(msg => {
-            messages.push({
-                role: msg.role === 'user' ? 'user' : 'assistant',
-                content: msg.content
-            });
+            conversationContext += `${msg.role === 'user' ? 'Пользователь' : 'Помощник'}: ${msg.content}\n`;
         });
         
-        // Добавляем текущее сообщение
-        messages.push({ role: 'user', content: message });
+        conversationContext += `Пользователь: ${message}`;
         
-        const response = await fetch(AI_CONFIG.apiUrl, {
+        const response = await fetch(`${AI_CONFIG.apiUrl}?key=${AI_CONFIG.apiKey}`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${AI_CONFIG.apiKey}`
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                model: AI_CONFIG.model,
-                messages: messages,
-                temperature: 0.7,
-                max_tokens: 500,
-                top_p: 0.95
+                contents: [{
+                    parts: [{
+                        text: conversationContext
+                    }]
+                }],
+                generationConfig: {
+                    temperature: 0.7,
+                    maxOutputTokens: 500,
+                    topP: 0.95,
+                    topK: 40
+                }
             })
         });
         
         if (!response.ok) {
             const error = await response.json();
-            throw new Error(error.error?.message || `Ошибка API DeepSeek: ${response.status}`);
+            throw new Error(error.error?.message || 'Ошибка API Gemini');
         }
         
         const data = await response.json();
-        const assistantMessage = data.choices[0].message.content;
+        const assistantMessage = data.candidates[0].content.parts[0].text;
         
         // Удаляем сообщение "Думаю..."
         removeLastAIChatMessage();

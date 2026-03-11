@@ -35,16 +35,52 @@ function checkAdminAccess() {
 // Загрузить уровни администратора с сервера
 async function loadAdminLevels() {
     try {
+        // Сначала пытаемся загрузить из localStorage
+        const savedLevels = localStorage.getItem('adminLevels');
+        if (savedLevels) {
+            levelsAdmin.levels = JSON.parse(savedLevels);
+            // Мигрируем старые уровни, добавляя поля завершения если их нет
+            levelsAdmin.levels = levelsAdmin.levels.map(level => {
+                if (!level.hasOwnProperty('completed')) {
+                    level.completed = false;
+                    level.completions = 0;
+                    level.bestScore = 0;
+                    level.bestSteps = Infinity;
+                    level.lastCompletionTime = null;
+                }
+                return level;
+            });
+            // Сохраняем мигрированные уровни
+            localStorage.setItem('adminLevels', JSON.stringify(levelsAdmin.levels));
+            return;
+        }
+        
+        // Если в localStorage нет, загружаем с сервера
         const response = await fetch('levels/admin_levels.json');
         if (response.ok) {
             const data = await response.json();
             levelsAdmin.levels = data.levels || [];
+            // Инициализируем поля завершения для новых уровней
+            levelsAdmin.levels = levelsAdmin.levels.map(level => {
+                if (!level.hasOwnProperty('completed')) {
+                    level.completed = false;
+                    level.completions = 0;
+                    level.bestScore = 0;
+                    level.bestSteps = Infinity;
+                    level.lastCompletionTime = null;
+                }
+                return level;
+            });
+            // Сохраняем в localStorage
+            localStorage.setItem('adminLevels', JSON.stringify(levelsAdmin.levels));
         } else {
             levelsAdmin.levels = [];
         }
     } catch (e) {
         console.log('Уровни администратора не найдены, используется пустой список');
-        levelsAdmin.levels = [];
+        // Пытаемся загрузить из localStorage как резервный вариант
+        const savedLevels = localStorage.getItem('adminLevels');
+        levelsAdmin.levels = savedLevels ? JSON.parse(savedLevels) : [];
     }
 }
 
@@ -329,6 +365,13 @@ function playAdminLevel(levelIndex) {
     sandbox.tigerPos = level.data.start;
     sandbox.exitPos = level.data.exit;
     sandbox.objects = level.data.objects || [];
+    
+    // Сохранить информацию о текущем админ-уровне
+    window.currentAdminLevel = {
+        index: levelIndex,
+        name: level.name,
+        levelData: level
+    };
     
     // Увеличить счетчик игр
     level.plays = (level.plays || 0) + 1;

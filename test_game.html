@@ -139,7 +139,7 @@
         }
         .modal-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(33, 150, 243, 0.3); }
         .button-row { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-        .tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; margin-top: 20px; position: relative; z-index: 1; }
+        .tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; margin-top: 20px; }
         .tab-btn {
             padding: 12px 24px;
             background: var(--bg-secondary);
@@ -596,22 +596,14 @@
         .close-btn {
             background: none;
             border: none;
-            font-size: 1.8em;
+            font-size: 1.5em;
             cursor: pointer;
             color: var(--text-primary);
             transition: all 0.3s;
-            padding: 5px 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 40px;
-            min-height: 40px;
         }
         .close-btn:hover {
-            transform: scale(1.3);
+            transform: scale(1.2);
             color: var(--error-color);
-            background: rgba(244, 67, 54, 0.1);
-            border-radius: 50%;
         }
         .admin-tabs {
             display: flex;
@@ -740,18 +732,13 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.7);
             z-index: 2000;
             align-items: center;
             justify-content: center;
-            pointer-events: none;
         }
         #admin-modal.active {
             display: flex;
-            pointer-events: auto;
-        }
-        .admin-panel-content {
-            pointer-events: auto;
         }
         /* Стили для уведомлений */
         .admin-notification-item {
@@ -1252,7 +1239,7 @@
     
     <div class="tabs">
         <button class="tab-btn active" onclick="switchTab('levels')">🎮 Уровни</button>
-        <button class="tab-btn" onclick="switchTab('userlevels')">👥 Уровни пользователей</button>
+        <button class="tab-btn" onclick="switchTab('sandbox')">🏗️ Песочница</button>
     </div>
     <div id="levels" class="tab-content active">
         <div class="levels" id="level-buttons"></div>
@@ -1319,14 +1306,14 @@
             </div>
         </div>
     </div>
-    <!-- Вкладка Уровни пользователей -->
-    <div id="userlevels" class="tab-content">
+    <!-- Вкладка Песочница -->
+    <div id="sandbox" class="tab-content">
         <div class="sandbox-container">
             <div class="sandbox-header">
-                <h2 style="color: #7e57c2; font-size: 24px;">👥 Уровни пользователей</h2>
+                <h2 style="color: #7e57c2; font-size: 24px;">🏗️ Конструктор уровней</h2>
                 <div class="sandbox-controls">
-                    <button class="sandbox-btn" onclick="uploadSandboxLevel()">📤 Загрузить уровень</button>
-                    <button class="sandbox-btn" onclick="downloadSandboxLevel()">📥 Скачать текущий</button>
+                    <button class="sandbox-btn" onclick="uploadSandboxLevel()">📤 Загрузить файл</button>
+                    <button class="sandbox-btn" onclick="downloadSandboxLevel()">📥 Скачать</button>
                     <button class="sandbox-btn orange" onclick="playSandboxLevel()">▶ Играть</button>
                     <button class="sandbox-btn red" onclick="clearSandbox()">🗑️ Очистить</button>
                 </div>
@@ -1353,14 +1340,12 @@
                 <small>💡 Зажми левую кнопку мыши и тяни, чтобы рисовать несколько клеток!</small>
             </div>
             <div id="sandbox-grid"></div>
-            <div id="user-levels-display" style="margin-top: 30px;"></div>
             <div class="hint">
-                <h4>🎯 Как пользоваться:</h4>
+                <h4>🎯 Как пользоваться конструктором:</h4>
                 <p>1. Выбери размер поля и объект для размещения</p>
                 <p>2. Кликни на клетку или зажми мышь и тяни</p>
                 <p>3. Нажми "Играть" чтобы протестировать уровень</p>
                 <p>4. Нажми "Скачать" чтобы сохранить уровень в файл</p>
-                <p>5. Загрузи уровни других пользователей и оцени их!</p>
             </div>
         </div>
     </div>
@@ -1373,27 +1358,15 @@
             <button class="close-btn" onclick="closeAdminPanel()">✕</button>
         </div>
         <div class="admin-tabs">
-            <button class="admin-tab-btn active" onclick="switchAdminTab('levels')" data-tab="levels">📋 Уровни</button>
-            <button class="admin-tab-btn" onclick="switchAdminTab('edit-levels')" data-tab="edit-levels">✏️ Редактирование</button>
-            <button class="admin-tab-btn" onclick="switchAdminTab('stories')" data-tab="stories">📚 Истории</button>
-            <button class="admin-tab-btn" onclick="switchAdminTab('users')" data-tab="users">👥 Пользователи</button>
-            <button class="admin-tab-btn" onclick="switchAdminTab('notifications')" data-tab="notifications">📢 Уведомления</button>
-            <button class="admin-tab-btn" onclick="switchAdminTab('stats')" data-tab="stats">📊 Статистика</button>
-            <button class="admin-tab-btn" onclick="switchAdminTab('settings')" data-tab="settings">⚙️ Настройки</button>
+            <button class="admin-tab-btn active" onclick="switchAdminTab('levels')">📋 Уровни</button>
+            <button class="admin-tab-btn" onclick="switchAdminTab('edit-levels')">✏️ Редактирование</button>
+            <button class="admin-tab-btn" onclick="switchAdminTab('users')">👥 Пользователи</button>
+            <button class="admin-tab-btn" onclick="switchAdminTab('notifications')">📢 Уведомления</button>
+            <button class="admin-tab-btn" onclick="switchAdminTab('stats')">📊 Статистика</button>
+            <button class="admin-tab-btn" onclick="switchAdminTab('settings')">⚙️ Настройки</button>
         </div>
         <div id="admin-levels-tab" class="admin-tab-content active">
             <h3>📋 Управление уровнями</h3>
-            <div class="admin-section">
-                <h4>⚡ Быстрое тестирование</h4>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-bottom: 20px;">
-                    <button onclick="autoCompleteLevel(1)" style="padding: 12px; background: #4caf50; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9em;">▶️ Уровень 1</button>
-                    <button onclick="autoCompleteLevel(2)" style="padding: 12px; background: #4caf50; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9em;">▶️ Уровень 2</button>
-                    <button onclick="autoCompleteLevel(3)" style="padding: 12px; background: #4caf50; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9em;">▶️ Уровень 3</button>
-                    <button onclick="autoCompleteLevel(4)" style="padding: 12px; background: #4caf50; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9em;">▶️ Уровень 4</button>
-                    <button onclick="autoCompleteLevel(5)" style="padding: 12px; background: #4caf50; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9em;">▶️ Уровень 5</button>
-                    <button onclick="autoCompleteLevel(6)" style="padding: 12px; background: #4caf50; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9em;">▶️ Уровень 6</button>
-                </div>
-            </div>
             <div class="admin-section">
                 <h4>Загрузить уровень</h4>
                 <input type="file" id="admin-level-upload" accept=".json" />
@@ -1454,46 +1427,6 @@
                 </div>
             </div>
         </div>
-        <div id="admin-stories-tab" class="admin-tab-content">
-            <h3>📚 Истории всех уровней</h3>
-            <div class="admin-section">
-                <p style="color: var(--text-secondary); margin-bottom: 15px;">Нажми на историю, чтобы её просмотреть:</p>
-                <div style="display: grid; gap: 12px;">
-                    <button onclick="adminViewStory('intro')" style="padding: 15px; background: var(--bg-primary); border: 2px solid var(--primary-color); border-radius: 8px; cursor: pointer; text-align: left; transition: all 0.3s;">
-                        <div style="font-weight: 600; color: var(--primary-color); font-size: 1.1em;">📖 Вводная история</div>
-                        <div style="font-size: 0.85em; color: var(--text-secondary); margin-top: 5px;">🐯 Добро пожаловать в лес!</div>
-                    </button>
-                    <button onclick="adminViewStory('level1')" style="padding: 15px; background: var(--bg-primary); border: 2px solid #ff6b6b; border-radius: 8px; cursor: pointer; text-align: left; transition: all 0.3s;">
-                        <div style="font-weight: 600; color: #ff6b6b; font-size: 1.1em;">🌱 Уровень 1</div>
-                        <div style="font-size: 0.85em; color: var(--text-secondary); margin-top: 5px;">Первые шаги</div>
-                    </button>
-                    <button onclick="adminViewStory('level2')" style="padding: 15px; background: var(--bg-primary); border: 2px solid #4ecdc4; border-radius: 8px; cursor: pointer; text-align: left; transition: all 0.3s;">
-                        <div style="font-weight: 600; color: #4ecdc4; font-size: 1.1em;">🍃 Уровень 2</div>
-                        <div style="font-size: 0.85em; color: var(--text-secondary); margin-top: 5px;">Обход дерева</div>
-                    </button>
-                    <button onclick="adminViewStory('level3')" style="padding: 15px; background: var(--bg-primary); border: 2px solid #95e1d3; border-radius: 8px; cursor: pointer; text-align: left; transition: all 0.3s;">
-                        <div style="font-weight: 600; color: #95e1d3; font-size: 1.1em;">🌿 Уровень 3</div>
-                        <div style="font-size: 0.85em; color: var(--text-secondary); margin-top: 5px;">Лесная тропа</div>
-                    </button>
-                    <button onclick="adminViewStory('level4')" style="padding: 15px; background: var(--bg-primary); border: 2px solid #f38181; border-radius: 8px; cursor: pointer; text-align: left; transition: all 0.3s;">
-                        <div style="font-weight: 600; color: #f38181; font-size: 1.1em;">🌳 Уровень 4</div>
-                        <div style="font-size: 0.85em; color: var(--text-secondary); margin-top: 5px;">Вкусное мясо</div>
-                    </button>
-                    <button onclick="adminViewStory('level5')" style="padding: 15px; background: var(--bg-primary); border: 2px solid #aa96da; border-radius: 8px; cursor: pointer; text-align: left; transition: all 0.3s;">
-                        <div style="font-weight: 600; color: #aa96da; font-size: 1.1em;">🔑 Уровень 5</div>
-                        <div style="font-size: 0.85em; color: var(--text-secondary); margin-top: 5px;">Волшебный ключ</div>
-                    </button>
-                    <button onclick="adminViewStory('level6')" style="padding: 15px; background: var(--bg-primary); border: 2px solid #fcbad3; border-radius: 8px; cursor: pointer; text-align: left; transition: all 0.3s;">
-                        <div style="font-weight: 600; color: #fcbad3; font-size: 1.1em;">🏆 Уровень 6</div>
-                        <div style="font-size: 0.85em; color: var(--text-secondary); margin-top: 5px;">Большое приключение</div>
-                    </button>
-                    <button onclick="adminViewStory('ending')" style="padding: 15px; background: var(--bg-primary); border: 2px solid #ffd93d; border-radius: 8px; cursor: pointer; text-align: left; transition: all 0.3s;">
-                        <div style="font-weight: 600; color: #ffd93d; font-size: 1.1em;">🎉 Концовка</div>
-                        <div style="font-size: 0.85em; color: var(--text-secondary); margin-top: 5px;">Финальная история</div>
-                    </button>
-                </div>
-            </div>
-        </div>
         <div id="admin-users-tab" class="admin-tab-content">
             <h3>👥 Активные пользователи</h3>
             <div class="admin-section">
@@ -1548,11 +1481,10 @@
 
 <button class="ai-chat-btn" onclick="toggleAIChatWidget()" title="ИИ Помощник">🤖</button>
 <button class="admin-btn-floating" onclick="openAdminPanel()" title="Админ-панель (🔐)">🔐</button>
-<script src="improved_levels.js"></script>
-<script src="test_game.js?v=24"></script>
-<script src="test_story.js?v=10"></script>
-<script src="test_admin_panel.js?v=13"></script>
-<script src="ai_chat.js?v=8"></script>
+<script src="test_game.js?v=22"></script>
+<script src="test_story.js?v=9"></script>
+<script src="test_admin_panel.js?v=9"></script>
+<script src="ai_chat.js?v=7"></script>
 <script src="stats_system.js?v=17"></script>
 <script src="game_modes.js?v=3"></script>
 <script src="achievements_display.js?v=1"></script>

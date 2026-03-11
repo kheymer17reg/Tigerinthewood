@@ -1,5 +1,7 @@
 // 📖 СИСТЕМА ИСТОРИЙ ДЛЯ ИГРЫ
 
+console.log('✅ test_story.js загружен');
+
 const STORY_DATA = {
     intro: {
         title: "🐯 Добро пожаловать в лес!",
@@ -128,10 +130,14 @@ const STORY_DATA = {
 };
 
 // Показать историю перед уровнем
-function showStory(levelNumber, playerName, tigerName = 'Тигра') {
+function showStory(levelNumber, playerName, tigerName = 'Тигра', onComplete = null) {
     let storyKey = 'intro';
+    let isIntroStory = false;
     
-    if (levelNumber === 1) storyKey = 'level1';
+    if (levelNumber === 'intro') {
+        storyKey = 'intro';
+        isIntroStory = true;
+    } else if (levelNumber === 1) storyKey = 'level1';
     else if (levelNumber === 2) storyKey = 'level2';
     else if (levelNumber === 3) storyKey = 'level3';
     else if (levelNumber === 4) storyKey = 'level4';
@@ -139,8 +145,29 @@ function showStory(levelNumber, playerName, tigerName = 'Тигра') {
     else if (levelNumber === 6) storyKey = 'level6';
     else if (levelNumber === 'ending') storyKey = 'ending';
     
+    console.log('📖 showStory вызвана, storyKey:', storyKey);
+    
+    // Проверяем, была ли эта история уже просмотрена
+    const viewedStories = JSON.parse(localStorage.getItem('viewedStories') || '[]');
+    if (viewedStories.includes(storyKey)) {
+        // История уже просмотрена, вызываем callback сразу
+        console.log('📖 История уже просмотрена, вызываем callback');
+        if (onComplete) {
+            setTimeout(onComplete, 0);
+        }
+        return;
+    }
+    
     const story = STORY_DATA[storyKey];
-    if (!story) return;
+    if (!story) {
+        console.log('❌ История не найдена в STORY_DATA');
+        if (onComplete) {
+            setTimeout(onComplete, 0);
+        }
+        return;
+    }
+    
+    console.log('📖 Показываем историю:', storyKey);
     
     // Заменяем {playerName} и {tigerName} на имена
     const processedScenes = story.scenes.map(scene => ({
@@ -148,11 +175,11 @@ function showStory(levelNumber, playerName, tigerName = 'Тигра') {
         text: scene.text.replace('{playerName}', playerName).replace('{tigerName}', tigerName)
     }));
     
-    showStoryModal(story.title, processedScenes);
+    showStoryModal(story.title, processedScenes, isIntroStory, storyKey, onComplete);
 }
 
 // Показать модальное окно истории
-function showStoryModal(title, scenes) {
+function showStoryModal(title, scenes, isIntroStory = false, storyKey = null, onComplete = null) {
     const modal = document.createElement('div');
     modal.id = 'story-modal';
     modal.style.cssText = `
@@ -289,7 +316,10 @@ function showStoryModal(title, scenes) {
     window.currentStory = {
         scenes: scenes,
         currentScene: 0,
-        modal: modal
+        modal: modal,
+        isIntroStory: isIntroStory,
+        storyKey: storyKey,
+        onComplete: onComplete
     };
     
     // Показываем первую сцену
@@ -354,11 +384,29 @@ function skipStory() {
 
 // Закрыть историю
 function closeStory() {
+    console.log('📖 closeStory вызвана');
     const modal = document.getElementById('story-modal');
     if (modal) {
         modal.style.animation = 'fadeOut 0.3s ease-out';
         setTimeout(() => {
             if (modal.parentElement) modal.remove();
+            
+            // Отмечаем историю как просмотренную
+            if (window.currentStory && window.currentStory.storyKey) {
+                const viewedStories = JSON.parse(localStorage.getItem('viewedStories') || '[]');
+                if (!viewedStories.includes(window.currentStory.storyKey)) {
+                    viewedStories.push(window.currentStory.storyKey);
+                    localStorage.setItem('viewedStories', JSON.stringify(viewedStories));
+                    console.log('📖 История отмечена как просмотренная:', window.currentStory.storyKey);
+                }
+            }
+            
+            // Вызываем callback если он есть
+            if (window.currentStory && window.currentStory.onComplete) {
+                console.log('📖 Вызываем callback');
+                window.currentStory.onComplete();
+            }
+            
             // Start level statistics tracking after story closes
             if (game.level && game.level >= 1 && game.level <= 6) {
                 startLevelStats(game.level);

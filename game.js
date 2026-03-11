@@ -1,4 +1,6 @@
 // ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ
+console.log('✅ game.js загружен');
+
 let game = {
     level: 1,
     tiger: { x: 0, y: 0 },
@@ -171,15 +173,23 @@ function confirmTigerName() {
     document.getElementById('tiger-name-modal').classList.remove('active');
     localStorage.setItem('tigerName', tigerName);
     
-    // Показываем вводную историю
-    showStory('intro', playerName, tigerName);
+    console.log('✅ confirmTigerName вызвана, playerName:', playerName, 'tigerName:', tigerName);
     
-    initGame();
-    createLevelButtons();
+    // Показываем вводную историю с callback
+    showStory('intro', playerName, tigerName, () => {
+        console.log('✅ История закрыта, инициализируем игру');
+        initGame();
+        createLevelButtons();
+    });
 }
 
 function createLevelButtons() {
+    console.log('🎮 createLevelButtons вызвана');
     const container = document.getElementById('level-buttons');
+    if (!container) {
+        console.error('❌ level-buttons не найден в DOM');
+        return;
+    }
     container.innerHTML = '';
     const icons = ['🌱', '🍃', '🌿', '🌳', '🔑', '🏆'];
     for (let i = 1; i <= 6; i++) {
@@ -199,9 +209,11 @@ function createLevelButtons() {
         btn.onclick = () => loadLevel(i);
         container.appendChild(btn);
     }
+    console.log('🎮 createLevelButtons завершена');
 }
 
 function initGame() {
+    console.log('🎮 initGame вызвана, game.level:', game.level);
     const level = levels[game.level];
     game.tiger = { ...level.start };
     game.startPosition = { ...level.start };
@@ -224,6 +236,7 @@ function initGame() {
     
     game.totalMeat = game.objects.filter(obj => obj.type === 'meat').length;
     
+    console.log('🎮 Вызываем renderBoard');
     renderBoard();
     updateStats();
     updateRunButton();
@@ -231,12 +244,24 @@ function initGame() {
 }
 
 function renderBoard() {
+    console.log('🎮 renderBoard вызвана');
     const grid = document.getElementById('game-grid');
+    if (!grid) {
+        console.error('❌ game-grid не найден в DOM');
+        return;
+    }
     grid.innerHTML = '';
     const level = levels[game.level];
     
-    for (let y = 0; y < 8; y++) {
-        for (let x = 0; x < 8; x++) {
+    // Получаем размер сетки из уровня или используем 8 по умолчанию
+    const gridSize = level.gridSize || 8;
+    
+    // Обновляем CSS сетки динамически
+    grid.style.gridTemplateColumns = `repeat(${gridSize}, 60px)`;
+    grid.style.gridTemplateRows = `repeat(${gridSize}, 60px)`;
+    
+    for (let y = 0; y < gridSize; y++) {
+        for (let x = 0; x < gridSize; x++) {
             const cell = document.createElement('div');
             cell.className = 'cell empty';
             cell.id = `cell-${x}-${y}`;
@@ -267,6 +292,7 @@ function renderBoard() {
             grid.appendChild(cell);
         }
     }
+    console.log('🎮 renderBoard завершена');
 }
 
 function updateStats() {
@@ -664,6 +690,21 @@ function checkWin() {
         saveLevelStats(game.level);
     }
     
+    // Если это админ-уровень, сохраняем его статистику
+    if (window.currentAdminLevel) {
+        const adminLevel = window.currentAdminLevel.levelData;
+        adminLevel.completed = true;
+        adminLevel.completions = (adminLevel.completions || 0) + 1;
+        adminLevel.lastCompletionTime = new Date().toISOString();
+        adminLevel.bestScore = Math.max(adminLevel.bestScore || 0, game.score);
+        adminLevel.bestSteps = Math.min(adminLevel.bestSteps || Infinity, game.steps);
+        
+        // Сохраняем обновленные админ-уровни
+        if (typeof saveAdminLevels === 'function') {
+            saveAdminLevels();
+        }
+    }
+    
     const tigerCell = document.getElementById(`cell-${game.tiger.x}-${game.tiger.y}`);
     if (tigerCell) {
         tigerCell.classList.add('dance');
@@ -672,9 +713,18 @@ function checkWin() {
     // Фейерверк при победе
     createFireworks();
     
+    // Определяем сообщение в зависимости от типа уровня
+    let messageTitle = `Молодец, ${playerName}! 🎉`;
+    let messageText = `Тигрёнок прошёл уровень!<br><br>🍖 Мяса: ${game.meatCollected}/${game.totalMeat}<br>🐾 Шагов: ${game.steps}<br>⭐ Бонусы: +${totalBonus}<br>🏆 Всего: ${game.score}`;
+    
+    // Если это админ-уровень, добавляем специальное сообщение
+    if (window.currentAdminLevel) {
+        messageTitle = `🎉 Уровень завершен! 🎉`;
+        messageText = `<strong>${window.currentAdminLevel.name}</strong><br><br>Отлично сыграно!<br><br>🍖 Мяса: ${game.meatCollected}/${game.totalMeat}<br>🐾 Шагов: ${game.steps}<br>⭐ Бонусы: +${totalBonus}<br>🏆 Всего: ${game.score}`;
+    }
+    
     setTimeout(() => {
-        showMessage(`Молодец, ${playerName}! 🎉`,
-            `Тигрёнок прошёл уровень!<br><br>🍖 Мяса: ${game.meatCollected}/${game.totalMeat}<br>🐾 Шагов: ${game.steps}<br>⭐ Бонусы: +${totalBonus}<br>🏆 Всего: ${game.score}`);
+        showMessage(messageTitle, messageText);
     }, 500);
     
     // Обновляем кнопки уровней
@@ -694,8 +744,8 @@ function checkWin() {
         }
     }
     
-    // Проверяем, прошел ли все уровни
-    if (game.completedLevels.size === 6) {
+    // Проверяем, прошел ли все уровни (только для встроенных уровней)
+    if (!window.currentAdminLevel && game.completedLevels.size === 6) {
         setTimeout(() => {
             showEndingStory(playerName, tigerName);
             // Показываем статистику после истории
@@ -716,6 +766,8 @@ function showMessage(title, text) {
 
 function closeMessage() {
     document.getElementById('message-modal').classList.remove('active');
+    // Очищаем информацию о текущем админ-уровне после закрытия сообщения
+    window.currentAdminLevel = null;
 }
 
 function toggleTheme() {
@@ -744,6 +796,11 @@ function switchTab(tabName) {
     });
     document.getElementById(tabName).classList.add('active');
     document.querySelector(`.tab-btn[onclick="switchTab('${tabName}')"]`).classList.add('active');
+    
+    // Загрузить одобренные уровни при переключении на вкладку user-levels
+    if (tabName === 'user-levels' && typeof loadApprovedLevelsForPlay === 'function') {
+        loadApprovedLevelsForPlay();
+    }
 }
 
 function sleep(ms) {
@@ -753,6 +810,16 @@ function sleep(ms) {
 
 
 window.onload = function() {
+    // Инициализировать систему администратора
+    if (typeof initLevelsAdmin === 'function') {
+        initLevelsAdmin();
+    }
+    
+    // Инициализировать систему модерации
+    if (typeof initModeration === 'function') {
+        initModeration();
+    }
+    
     const theme = localStorage.getItem('theme');
     if (theme === 'dark') {
         document.body.classList.add('dark-mode');
@@ -775,9 +842,10 @@ window.onload = function() {
         document.getElementById('player-info').textContent = `Игрок: ${playerName}`;
         setTimeout(() => {
             document.getElementById('welcome-modal').classList.remove('active');
-            showStory('intro', playerName);
-            initGame();
-            createLevelButtons();
+            showStory('intro', playerName, tigerName, () => {
+                initGame();
+                createLevelButtons();
+            });
         }, 500);
     } else {
         nameInput.focus();

@@ -348,25 +348,22 @@ function getSandboxLevelsByRating() {
     return [...gameStats.sandboxLevels].sort((a, b) => b.rating - a.rating);
 }
 
-// Показать рейтинг всех уровней пользователей
+// Показать рейтинг песочницы
 function showSandboxRating() {
-    loadPublishedLevels();
-    const publishedLevels = getPublishedLevels();
+    const sortedLevels = getSandboxLevelsByRating();
     
     let ratingHTML = `
         <div style="padding: 20px;">
-            <h2 style="color: var(--primary-color); text-align: center; font-size: 1.8em; margin-bottom: 20px;">🏆 Рейтинг уровней пользователей</h2>
+            <h2 style="color: var(--primary-color); text-align: center; font-size: 1.8em; margin-bottom: 20px;">🏗️ Рейтинг песочницы</h2>
             
-            ${publishedLevels.length === 0 ? `
+            ${sortedLevels.length === 0 ? `
                 <div style="color: var(--text-secondary); text-align: center; padding: 40px;">
-                    <p style="font-size: 1.1em;">Пока нет опубликованных уровней</p>
-                    <p style="margin-top: 10px;">Создай свой уровень и поделись им с другими!</p>
+                    <p style="font-size: 1.1em;">Ты ещё не создал уровни в песочнице</p>
+                    <p style="margin-top: 10px;">Создай свой первый уровень и оцени его!</p>
                 </div>
             ` : `
                 <div style="display: grid; gap: 15px;">
-                    ${publishedLevels
-                        .sort((a, b) => (b.rating || 0) - (a.rating || 0))
-                        .map((level, index) => `
+                    ${sortedLevels.map((level, index) => `
                         <div style="background: var(--bg-primary); padding: 15px; border-radius: 10px; border-left: 4px solid var(--primary-color);">
                             <div style="display: flex; justify-content: space-between; align-items: start;">
                                 <div style="flex: 1;">
@@ -374,23 +371,16 @@ function showSandboxRating() {
                                         ${index + 1}. ${level.name}
                                     </div>
                                     <div style="font-size: 0.85em; color: var(--text-secondary); margin-top: 5px;">
-                                        👤 ${level.publishedBy || 'Неизвестный автор'}
-                                    </div>
-                                    <div style="font-size: 0.85em; color: var(--text-secondary); margin-top: 3px;">
-                                        📝 ${level.description || 'Нет описания'}
+                                        📅 ${level.createdAt}
                                     </div>
                                 </div>
                                 <div style="text-align: right;">
-                                    <div style="font-size: 1.3em; margin-bottom: 5px;">
-                                        ${getStarsDisplay(level.rating || 0)}
+                                    <div style="font-size: 1.3em; margin-bottom: 5px; cursor: pointer;" onclick="showRatingModal(${level.id}, '${level.name}')">
+                                        ${getStarsDisplay(level.rating)}
                                     </div>
-                                    <div style="font-size: 0.85em; color: var(--text-secondary); margin-bottom: 3px;">
-                                        📥 ${level.downloads || 0} скачиваний
+                                    <div style="font-size: 0.85em; color: var(--text-secondary);">
+                                        🎮 ${level.plays} игр
                                     </div>
-                                    <div style="font-size: 0.85em; color: var(--text-secondary); margin-bottom: 10px;">
-                                        🎮 ${level.plays || 0} игр
-                                    </div>
-                                    <button onclick="playPublishedLevel(${publishedLevels.indexOf(level)})" style="padding: 8px 12px; background: var(--success-color); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.9em; width: 100%;">▶️ Играть</button>
                                 </div>
                             </div>
                         </div>
@@ -696,77 +686,4 @@ function playPublishedLevel(index) {
     // Закрыть модальное окно и начать игру
     document.getElementById('stats-modal').classList.remove('active');
     playSandboxLevel();
-}
-
-// Показать все уровни пользователей с рейтингом и скачиваниями
-function displayUserLevelsInTab() {
-    loadPublishedLevels();
-    const publishedLevels = getPublishedLevels();
-    
-    let html = `
-        <div style="padding: 20px; background: var(--bg-secondary); border-radius: 10px; margin-top: 20px;">
-            <h3 style="color: var(--primary-color); font-size: 1.4em; margin-bottom: 15px;">🏆 Рейтинг уровней пользователей</h3>
-            
-            ${publishedLevels.length === 0 ? `
-                <div style="color: var(--text-secondary); text-align: center; padding: 30px;">
-                    <p style="font-size: 1em;">Пока нет опубликованных уровней</p>
-                    <p style="margin-top: 10px; font-size: 0.9em;">Создай свой уровень и поделись им с другими!</p>
-                </div>
-            ` : `
-                <div style="display: grid; gap: 12px;">
-                    ${publishedLevels
-                        .sort((a, b) => (b.rating || 0) - (a.rating || 0))
-                        .map((level, index) => `
-                        <div style="background: var(--bg-primary); padding: 12px; border-radius: 8px; border-left: 3px solid var(--primary-color); display: flex; justify-content: space-between; align-items: center;">
-                            <div style="flex: 1;">
-                                <div style="font-weight: 600; color: var(--text-primary); font-size: 1em;">
-                                    ${index + 1}. ${level.name}
-                                </div>
-                                <div style="font-size: 0.8em; color: var(--text-secondary); margin-top: 3px;">
-                                    👤 ${level.publishedBy || 'Неизвестный автор'}
-                                </div>
-                            </div>
-                            <div style="text-align: right; min-width: 120px;">
-                                <div style="font-size: 1.1em; margin-bottom: 3px;">
-                                    ${getStarsDisplay(level.rating || 0)}
-                                </div>
-                                <div style="font-size: 0.8em; color: var(--text-secondary); margin-bottom: 5px;">
-                                    📥 ${level.downloads || 0} скачиваний
-                                </div>
-                                <div style="font-size: 0.8em; color: var(--text-secondary);">
-                                    🎮 ${level.plays || 0} игр
-                                </div>
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            `}
-        </div>
-    `;
-    
-    const userLevelsDisplay = document.getElementById('user-levels-display');
-    if (userLevelsDisplay) {
-        userLevelsDisplay.innerHTML = html;
-    }
-}
-
-// Обновить счетчик скачиваний при загрузке уровня
-function incrementDownloadCount(levelIndex) {
-    loadPublishedLevels();
-    const publishedLevels = getPublishedLevels();
-    if (publishedLevels[levelIndex]) {
-        publishedLevels[levelIndex].downloads = (publishedLevels[levelIndex].downloads || 0) + 1;
-        savePublishedLevels();
-    }
-}
-
-// Обновить рейтинг уровня
-function updateLevelRating(levelIndex, rating) {
-    loadPublishedLevels();
-    const publishedLevels = getPublishedLevels();
-    if (publishedLevels[levelIndex]) {
-        publishedLevels[levelIndex].rating = rating;
-        savePublishedLevels();
-        displayUserLevelsInTab();
-    }
 }

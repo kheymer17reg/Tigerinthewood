@@ -128,7 +128,7 @@ const STORY_DATA = {
 };
 
 // Показать историю перед уровнем
-function showStory(levelNumber, playerName, tigerName = 'Тигра') {
+function showStory(levelNumber, playerName, tigerName = 'Тигра', onComplete = null) {
     let storyKey = 'intro';
     let isIntroStory = false;
     
@@ -146,11 +146,20 @@ function showStory(levelNumber, playerName, tigerName = 'Тигра') {
     // Проверяем, была ли эта история уже просмотрена
     const viewedStories = JSON.parse(localStorage.getItem('viewedStories') || '[]');
     if (viewedStories.includes(storyKey)) {
-        return; // История уже просмотрена, не показываем её
+        // История уже просмотрена, вызываем callback сразу
+        if (onComplete) {
+            setTimeout(onComplete, 0);
+        }
+        return;
     }
     
     const story = STORY_DATA[storyKey];
-    if (!story) return;
+    if (!story) {
+        if (onComplete) {
+            setTimeout(onComplete, 0);
+        }
+        return;
+    }
     
     // Заменяем {playerName} и {tigerName} на имена
     const processedScenes = story.scenes.map(scene => ({
@@ -158,11 +167,11 @@ function showStory(levelNumber, playerName, tigerName = 'Тигра') {
         text: scene.text.replace('{playerName}', playerName).replace('{tigerName}', tigerName)
     }));
     
-    showStoryModal(story.title, processedScenes, isIntroStory, storyKey);
+    showStoryModal(story.title, processedScenes, isIntroStory, storyKey, onComplete);
 }
 
 // Показать модальное окно истории
-function showStoryModal(title, scenes, isIntroStory = false, storyKey = null) {
+function showStoryModal(title, scenes, isIntroStory = false, storyKey = null, onComplete = null) {
     const modal = document.createElement('div');
     modal.id = 'story-modal';
     modal.style.cssText = `
@@ -316,7 +325,8 @@ function showStoryModal(title, scenes, isIntroStory = false, storyKey = null) {
         modal: modal,
         isIntroStory: isIntroStory,
         storyKey: storyKey,
-        tigerName: typeof tigerName !== 'undefined' ? tigerName : 'Тигра'
+        tigerName: typeof tigerName !== 'undefined' ? tigerName : 'Тигра',
+        onComplete: onComplete
     };
     
     // Показываем первую сцену
@@ -400,24 +410,22 @@ function closeStory() {
                 }
             }
             
-            // Show tutorial after intro story (если не пропущен для админа)
+            // Вызываем callback если он есть
+            if (window.currentStory && window.currentStory.onComplete) {
+                window.currentStory.onComplete();
+            }
+            
+            // Show tutorial after intro story
             if (window.currentStory && window.currentStory.isIntroStory) {
-                const tutorialSkipped = sessionStorage.getItem('tutorial_skipped');
-                
-                if (!tutorialSkipped) {
-                    setTimeout(() => {
-                        const tutorialModal = document.getElementById('tutorial-modal');
-                        if (tutorialModal) {
-                            tutorialModal.classList.add('active');
-                            console.log('✅ Tutorial modal shown');
-                        } else {
-                            console.error('❌ Tutorial modal not found');
-                        }
-                    }, 500);
-                } else {
-                    // Очищаем флаг пропуска
-                    sessionStorage.removeItem('tutorial_skipped');
-                }
+                setTimeout(() => {
+                    const tutorialModal = document.getElementById('tutorial-modal');
+                    if (tutorialModal) {
+                        tutorialModal.classList.add('active');
+                        console.log('✅ Tutorial modal shown');
+                    } else {
+                        console.error('❌ Tutorial modal not found');
+                    }
+                }, 500);
             }
         }, 300);
     }

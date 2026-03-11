@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🐯 Тигрёнок в лесу - ТЕСТ (Игра для обучения программированию)</title>
+    <title>🐯 Тигрёнок в лесу - Игра для обучения программированию</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
@@ -139,7 +139,7 @@
         }
         .modal-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(33, 150, 243, 0.3); }
         .button-row { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-        .tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; margin-top: 20px; position: relative; z-index: 1; }
+        .tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; margin-top: 20px; }
         .tab-btn {
             padding: 12px 24px;
             background: var(--bg-secondary);
@@ -200,14 +200,15 @@
         }
         #game-grid {
             display: grid;
-            grid-template-columns: repeat(8, 60px);
-            grid-template-rows: repeat(8, 60px);
+            grid-template-columns: repeat(auto-fit, 60px);
+            grid-template-rows: auto;
             gap: 4px;
             margin: 20px auto;
             background: var(--bg-primary);
             padding: 15px;
             border-radius: 12px;
             border: 2px solid var(--border-color);
+            width: fit-content;
         }
         .cell {
             width: 60px;
@@ -596,22 +597,14 @@
         .close-btn {
             background: none;
             border: none;
-            font-size: 1.8em;
+            font-size: 1.5em;
             cursor: pointer;
             color: var(--text-primary);
             transition: all 0.3s;
-            padding: 5px 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 40px;
-            min-height: 40px;
         }
         .close-btn:hover {
-            transform: scale(1.3);
+            transform: scale(1.2);
             color: var(--error-color);
-            background: rgba(244, 67, 54, 0.1);
-            border-radius: 50%;
         }
         .admin-tabs {
             display: flex;
@@ -740,18 +733,13 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.7);
             z-index: 2000;
             align-items: center;
             justify-content: center;
-            pointer-events: none;
         }
         #admin-modal.active {
             display: flex;
-            pointer-events: auto;
-        }
-        .admin-panel-content {
-            pointer-events: auto;
         }
         /* Стили для уведомлений */
         .admin-notification-item {
@@ -982,6 +970,7 @@
             animation: tutorialMove 0.6s ease-in-out;
         }
     </style>
+    <script src="https://forms.yandex.ru/_static/embed.js"></script>
 </head>
 <body>
 <script>
@@ -1014,16 +1003,27 @@
         localStorage.clear();
     }
 </script>
-<div id="welcome-modal" class="modal active">
+<script>
+console.log('✅ HTML загружен, начинаем загрузку скриптов');
+</script>
+<div id="welcome-modal" class="modal active" style="z-index: 1000;">
     <div class="modal-content">
-        <h2>🐯 Добро пожаловать!</h2>
-        <p>Помоги тигрёнку найти выход из лесу!</p>
-        <p style="font-size: 0.9em; color: var(--text-secondary);">Введи своё имя:</p>
-        <input type="text" id="player-name" placeholder="Твоё имя" maxlength="30">
-        <button class="modal-btn" onclick="startGame()">Начать игру! 🎮</button>
+        <h2>🐯 Вход в игру</h2>
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+            <p style="color: white; font-weight: 600; margin-bottom: 8px; font-size: 1.05em;">📱 Получите логин и пароль в Telegram боте:</p>
+            <a href="https://t.me/Tiger42bot" target="_blank" style="display: inline-block; background: white; color: #667eea; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 1.05em; transition: all 0.3s;" onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.2)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'">
+                🤖 @Tiger42bot
+            </a>
+        </div>
+        <p style="font-size: 0.9em; color: var(--text-secondary); font-weight: 600;">Логин:</p>
+        <input type="text" id="player-login" placeholder="Твой логин" maxlength="30">
+        <p style="font-size: 0.9em; color: var(--text-secondary); margin-top: 10px; font-weight: 600;">Пароль:</p>
+        <input type="password" id="player-password" placeholder="Твой пароль" maxlength="50">
+        <div id="login-error" style="color: #f44336; font-size: 0.9em; margin-top: 10px; display: none;"></div>
+        <button class="modal-btn" onclick="loginGame()" style="margin-top: 15px;">Войти 🎮</button>
     </div>
 </div>
-<div id="tiger-name-modal" class="modal">
+<div id="tiger-name-modal" class="modal" style="z-index: 1001;">
     <div class="modal-content">
         <h2>🐯 Как зовут тигрёнка?</h2>
         <p>Выбери имя для нашего маленького героя!</p>
@@ -1231,12 +1231,62 @@
     </div>
 </div>
 
+<!-- Developers Modal -->
+<div id="developers-modal" class="modal" style="z-index: 3000;">
+    <div class="modal-content" style="max-width: 700px; background: var(--bg-secondary);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 style="color: var(--primary-color); margin: 0;">👨‍💻 О разработчиках</h2>
+            <button class="close-btn" onclick="document.getElementById('developers-modal').classList.remove('active')">✕</button>
+        </div>
+        <div style="padding: 20px; max-height: 80vh; overflow-y: auto;">
+            <p style="font-size: 1.1em; margin-bottom: 20px; color: var(--text-primary);">Спасибо за использование нашей игры! Если у вас есть предложения или вы хотите поделиться своим мнением, заполните форму ниже:</p>
+            
+            <div id="developers-form-container" style="background: var(--bg-primary); padding: 20px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: center;">
+                <iframe src="https://forms.yandex.ru/cloud/6996561e84227c1b49d425c1?iframe=1" frameborder="0" name="ya-form-6996561e84227c1b49d425c1" width="650" height="600" style="border-radius: 10px; border: none;"></iframe>
+            </div>
+            
+            <button onclick="document.getElementById('developers-modal').classList.remove('active')" style="width: 100%; padding: 12px; background: var(--primary-color); color: white; border: none; border-radius: 10px; font-size: 1em; font-weight: 600; cursor: pointer;">Закрыть</button>
+        </div>
+    </div>
+</div>
+
+<!-- Change Password Modal -->
+<div id="change-password-modal" class="modal" style="z-index: 3000;">
+    <div class="modal-content" style="max-width: 500px; background: var(--bg-secondary);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 style="color: var(--primary-color); margin: 0;">🔒 Смена пароля</h2>
+            <button class="close-btn" onclick="document.getElementById('change-password-modal').classList.remove('active')">✕</button>
+        </div>
+        <div style="padding: 20px;">
+            <div style="background: var(--bg-primary); padding: 15px; border-radius: 10px; margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600;">Старый пароль:</label>
+                <input type="password" id="old-password" placeholder="Введи старый пароль" style="width: 100%; padding: 10px; border: 2px solid var(--primary-color); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary); box-sizing: border-box;">
+            </div>
+            
+            <div style="background: var(--bg-primary); padding: 15px; border-radius: 10px; margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600;">Новый пароль:</label>
+                <input type="password" id="new-password" placeholder="Введи новый пароль" style="width: 100%; padding: 10px; border: 2px solid var(--primary-color); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary); box-sizing: border-box;">
+            </div>
+            
+            <div style="background: var(--bg-primary); padding: 15px; border-radius: 10px; margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600;">Подтверди новый пароль:</label>
+                <input type="password" id="confirm-password" placeholder="Повтори новый пароль" style="width: 100%; padding: 10px; border: 2px solid var(--primary-color); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary); box-sizing: border-box;">
+            </div>
+            
+            <div id="change-password-error" style="color: #f44336; font-size: 0.9em; margin-bottom: 15px; display: none;"></div>
+            
+            <button onclick="changePassword()" style="width: 100%; padding: 12px; background: var(--success-color); color: white; border: none; border-radius: 10px; font-size: 1em; font-weight: 600; cursor: pointer; margin-bottom: 10px;">Сменить пароль</button>
+            <button onclick="document.getElementById('change-password-modal').classList.remove('active')" style="width: 100%; padding: 12px; background: var(--text-secondary); color: white; border: none; border-radius: 10px; font-size: 1em; font-weight: 600; cursor: pointer;">Отмена</button>
+        </div>
+    </div>
+</div>
+
 <div class="container">
     <header>
-        <h1>Тигрёнок в лесу [ТЕСТ]</h1>
+        <h1>Тигрёнок в лесу</h1>
         <div style="display: flex; align-items: center; gap: 15px; position: absolute; top: 20px; right: 20px;">
             <div class="player-info" id="player-info" style="font-size: 1.1em; padding: 12px 25px;">Игрок: Гость</div>
-            <button class="theme-btn" onclick="changePlayer()" title="Сменить игрока" style="padding: 12px 25px; font-size: 1em;">👤 Сменить</button>
+            <button class="theme-btn" onclick="showChangePasswordModal()" title="Сменить пароль" style="padding: 12px 25px; font-size: 1em;">🔒 Сменить пароль</button>
             <button class="theme-btn" onclick="document.getElementById('settings-modal').classList.add('active')" title="Настройки" style="padding: 12px 25px; font-size: 1em;">⚙️ Настройки</button>
         </div>
     </header>
@@ -1247,12 +1297,14 @@
         <button class="theme-btn" onclick="showStats()" title="Статистика">📊 Статистика</button>
         <button class="theme-btn" onclick="showSandboxRating()" title="Рейтинг песочницы">🏗️ Рейтинг</button>
         <button class="theme-btn" onclick="showPublishedLevels()" title="Опубликованные уровни">🚀 Новые уровни</button>
+        <button class="theme-btn" onclick="showDevelopersModal()" title="О разработчиках">👨‍💻 Разработчики</button>
         <button class="theme-btn" onclick="resetGameProgress()" title="Очистить прогресс" style="background: #ff9800; color: white; border-color: #ff9800;">🔄 Сброс прогресса</button>
     </div>
     
     <div class="tabs">
         <button class="tab-btn active" onclick="switchTab('levels')">🎮 Уровни</button>
-        <button class="tab-btn" onclick="switchTab('userlevels')">👥 Уровни пользователей</button>
+        <button class="tab-btn" onclick="switchTab('user-levels')">📤 Уровни пользователей</button>
+        <button class="tab-btn" onclick="switchTab('sandbox')">🏗️ Песочница</button>
     </div>
     <div id="levels" class="tab-content active">
         <div class="levels" id="level-buttons"></div>
@@ -1319,14 +1371,14 @@
             </div>
         </div>
     </div>
-    <!-- Вкладка Уровни пользователей -->
-    <div id="userlevels" class="tab-content">
+    <!-- Вкладка Песочница -->
+    <div id="sandbox" class="tab-content">
         <div class="sandbox-container">
             <div class="sandbox-header">
-                <h2 style="color: #7e57c2; font-size: 24px;">👥 Уровни пользователей</h2>
+                <h2 style="color: #7e57c2; font-size: 24px;">🏗️ Конструктор уровней</h2>
                 <div class="sandbox-controls">
-                    <button class="sandbox-btn" onclick="uploadSandboxLevel()">📤 Загрузить уровень</button>
-                    <button class="sandbox-btn" onclick="downloadSandboxLevel()">📥 Скачать текущий</button>
+                    <button class="sandbox-btn" onclick="uploadSandboxLevel()">📤 Загрузить файл</button>
+                    <button class="sandbox-btn" onclick="downloadSandboxLevel()">📥 Скачать</button>
                     <button class="sandbox-btn orange" onclick="playSandboxLevel()">▶ Играть</button>
                     <button class="sandbox-btn red" onclick="clearSandbox()">🗑️ Очистить</button>
                 </div>
@@ -1353,15 +1405,24 @@
                 <small>💡 Зажми левую кнопку мыши и тяни, чтобы рисовать несколько клеток!</small>
             </div>
             <div id="sandbox-grid"></div>
-            <div id="user-levels-display" style="margin-top: 30px;"></div>
             <div class="hint">
-                <h4>🎯 Как пользоваться:</h4>
+                <h4>🎯 Как пользоваться конструктором:</h4>
                 <p>1. Выбери размер поля и объект для размещения</p>
                 <p>2. Кликни на клетку или зажми мышь и тяни</p>
                 <p>3. Нажми "Играть" чтобы протестировать уровень</p>
                 <p>4. Нажми "Скачать" чтобы сохранить уровень в файл</p>
-                <p>5. Загрузи уровни других пользователей и оцени их!</p>
             </div>
+        </div>
+    </div>
+    <!-- Вкладка Уровни пользователей -->
+    <div id="user-levels" class="tab-content">
+        <div style="background: var(--bg-secondary); padding: 25px; border-radius: 15px; border: 3px solid #9c27b0; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);">
+            <h2 style="color: #9c27b0; font-size: 24px; margin-bottom: 20px;">📤 Уровни пользователей</h2>
+            <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+                <button class="sandbox-btn" style="background: #9c27b0;" onclick="showUserLevelCreator()">➕ Создать уровень</button>
+                <button class="sandbox-btn" style="background: #9c27b0;" onclick="showUserLevelsTab()">📋 Мои уровни</button>
+            </div>
+            <div id="user-levels-content"></div>
         </div>
     </div>
 </div>
@@ -1373,27 +1434,16 @@
             <button class="close-btn" onclick="closeAdminPanel()">✕</button>
         </div>
         <div class="admin-tabs">
-            <button class="admin-tab-btn active" onclick="switchAdminTab('levels')" data-tab="levels">📋 Уровни</button>
-            <button class="admin-tab-btn" onclick="switchAdminTab('edit-levels')" data-tab="edit-levels">✏️ Редактирование</button>
-            <button class="admin-tab-btn" onclick="switchAdminTab('stories')" data-tab="stories">📚 Истории</button>
-            <button class="admin-tab-btn" onclick="switchAdminTab('users')" data-tab="users">👥 Пользователи</button>
-            <button class="admin-tab-btn" onclick="switchAdminTab('notifications')" data-tab="notifications">📢 Уведомления</button>
-            <button class="admin-tab-btn" onclick="switchAdminTab('stats')" data-tab="stats">📊 Статистика</button>
-            <button class="admin-tab-btn" onclick="switchAdminTab('settings')" data-tab="settings">⚙️ Настройки</button>
+            <button class="admin-tab-btn active" onclick="switchAdminTab('levels')">📋 Уровни</button>
+            <button class="admin-tab-btn" onclick="switchAdminTab('edit-levels')">✏️ Редактирование</button>
+            <button class="admin-tab-btn" onclick="switchAdminTab('moderation')">📋 Модерация</button>
+            <button class="admin-tab-btn" onclick="switchAdminTab('users')">👥 Пользователи</button>
+            <button class="admin-tab-btn" onclick="switchAdminTab('notifications')">📢 Уведомления</button>
+            <button class="admin-tab-btn" onclick="switchAdminTab('stats')">📊 Статистика</button>
+            <button class="admin-tab-btn" onclick="switchAdminTab('settings')">⚙️ Настройки</button>
         </div>
         <div id="admin-levels-tab" class="admin-tab-content active">
             <h3>📋 Управление уровнями</h3>
-            <div class="admin-section">
-                <h4>⚡ Быстрое тестирование</h4>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-bottom: 20px;">
-                    <button onclick="autoCompleteLevel(1)" style="padding: 12px; background: #4caf50; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9em;">▶️ Уровень 1</button>
-                    <button onclick="autoCompleteLevel(2)" style="padding: 12px; background: #4caf50; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9em;">▶️ Уровень 2</button>
-                    <button onclick="autoCompleteLevel(3)" style="padding: 12px; background: #4caf50; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9em;">▶️ Уровень 3</button>
-                    <button onclick="autoCompleteLevel(4)" style="padding: 12px; background: #4caf50; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9em;">▶️ Уровень 4</button>
-                    <button onclick="autoCompleteLevel(5)" style="padding: 12px; background: #4caf50; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9em;">▶️ Уровень 5</button>
-                    <button onclick="autoCompleteLevel(6)" style="padding: 12px; background: #4caf50; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9em;">▶️ Уровень 6</button>
-                </div>
-            </div>
             <div class="admin-section">
                 <h4>Загрузить уровень</h4>
                 <input type="file" id="admin-level-upload" accept=".json" />
@@ -1454,44 +1504,19 @@
                 </div>
             </div>
         </div>
-        <div id="admin-stories-tab" class="admin-tab-content">
-            <h3>📚 Истории всех уровней</h3>
+        <div id="admin-moderation-tab" class="admin-tab-content">
+            <h3>📋 Модерация уровней пользователей</h3>
             <div class="admin-section">
-                <p style="color: var(--text-secondary); margin-bottom: 15px;">Нажми на историю, чтобы её просмотреть:</p>
-                <div style="display: grid; gap: 12px;">
-                    <button onclick="adminViewStory('intro')" style="padding: 15px; background: var(--bg-primary); border: 2px solid var(--primary-color); border-radius: 8px; cursor: pointer; text-align: left; transition: all 0.3s;">
-                        <div style="font-weight: 600; color: var(--primary-color); font-size: 1.1em;">📖 Вводная история</div>
-                        <div style="font-size: 0.85em; color: var(--text-secondary); margin-top: 5px;">🐯 Добро пожаловать в лес!</div>
-                    </button>
-                    <button onclick="adminViewStory('level1')" style="padding: 15px; background: var(--bg-primary); border: 2px solid #ff6b6b; border-radius: 8px; cursor: pointer; text-align: left; transition: all 0.3s;">
-                        <div style="font-weight: 600; color: #ff6b6b; font-size: 1.1em;">🌱 Уровень 1</div>
-                        <div style="font-size: 0.85em; color: var(--text-secondary); margin-top: 5px;">Первые шаги</div>
-                    </button>
-                    <button onclick="adminViewStory('level2')" style="padding: 15px; background: var(--bg-primary); border: 2px solid #4ecdc4; border-radius: 8px; cursor: pointer; text-align: left; transition: all 0.3s;">
-                        <div style="font-weight: 600; color: #4ecdc4; font-size: 1.1em;">🍃 Уровень 2</div>
-                        <div style="font-size: 0.85em; color: var(--text-secondary); margin-top: 5px;">Обход дерева</div>
-                    </button>
-                    <button onclick="adminViewStory('level3')" style="padding: 15px; background: var(--bg-primary); border: 2px solid #95e1d3; border-radius: 8px; cursor: pointer; text-align: left; transition: all 0.3s;">
-                        <div style="font-weight: 600; color: #95e1d3; font-size: 1.1em;">🌿 Уровень 3</div>
-                        <div style="font-size: 0.85em; color: var(--text-secondary); margin-top: 5px;">Лесная тропа</div>
-                    </button>
-                    <button onclick="adminViewStory('level4')" style="padding: 15px; background: var(--bg-primary); border: 2px solid #f38181; border-radius: 8px; cursor: pointer; text-align: left; transition: all 0.3s;">
-                        <div style="font-weight: 600; color: #f38181; font-size: 1.1em;">🌳 Уровень 4</div>
-                        <div style="font-size: 0.85em; color: var(--text-secondary); margin-top: 5px;">Вкусное мясо</div>
-                    </button>
-                    <button onclick="adminViewStory('level5')" style="padding: 15px; background: var(--bg-primary); border: 2px solid #aa96da; border-radius: 8px; cursor: pointer; text-align: left; transition: all 0.3s;">
-                        <div style="font-weight: 600; color: #aa96da; font-size: 1.1em;">🔑 Уровень 5</div>
-                        <div style="font-size: 0.85em; color: var(--text-secondary); margin-top: 5px;">Волшебный ключ</div>
-                    </button>
-                    <button onclick="adminViewStory('level6')" style="padding: 15px; background: var(--bg-primary); border: 2px solid #fcbad3; border-radius: 8px; cursor: pointer; text-align: left; transition: all 0.3s;">
-                        <div style="font-weight: 600; color: #fcbad3; font-size: 1.1em;">🏆 Уровень 6</div>
-                        <div style="font-size: 0.85em; color: var(--text-secondary); margin-top: 5px;">Большое приключение</div>
-                    </button>
-                    <button onclick="adminViewStory('ending')" style="padding: 15px; background: var(--bg-primary); border: 2px solid #ffd93d; border-radius: 8px; cursor: pointer; text-align: left; transition: all 0.3s;">
-                        <div style="font-weight: 600; color: #ffd93d; font-size: 1.1em;">🎉 Концовка</div>
-                        <div style="font-size: 0.85em; color: var(--text-secondary); margin-top: 5px;">Финальная история</div>
-                    </button>
-                </div>
+                <h4>Ожидающие модерации</h4>
+                <div id="admin-pending-levels"></div>
+            </div>
+            <div class="admin-section">
+                <h4>Одобренные уровни</h4>
+                <div id="admin-approved-levels"></div>
+            </div>
+            <div class="admin-section">
+                <h4>Отклоненные уровни</h4>
+                <div id="admin-rejected-levels"></div>
             </div>
         </div>
         <div id="admin-users-tab" class="admin-tab-content">
@@ -1548,14 +1573,30 @@
 
 <button class="ai-chat-btn" onclick="toggleAIChatWidget()" title="ИИ Помощник">🤖</button>
 <button class="admin-btn-floating" onclick="openAdminPanel()" title="Админ-панель (🔐)">🔐</button>
-<script src="improved_levels.js"></script>
+<script>
+console.log('✅ Начинаем загрузку скриптов');
+</script>
 <script src="test_game.js?v=24"></script>
+<script>console.log('✅ test_game.js загружен');</script>
+<script src="improved_levels.js?v=2"></script>
+<script>console.log('✅ improved_levels.js загружен');</script>
+<script src="auth.js?v=2"></script>
+<script>console.log('✅ auth.js загружен');</script>
 <script src="test_story.js?v=10"></script>
-<script src="test_admin_panel.js?v=13"></script>
+<script>console.log('✅ test_story.js загружен');</script>
+<script src="test_admin_panel.js?v=11"></script>
+<script>console.log('✅ test_admin_panel.js загружен');</script>
+<script src="moderation_system.js?v=2"></script>
+<script>console.log('✅ moderation_system.js загружен');</script>
 <script src="ai_chat.js?v=8"></script>
-<script src="stats_system.js?v=17"></script>
-<script src="game_modes.js?v=3"></script>
-<script src="achievements_display.js?v=1"></script>
-<script src="levels_admin.js?v=3"></script>
+<script>console.log('✅ ai_chat.js загружен');</script>
+<script src="stats_system.js?v=18"></script>
+<script>console.log('✅ stats_system.js загружен');</script>
+<script src="game_modes.js?v=4"></script>
+<script>console.log('✅ game_modes.js загружен');</script>
+<script src="achievements_display.js?v=2"></script>
+<script>console.log('✅ achievements_display.js загружен');</script>
+<script src="levels_admin.js?v=5"></script>
+<script>console.log('✅ levels_admin.js загружен');</script>
 </body>
 </html>

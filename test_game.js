@@ -1,4 +1,6 @@
 // ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ
+console.log('✅ test_game.js загружен');
+
 let game = {
     level: 1,
     tiger: { x: 0, y: 0 },
@@ -133,12 +135,17 @@ function confirmTigerName() {
     const storySkipped = sessionStorage.getItem('story_skipped');
     
     if (!storySkipped) {
-        // Показываем вводную историю
-        showStory('intro', playerName, tigerName);
+        // Показываем вводную историю с callback для инициализации игры
+        showStory('intro', playerName, tigerName, function() {
+            console.log('✅ История завершена, инициализируем игру');
+            initGame();
+            createLevelButtons();
+        });
+    } else {
+        // Если история пропущена, сразу инициализируем игру
+        initGame();
+        createLevelButtons();
     }
-    
-    initGame();
-    createLevelButtons();
 }
 
 function createLevelButtons() {
@@ -1000,6 +1007,58 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+// Отобразить уровни пользователей в вкладке
+function displayUserLevelsInTab() {
+    console.log('📤 displayUserLevelsInTab вызвана');
+    const container = document.getElementById('user-levels-content');
+    if (!container) {
+        console.error('❌ user-levels-content не найден');
+        return;
+    }
+    
+    // Получаем уровни из модерации
+    const userLevels = moderation.approvedLevels.filter(l => l.playerName === playerName)
+        .concat(moderation.pendingLevels.filter(l => l.playerName === playerName))
+        .concat(moderation.rejectedLevels.filter(l => l.playerName === playerName));
+    
+    if (userLevels.length === 0) {
+        container.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 20px;">У вас нет опубликованных уровней</p>';
+        return;
+    }
+    
+    container.innerHTML = userLevels.map(level => {
+        const statusColor = level.status === 'approved' ? '#4caf50' : level.status === 'rejected' ? '#f44336' : '#ff9800';
+        const statusText = level.status === 'approved' ? '✅ Одобрен' : level.status === 'rejected' ? '❌ Отклонен' : '⏳ На модерации';
+        
+        return `
+            <div style="background: var(--bg-primary); padding: 15px; border-radius: 10px; margin-bottom: 10px; border-left: 4px solid ${statusColor};">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <strong>${level.levelName}</strong>
+                        <p style="color: var(--text-secondary); font-size: 0.9em; margin-top: 5px;">${level.description || 'Нет описания'}</p>
+                        <p style="color: ${statusColor}; font-size: 0.9em; margin-top: 5px;">${statusText}</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <p style="color: var(--text-secondary); font-size: 0.9em;">Сложность: ${level.difficulty}</p>
+                        <p style="color: var(--text-secondary); font-size: 0.9em;">Отправлено: ${new Date(level.submittedAt).toLocaleDateString('ru-RU')}</p>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// Показать модальное окно разработчиков
+function showDevelopersModal() {
+    console.log('👨‍💻 showDevelopersModal вызвана');
+    const modal = document.getElementById('developers-modal');
+    if (modal) {
+        modal.classList.add('active');
+    } else {
+        console.error('❌ developers-modal не найден');
+    }
+}
+
 
 
 window.onload = function() {
@@ -1017,6 +1076,13 @@ window.onload = function() {
         game.moveSpeed = parseInt(moveSpeed);
         document.getElementById('speed-select').value = moveSpeed;
     }
+    
+    // Инициализируем системы
+    console.log('✅ Инициализируем системы');
+    initStats();
+    loadStats();
+    initModeration();
+    
     const savedPlayerName = localStorage.getItem('currentPlayer');
     const nameInput = document.getElementById('player-name');
     if (savedPlayerName) {
@@ -1025,9 +1091,11 @@ window.onload = function() {
         document.getElementById('player-info').textContent = `Игрок: ${playerName}`;
         setTimeout(() => {
             document.getElementById('welcome-modal').classList.remove('active');
-            showStory('intro', playerName);
-            initGame();
-            createLevelButtons();
+            showStory('intro', playerName, tigerName, function() {
+                console.log('✅ История завершена, инициализируем игру');
+                initGame();
+                createLevelButtons();
+            });
         }, 500);
     } else {
         nameInput.focus();
