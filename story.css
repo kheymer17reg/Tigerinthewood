@@ -1,1 +1,147 @@
-/* История CSS (заглушка) */
+/* Story System - Luxury Edition */
+#story-modal {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.92);
+    backdrop-filter: blur(16px);
+    z-index: 5000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: storyFadeIn 0.6s ease;
+}
+
+@keyframes storyFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.story-container {
+    max-width: 700px;
+    width: 90%;
+    background: #111827;
+    border-radius: 24px;
+    padding: 40px;
+    border: 1px solid rgba(245, 158, 11, 0.15);
+    box-shadow: 0 20px 80px rgba(0, 0, 0, 0.6), 0 0 60px rgba(245, 158, 11, 0.05);
+    animation: storySlideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.story-container::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #f59e0b, #fbbf24, #f59e0b);
+}
+
+@keyframes storySlideUp {
+    from { transform: translateY(40px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.story-title {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.8em;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 28px;
+    background: linear-gradient(135deg, #f59e0b, #fbbf24);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.story-character {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85em;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #f59e0b;
+    margin-bottom: 12px;
+    padding: 6px 14px;
+    display: inline-block;
+    background: rgba(245, 158, 11, 0.08);
+    border-radius: 8px;
+    border: 1px solid rgba(245, 158, 11, 0.15);
+}
+
+.story-text {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.05em;
+    line-height: 1.8;
+    color: #e2e8f0;
+    margin-bottom: 32px;
+    white-space: pre-line;
+}
+
+.story-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.story-btn {
+    padding: 12px 28px;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95em;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.story-btn:hover {
+    transform: translateY(-2px);
+}
+
+.story-btn-next {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: #000;
+    box-shadow: 0 4px 16px rgba(245, 158, 11, 0.2);
+}
+
+.story-btn-next:hover {
+    box-shadow: 0 8px 24px rgba(245, 158, 11, 0.3);
+}
+
+.story-btn-skip {
+    background: rgba(255, 255, 255, 0.05);
+    color: #94a3b8;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.story-btn-skip:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #e2e8f0;
+}
+
+.story-progress {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.story-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    transition: all 0.3s;
+}
+
+.story-dot.active {
+    background: #f59e0b;
+    box-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
+    transform: scale(1.2);
+}
+
+.story-dot.completed {
+    background: rgba(245, 158, 11, 0.4);
+}
