@@ -102,7 +102,7 @@ function changePlayer() {
     
     // Show welcome modal
     document.getElementById('welcome-modal').classList.add('active');
-    const nameInput = document.getElementById('player-name');
+    const nameInput = document.getElementById('player-login');
     nameInput.value = '';
     nameInput.focus();
     playerName = 'Гость';
@@ -111,7 +111,7 @@ function changePlayer() {
 }
 
 function startGame() {
-    const nameInput = document.getElementById('player-name').value.trim();
+    const nameInput = document.getElementById('player-login').value.trim();
     if (nameInput) playerName = nameInput;
     document.getElementById('welcome-modal').classList.remove('active');
     document.getElementById('player-info').textContent = `Игрок: ${playerName}`;
@@ -971,13 +971,13 @@ function closeMessage() {
 }
 
 function toggleTheme() {
-    document.body.classList.toggle('dark-mode');
-    localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+    document.body.classList.toggle('light-mode');
+    localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'dark' : 'light');
 }
 
 function toggleSound() {
     game.soundEnabled = !game.soundEnabled;
-    const btn = document.getElementById('sound-btn');
+    const btn = document.getElementById('sound-label');
     btn.textContent = game.soundEnabled ? '🔊 Звук' : '🔇 Без звука';
     localStorage.setItem('soundEnabled', game.soundEnabled);
 }
@@ -1063,13 +1063,13 @@ function showDevelopersModal() {
 
 window.onload = function() {
     const theme = localStorage.getItem('theme');
-    if (theme === 'dark') {
-        document.body.classList.add('dark-mode');
+    if (theme === 'light') {
+        document.body.classList.add('light-mode');
     }
     const soundEnabled = localStorage.getItem('soundEnabled');
     if (soundEnabled === 'false') {
         game.soundEnabled = false;
-        document.getElementById('sound-btn').textContent = '🔇 Без звука';
+        document.getElementById('sound-label').textContent = '🔇 Без звука';
     }
     const moveSpeed = localStorage.getItem('moveSpeed');
     if (moveSpeed) {
@@ -1084,7 +1084,7 @@ window.onload = function() {
     initModeration();
     
     const savedPlayerName = localStorage.getItem('currentPlayer');
-    const nameInput = document.getElementById('player-name');
+    const nameInput = document.getElementById('player-login');
     if (savedPlayerName) {
         playerName = savedPlayerName;
         nameInput.value = savedPlayerName;
