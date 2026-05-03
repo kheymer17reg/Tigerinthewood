@@ -115,10 +115,47 @@
             box-shadow: var(--shadow-card);
         }
         .logo {
-            font-size:1.6em; font-weight:900; letter-spacing:-0.03em;
+            display:flex; align-items:center; gap:12px;
+            text-decoration:none; cursor:default;
+        }
+        .logo-icon {
+            width:44px; height:44px;
+            background: var(--gradient-gold);
+            border-radius:12px;
+            display:flex; align-items:center; justify-content:center;
+            box-shadow: 0 0 20px var(--primary-glow), 0 4px 12px rgba(0,0,0,0.3);
+            position:relative;
+            overflow:hidden;
+            transition: var(--transition);
+        }
+        .logo-icon::before {
+            content:'';
+            position:absolute; inset:0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, transparent 50%);
+            border-radius:12px;
+        }
+        .logo-icon:hover {
+            transform:scale(1.08) rotate(-3deg);
+            box-shadow: 0 0 30px var(--primary-glow), 0 6px 20px rgba(0,0,0,0.4);
+        }
+        .logo-icon svg {
+            width:28px; height:28px;
+            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
+            position:relative; z-index:1;
+        }
+        .logo-text {
+            display:flex; flex-direction:column; line-height:1.1;
+        }
+        .logo-title {
+            font-size:1.5em; font-weight:900; letter-spacing:-0.03em;
             background: var(--gradient-hero);
             -webkit-background-clip:text; -webkit-text-fill-color:transparent;
             background-clip:text;
+        }
+        .logo-subtitle {
+            font-size:0.65em; font-weight:500; letter-spacing:0.08em;
+            color: var(--text-secondary); text-transform:uppercase;
+            margin-top:2px;
         }
         .header-actions { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
         .header-btn {
@@ -755,7 +792,10 @@
         @media (max-width: 600px) {
             .container { padding:10px 12px; }
             header { padding:10px 14px; flex-wrap:wrap; gap:8px; }
-            .logo { font-size:1.2em; }
+            .logo-icon { width:36px; height:36px; border-radius:10px; }
+            .logo-icon svg { width:22px; height:22px; }
+            .logo-title { font-size:1.2em; }
+            .logo-subtitle { font-size:0.55em; }
             .header-btn { padding:6px 10px; font-size:12px; }
             .nav-btn { padding:8px 12px; font-size:12px; }
             .level-btn { padding:8px 12px; min-width:70px; }
@@ -783,7 +823,48 @@
     <div class="container">
         <!-- HEADER -->
         <header>
-            <div class="logo">Tigerinthewood</div>
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Tiger face -->
+                        <circle cx="50" cy="52" r="32" fill="#1a1a2e" stroke="#0a0e17" stroke-width="2"/>
+                        <!-- Ears -->
+                        <path d="M25 30 L18 12 L38 24 Z" fill="#f59e0b" stroke="#d97706" stroke-width="1.5"/>
+                        <path d="M75 30 L82 12 L62 24 Z" fill="#f59e0b" stroke="#d97706" stroke-width="1.5"/>
+                        <path d="M27 28 L22 15 L36 25 Z" fill="#fbbf24"/>
+                        <path d="M73 28 L78 15 L64 25 Z" fill="#fbbf24"/>
+                        <!-- Stripes -->
+                        <path d="M30 35 Q35 30 33 40" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round"/>
+                        <path d="M70 35 Q65 30 67 40" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round"/>
+                        <path d="M28 45 Q33 42 31 50" stroke="#f59e0b" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M72 45 Q67 42 69 50" stroke="#f59e0b" stroke-width="2" stroke-linecap="round"/>
+                        <!-- Eyes -->
+                        <ellipse cx="40" cy="48" rx="5" ry="5.5" fill="#10b981"/>
+                        <ellipse cx="60" cy="48" rx="5" ry="5.5" fill="#10b981"/>
+                        <ellipse cx="40" cy="48" rx="2.2" ry="4" fill="#0a0e17"/>
+                        <ellipse cx="60" cy="48" rx="2.2" ry="4" fill="#0a0e17"/>
+                        <circle cx="42" cy="46" r="1.5" fill="white" opacity="0.9"/>
+                        <circle cx="62" cy="46" r="1.5" fill="white" opacity="0.9"/>
+                        <!-- Nose -->
+                        <path d="M47 57 L50 54 L53 57 Z" fill="#f59e0b"/>
+                        <!-- Mouth -->
+                        <path d="M50 57 Q50 62 44 63" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+                        <path d="M50 57 Q50 62 56 63" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+                        <!-- Whiskers -->
+                        <line x1="22" y1="55" x2="36" y2="57" stroke="#f59e0b" stroke-width="1" opacity="0.6"/>
+                        <line x1="22" y1="60" x2="36" y2="60" stroke="#f59e0b" stroke-width="1" opacity="0.6"/>
+                        <line x1="64" y1="57" x2="78" y2="55" stroke="#f59e0b" stroke-width="1" opacity="0.6"/>
+                        <line x1="64" y1="60" x2="78" y2="60" stroke="#f59e0b" stroke-width="1" opacity="0.6"/>
+                        <!-- Cheeks -->
+                        <circle cx="36" cy="60" r="4" fill="#fbbf24" opacity="0.15"/>
+                        <circle cx="64" cy="60" r="4" fill="#fbbf24" opacity="0.15"/>
+                    </svg>
+                </div>
+                <div class="logo-text">
+                    <span class="logo-title">Tigerinthewood</span>
+                    <span class="logo-subtitle">Learn Programming</span>
+                </div>
+            </div>
             <div class="header-actions">
                 <span id="player-info" class="header-btn">Игрок: Гость</span>
                 <button class="header-btn" onclick="showChangePasswordModal()">🔒 Пароль</button>
