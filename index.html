@@ -3,1600 +3,1291 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🐯 Тигрёнок в лесу - Игра для обучения программированию</title>
+    <title>Tigerinthewood — Learn Programming</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="story.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
         :root {
-            --bg-primary: #f5f7fa;
+            --bg-primary: #0a0e17;
+            --bg-secondary: #111827;
+            --bg-tertiary: #1e293b;
+            --bg-card: rgba(17, 24, 39, 0.85);
+            --bg-glass: rgba(255, 255, 255, 0.03);
+            --bg-glass-hover: rgba(255, 255, 255, 0.06);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-glow: rgba(251, 191, 36, 0.15);
+            --primary: #f59e0b;
+            --primary-hover: #d97706;
+            --primary-glow: rgba(245, 158, 11, 0.25);
+            --success: #10b981;
+            --success-glow: rgba(16, 185, 129, 0.2);
+            --error: #ef4444;
+            --error-glow: rgba(239, 68, 68, 0.2);
+            --purple: #8b5cf6;
+            --blue: #3b82f6;
+            --cyan: #06b6d4;
+            --emerald: #10b981;
+            --pink: #ec4899;
+            --gradient-gold: linear-gradient(135deg, #f59e0b, #d97706, #b45309);
+            --gradient-purple: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            --gradient-blue: linear-gradient(135deg, #3b82f6, #2563eb);
+            --gradient-emerald: linear-gradient(135deg, #10b981, #059669);
+            --gradient-hero: linear-gradient(135deg, #f59e0b 0%, #ef4444 50%, #8b5cf6 100%);
+            --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.5);
+            --shadow-glow: 0 0 30px rgba(245, 158, 11, 0.1);
+            --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.3);
+            --radius: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --radius-2xl: 24px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-code: 'JetBrains Mono', 'Fira Code', monospace;
+        }
+
+        body.light-mode {
+            --bg-primary: #faf7f2;
             --bg-secondary: #ffffff;
-            --text-primary: #333333;
-            --text-secondary: #666666;
-            --border-color: #e0e0e0;
-            --primary-color: #2196f3;
-            --success-color: #4caf50;
-            --error-color: #f44336;
-            --warning-color: #ff9800;
+            --bg-tertiary: #f1f5f9;
+            --bg-card: rgba(255, 255, 255, 0.9);
+            --bg-glass: rgba(0, 0, 0, 0.02);
+            --bg-glass-hover: rgba(0, 0, 0, 0.04);
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border-color: rgba(0, 0, 0, 0.08);
+            --border-glow: rgba(245, 158, 11, 0.2);
+            --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.08);
+            --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.06);
         }
-        body.dark-mode {
-            --bg-primary: #1a1a1a;
-            --bg-secondary: #2d2d2d;
-            --text-primary: #ffffff;
-            --text-secondary: #cccccc;
-            --border-color: #444444;
-        }
+
         body {
-            font-family: 'Segoe UI', 'Arial', sans-serif;
-            background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary));
+            font-family: var(--font-ui);
+            background: var(--bg-primary);
             min-height: 100vh;
-            padding: 20px;
             color: var(--text-primary);
-            transition: background 0.3s;
-            font-size: 16px;
+            transition: var(--transition);
+            font-size: 15px;
+            line-height: 1.6;
+            overflow-x: hidden;
         }
-        /* Стандартные размеры шрифтов */
-        h1 { font-size: 2.2em; }
-        h2 { font-size: 1.8em; }
-        h3 { font-size: 1.5em; }
-        h4 { font-size: 1.2em; }
-        p { font-size: 1.05em; }
-        small { font-size: 0.9em; }
-        .container { max-width: 1400px; margin: 0 auto; }
-        header {
-            text-align: center;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-        h1 {
-            color: var(--primary-color);
-            text-shadow: 1px 1px 0 rgba(33, 150, 243, 0.2);
-            font-weight: 600;
-            flex: 1;
-            min-width: 300px;
-        }
-        .header-controls { display: flex; gap: 10px; flex-wrap: wrap; }
-        .theme-btn, .player-btn {
-            padding: 10px 20px;
-            background: var(--bg-secondary);
-            border: 2px solid var(--primary-color);
-            border-radius: 8px;
-            color: var(--primary-color);
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 16px;
-            transition: all 0.3s;
-        }
-        .theme-btn:hover, .player-btn:hover {
-            transform: translateY(-2px);
-            background: var(--primary-color);
-            color: white;
-        }
-        .player-info {
-            padding: 10px 20px;
-            background: var(--bg-secondary);
-            border: 2px solid var(--primary-color);
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 16px;
-            color: var(--primary-color);
-            min-width: 200px;
-            text-align: center;
-        }
-        .modal {
-            display: none;
+
+        body::before {
+            content: '';
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
+            inset: 0;
+            background:
+                radial-gradient(ellipse at 20% 50%, rgba(16, 185, 129, 0.07) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(245, 158, 11, 0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 80%, rgba(139, 92, 246, 0.04) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+            animation: bgShift 20s ease-in-out infinite alternate;
         }
-        .modal.active { display: flex; }
-        .modal-content {
-            background: var(--bg-secondary);
-            padding: 40px;
-            border-radius: 20px;
-            text-align: center;
-            max-width: 500px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-            animation: slideIn 0.5s;
+        @keyframes bgShift { 0%,100%{opacity:1} 50%{opacity:.6} }
+
+        #particles-bg { position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
+        .particle { position:absolute; border-radius:50%; opacity:0; animation:floatParticle linear infinite; }
+        @keyframes floatParticle {
+            0%{transform:translateY(100vh) rotate(0deg);opacity:0}
+            10%{opacity:.5}
+            90%{opacity:.2}
+            100%{transform:translateY(-10vh) rotate(360deg);opacity:0}
         }
-        @keyframes slideIn {
-            from { transform: translateY(-50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+
+        .container { max-width:1440px; margin:0 auto; padding:16px 20px; position:relative; z-index:1; }
+
+        /* ===== HEADER ===== */
+        header {
+            display:flex; justify-content:space-between; align-items:center;
+            margin-bottom:20px; padding:14px 24px;
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-card);
         }
-        .modal h2 { font-size: 2.5em; margin-bottom: 20px; color: var(--primary-color); }
-        .modal p { font-size: 1.1em; margin-bottom: 20px; color: var(--text-secondary); }
-        .modal input {
-            width: 100%;
-            padding: 15px;
-            font-size: 1.1em;
-            border: 2px solid var(--border-color);
-            border-radius: 10px;
-            margin-bottom: 20px;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            transition: border-color 0.3s;
+        .logo {
+            display:flex; align-items:center; gap:12px;
+            text-decoration:none; cursor:default;
         }
-        .modal input:focus { outline: none; border-color: var(--primary-color); }
-        .modal-btn {
-            padding: 15px 40px;
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 1.1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            width: 100%;
+        .logo-icon {
+            width:44px; height:44px;
+            background: var(--gradient-gold);
+            border-radius:12px;
+            display:flex; align-items:center; justify-content:center;
+            box-shadow: 0 0 20px var(--primary-glow), 0 4px 12px rgba(0,0,0,0.3);
+            position:relative;
+            overflow:hidden;
+            transition: var(--transition);
         }
-        .modal-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(33, 150, 243, 0.3); }
-        .button-row { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-        .tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; margin-top: 20px; }
+        .logo-icon::before {
+            content:'';
+            position:absolute; inset:0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, transparent 50%);
+            border-radius:12px;
+        }
+        .logo-icon:hover {
+            transform:scale(1.08) rotate(-3deg);
+            box-shadow: 0 0 30px var(--primary-glow), 0 6px 20px rgba(0,0,0,0.4);
+        }
+        .logo-icon svg {
+            width:28px; height:28px;
+            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
+            position:relative; z-index:1;
+        }
+        .logo-text {
+            display:flex; flex-direction:column; line-height:1.1;
+        }
+        .logo-title {
+            font-size:1.5em; font-weight:900; letter-spacing:-0.03em;
+            background: var(--gradient-hero);
+            -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+            background-clip:text;
+        }
+        .logo-subtitle {
+            font-size:0.65em; font-weight:500; letter-spacing:0.08em;
+            color: var(--text-secondary); text-transform:uppercase;
+            margin-top:2px;
+        }
+        .header-actions { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+        .header-btn {
+            display:inline-flex; align-items:center; gap:6px;
+            padding:8px 16px; font-size:13px; font-weight:600;
+            border:1px solid var(--border-color); border-radius:var(--radius);
+            background:var(--bg-glass); color:var(--text-primary);
+            cursor:pointer; transition:var(--transition);
+            font-family:var(--font-ui);
+        }
+        .header-btn:hover { background:var(--bg-glass-hover); border-color:var(--border-glow); transform:translateY(-1px); }
+        .header-btn.primary { background:var(--gradient-gold); color:#000; border:none; }
+        .header-btn.primary:hover { box-shadow:0 0 20px var(--primary-glow); }
+        .header-btn.danger { border-color:var(--error-glow); color:var(--error); }
+        .header-btn.danger:hover { background:var(--error-glow); }
+
+        /* ===== NAV BAR ===== */
+        .nav-bar {
+            display:flex; gap:6px; margin-bottom:20px; padding:6px;
+            background:var(--bg-card); backdrop-filter:blur(16px);
+            border:1px solid var(--border-color); border-radius:var(--radius-lg);
+            overflow-x:auto; scrollbar-width:none;
+        }
+        .nav-bar::-webkit-scrollbar { display:none; }
+        .nav-btn {
+            display:inline-flex; align-items:center; gap:6px;
+            padding:10px 18px; font-size:13px; font-weight:600;
+            border:none; border-radius:var(--radius);
+            background:transparent; color:var(--text-secondary);
+            cursor:pointer; transition:var(--transition);
+            white-space:nowrap; font-family:var(--font-ui);
+        }
+        .nav-btn:hover { background:var(--bg-glass-hover); color:var(--text-primary); }
+        .nav-btn.active {
+            background:var(--gradient-gold); color:#000;
+            box-shadow:0 4px 16px var(--primary-glow);
+        }
+
+        /* ===== TABS ===== */
+        .tabs-bar {
+            display:flex; gap:4px; margin-bottom:20px; padding:4px;
+            background:var(--bg-secondary); border:1px solid var(--border-color);
+            border-radius:var(--radius-lg);
+        }
         .tab-btn {
-            padding: 12px 24px;
-            background: var(--bg-secondary);
-            border: 2px solid var(--border-color);
-            border-radius: 10px;
-            font-size: 17px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--text-primary);
+            flex:1; padding:10px 16px; font-size:14px; font-weight:600;
+            border:none; border-radius:var(--radius);
+            background:transparent; color:var(--text-secondary);
+            cursor:pointer; transition:var(--transition);
+            font-family:var(--font-ui);
         }
+        .tab-btn:hover { color:var(--text-primary); }
         .tab-btn.active {
-            background: var(--primary-color);
-            border-color: var(--primary-color);
-            color: white;
-            transform: scale(1.05);
+            background:var(--bg-card); color:var(--primary);
+            box-shadow:var(--shadow-card);
         }
-        .tab-btn:hover:not(.active) { transform: translateY(-2px); background: var(--bg-primary); }
-        .tab-content { display: none; animation: fadeIn 0.5s; }
-        .tab-content.active { display: block; }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .tab-content { display:none; }
+        .tab-content.active { display:block; animation:fadeUp .3s ease; }
+
+        @keyframes fadeUp {
+            from { opacity:0; transform:translateY(8px); }
+            to { opacity:1; transform:translateY(0); }
         }
-        .levels { display: flex; gap: 12px; margin-bottom: 25px; justify-content: center; flex-wrap: wrap; }
+
+        /* ===== LEVEL BUTTONS ===== */
+        .level-selector {
+            display:flex; gap:8px; margin-bottom:20px;
+            overflow-x:auto; padding:4px 0;
+            scrollbar-width:none;
+        }
+        .level-selector::-webkit-scrollbar { display:none; }
         .level-btn {
-            padding: 14px 20px;
-            background: var(--bg-secondary);
-            border: 2px solid var(--border-color);
-            border-radius: 12px;
-            color: var(--text-primary);
-            cursor: pointer;
-            min-width: 100px;
-            font-weight: 600;
-            transition: all 0.3s;
-            font-size: 16px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
+            display:flex; flex-direction:column; align-items:center; gap:4px;
+            padding:12px 20px; min-width:100px;
+            background:var(--bg-card); border:1px solid var(--border-color);
+            border-radius:var(--radius-lg); color:var(--text-secondary);
+            cursor:pointer; transition:var(--transition);
+            font-family:var(--font-ui); font-size:12px; font-weight:600;
         }
-        .level-btn.completed { background: var(--success-color); border-color: var(--success-color); color: white; }
-        .level-btn.active { background: var(--primary-color); border-color: var(--primary-color); transform: scale(1.1); color: white; }
-        .level-btn:hover { transform: translateY(-4px); }
-        .level-icon { font-size: 28px; margin-bottom: 5px; }
-        .game-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-bottom: 20px; }
-        @media (max-width: 1200px) { .game-layout { grid-template-columns: 1fr; } }
-        .game-board {
-            background: var(--bg-secondary);
-            padding: 25px;
-            border-radius: 15px;
-            border: 3px solid var(--primary-color);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        .level-btn:hover { border-color:var(--border-glow); transform:translateY(-2px); box-shadow:var(--shadow-card); }
+        .level-btn.active {
+            border-color:var(--primary); background:rgba(245,158,11,0.08);
+            color:var(--primary); box-shadow:0 0 20px var(--primary-glow);
         }
+        .level-btn.completed { border-color:var(--success); }
+        .level-btn.completed::after {
+            content:''; display:block; width:6px; height:6px;
+            background:var(--success); border-radius:50%; margin-top:2px;
+        }
+        .level-btn:disabled { opacity:.4; cursor:not-allowed; transform:none !important; }
+        .level-icon { font-size:24px; line-height:1; }
+
+        /* ===== GAME LAYOUT ===== */
+        .game-layout {
+            display:grid; grid-template-columns:1fr 1fr;
+            gap:20px; align-items:start;
+        }
+
+        /* ===== GAME BOARD ===== */
+        .board-panel {
+            background:var(--bg-card); backdrop-filter:blur(16px);
+            border:1px solid var(--border-color); border-radius:var(--radius-xl);
+            padding:20px; box-shadow:var(--shadow-card);
+        }
+
+        .stats-row {
+            display:grid; grid-template-columns:repeat(4, 1fr);
+            gap:8px; margin-bottom:16px;
+        }
+        .stat-card {
+            text-align:center; padding:10px 8px;
+            background:var(--bg-glass); border:1px solid var(--border-color);
+            border-radius:var(--radius);
+        }
+        .stat-value { font-size:1.4em; font-weight:800; color:var(--primary); }
+        .stat-label { font-size:10px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; }
+
+        .lives-row { text-align:center; margin-bottom:12px; }
+        #lives-display { font-size:28px; }
+
         #game-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, 60px);
-            grid-template-rows: auto;
-            gap: 4px;
-            margin: 20px auto;
-            background: var(--bg-primary);
-            padding: 15px;
-            border-radius: 12px;
-            border: 2px solid var(--border-color);
-            width: fit-content;
+            display:grid;
+            grid-template-columns:repeat(8, 1fr);
+            grid-template-rows:repeat(8, 1fr);
+            gap:2px;
+            aspect-ratio:1;
+            background:var(--bg-secondary);
+            border:2px solid var(--border-color);
+            border-radius:var(--radius);
+            padding:3px;
+            margin:0 auto;
+            max-width:500px;
         }
         .cell {
-            width: 60px;
-            height: 60px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 40px;
-            transition: all 0.3s;
-            box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.05);
-            cursor: pointer;
-            user-select: none;
-            border: 2px solid var(--border-color);
+            display:flex; align-items:center; justify-content:center;
+            background:var(--bg-tertiary); border-radius:4px;
+            font-size:clamp(16px, 3vw, 24px);
+            transition:all 0.25s ease;
+            position:relative; cursor:default;
+            aspect-ratio:1;
         }
-        .cell:hover { transform: scale(1.05); }
-        .empty { background: var(--bg-primary); }
-        .tiger { background: #ff9800; border-color: #f57c00; animation: bounce 0.8s infinite alternate; cursor: pointer; transition: all 0.2s; font-size: 48px !important; }
-        .tiger:hover { transform: scale(1.1); }
-        @keyframes tigerJump { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
-        @keyframes tigerDance {
-            0%, 100% { transform: translateX(0) rotate(0deg); }
-            25% { transform: translateX(-8px) rotate(-3deg); }
-            50% { transform: translateX(8px) rotate(3deg); }
-            75% { transform: translateX(-8px) rotate(-3deg); }
+        .cell.tiger {
+            background:rgba(245,158,11,0.15);
+            box-shadow:inset 0 0 12px rgba(245,158,11,0.2);
+            animation:tigerPulse 2s ease-in-out infinite;
         }
-        .tiger.jump { animation: tigerJump 0.6s ease-in-out !important; }
-        .tiger.dance { animation: tigerDance 0.8s infinite !important; }
-        .wall { background: #2e7d32; border-color: #1b5e20; }
-        .tree { background: #388e3c; border-color: #2e7d32; }
-        .meat { background: #ffb74d; border-color: #ffa726; animation: wiggle 1s infinite alternate; }
-        .exit { background: #4caf50; border-color: #388e3c; animation: glow 2s infinite; }
-        .key { background: #ffd54f; border-color: #ffca28; animation: sparkle 1.5s infinite alternate; }
-        .door { background: #ba68c8; border-color: #ab47bc; }
-        .locked-door { background: #ba68c8; border-color: #ab47bc; position: relative; }
-        .locked-door::after { content: "🔒"; position: absolute; font-size: 16px; bottom: 2px; right: 2px; }
-        .paw { background: #ffcc80; border-color: #ffb74d; }
+        @keyframes tigerPulse {
+            0%,100%{box-shadow:inset 0 0 12px rgba(245,158,11,.2)}
+            50%{box-shadow:inset 0 0 20px rgba(245,158,11,.35)}
+        }
+        .cell.tree { background:rgba(16,185,129,0.12); }
+        .cell.meat { background:rgba(245,158,11,0.1); }
+        .cell.key { background:rgba(251,191,36,0.12); }
+        .cell.exit { background:rgba(16,185,129,0.15); box-shadow:inset 0 0 10px rgba(16,185,129,.2); }
+        .cell.locked-door { background:rgba(139,92,246,0.12); }
+        .cell.door { background:rgba(139,92,246,0.08); }
+        .cell.wall { background:rgba(100,116,139,0.2); }
+        .cell.paw { background:rgba(245,158,11,0.05); color:var(--text-muted); font-size:clamp(10px,2vw,14px); }
+
+        .cell.tiger-move {
+            animation:tigerStep .3s ease;
+        }
+        @keyframes tigerStep {
+            0%{transform:scale(1)} 50%{transform:scale(1.15)} 100%{transform:scale(1)}
+        }
+        .cell.dance { animation:dance .5s ease infinite; }
+        @keyframes dance { 0%,100%{transform:rotate(0)} 25%{transform:rotate(-8deg)} 75%{transform:rotate(8deg)} }
+        .cell.jump { animation:jump .5s ease; }
+        @keyframes jump { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+
+        /* ===== CODE PANEL ===== */
         .code-panel {
-            background: var(--bg-secondary);
-            padding: 25px;
-            border-radius: 15px;
-            border: 3px solid var(--primary-color);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            height: fit-content;
+            background:var(--bg-card); backdrop-filter:blur(16px);
+            border:1px solid var(--border-color); border-radius:var(--radius-xl);
+            padding:20px; box-shadow:var(--shadow-card);
+            display:flex; flex-direction:column; gap:16px;
         }
-        .level-task {
-            background: var(--bg-primary);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            border-left: 4px solid var(--primary-color);
-            font-size: 16px;
-            line-height: 1.6;
+
+        .task-box {
+            padding:14px 18px;
+            background:var(--bg-glass); border:1px solid var(--border-color);
+            border-radius:var(--radius); border-left:3px solid var(--primary);
         }
-        .level-task h4 { color: var(--primary-color); margin-bottom: 8px; font-size: 1.3em; }
-        .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
-        .stat { background: var(--bg-primary); padding: 12px; border-radius: 10px; text-align: center; border: 2px solid var(--border-color); }
-        .stat-value { font-size: 32px; font-weight: bold; color: var(--primary-color); }
-        .stat div:last-child { font-size: 15px; color: var(--text-secondary); margin-top: 6px; }
-        .controls { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
-        .button {
-            padding: 14px 24px;
-            border: none;
-            border-radius: 10px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            flex: 1;
-            min-width: 120px;
-            font-family: 'Segoe UI', sans-serif;
-            color: white;
+        .task-box .task-label { font-size:11px; font-weight:700; color:var(--primary); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px; }
+        .task-box .task-text { font-size:14px; color:var(--text-secondary); line-height:1.5; }
+        .task-box code {
+            background:rgba(245,158,11,0.1); color:var(--primary);
+            padding:2px 6px; border-radius:4px;
+            font-family:var(--font-code); font-size:13px;
         }
-        .button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); }
-        .button:disabled { opacity: 0.6; cursor: not-allowed; transform: none !important; }
-        .run-btn { background: var(--success-color); flex: 2; }
-        .run-btn.running { background: var(--warning-color); animation: pulse 1s infinite; }
-        .reset-btn { background: var(--error-color); }
-        .undo-btn { background: #673ab7; }
-        #code-input {
-            width: 100%;
-            height: 200px;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            font-family: 'Courier New', monospace;
-            font-size: 15px;
-            padding: 15px;
-            border: 2px solid var(--border-color);
-            border-radius: 10px;
-            resize: none;
-            margin-bottom: 15px;
-            line-height: 1.6;
-            transition: border-color 0.3s;
+
+        .action-buttons {
+            display:flex; gap:8px; flex-wrap:wrap;
         }
-        #code-input.error { border-color: var(--error-color); background: rgba(244, 67, 54, 0.1); }
-        #code-input:focus { outline: none; border-color: var(--primary-color); }
-        .arrow-controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 15px; justify-items: center; max-width: 200px; margin-left: auto; margin-right: auto; }
+        .action-btn {
+            flex:1; min-width:0; padding:10px 12px;
+            font-size:13px; font-weight:700;
+            border:none; border-radius:var(--radius);
+            cursor:pointer; transition:var(--transition);
+            font-family:var(--font-ui);
+            display:flex; align-items:center; justify-content:center; gap:6px;
+        }
+        .action-btn.run {
+            background:var(--gradient-gold); color:#000;
+            box-shadow:0 4px 16px var(--primary-glow);
+        }
+        .action-btn.run:hover { box-shadow:0 6px 24px var(--primary-glow); transform:translateY(-1px); }
+        .action-btn.run:disabled { opacity:.5; cursor:not-allowed; transform:none; }
+        .action-btn.run.running { background:var(--gradient-emerald); }
+        .action-btn.secondary {
+            background:var(--bg-glass); border:1px solid var(--border-color);
+            color:var(--text-primary);
+        }
+        .action-btn.secondary:hover { background:var(--bg-glass-hover); }
+        .action-btn.reset { background:var(--error-glow); color:var(--error); border:1px solid rgba(239,68,68,.2); }
+        .action-btn.reset:hover { background:rgba(239,68,68,.15); }
+        .action-btn.clear { background:rgba(139,92,246,.1); color:var(--purple); border:1px solid rgba(139,92,246,.2); }
+        .action-btn.clear:hover { background:rgba(139,92,246,.15); }
+
+        /* Arrow & command buttons */
+        .controls-grid {
+            display:flex; flex-direction:column; gap:8px;
+        }
+        .arrow-row {
+            display:flex; justify-content:center; gap:6px;
+        }
         .arrow-btn {
-            padding: 14px;
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 24px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: bold;
-            min-width: 60px;
-            min-height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width:44px; height:44px;
+            display:flex; align-items:center; justify-content:center;
+            background:var(--bg-glass); border:1px solid var(--border-color);
+            border-radius:var(--radius); font-size:18px;
+            cursor:pointer; transition:var(--transition);
+            color:var(--text-primary);
         }
-        .arrow-btn:hover { transform: scale(1.15); background: #1976d2; }
-        .arrow-btn:active { transform: scale(0.95); }
-        .number-buttons { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 15px; }
-        .num-btn {
-            padding: 8px;
-            background: var(--warning-color);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
+        .arrow-btn:hover { background:rgba(59,130,246,.12); border-color:var(--blue); color:var(--blue); transform:scale(1.05); }
+        .arrow-btn:active { transform:scale(.95); }
+
+        .cmd-buttons {
+            display:flex; gap:6px; flex-wrap:wrap;
         }
-        .num-btn:hover { transform: translateY(-2px); background: #f57c00; }
-        .commands { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 15px; }
         .cmd-btn {
-            padding: 12px;
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
+            padding:8px 14px; font-size:12px; font-weight:600;
+            font-family:var(--font-code);
+            background:rgba(139,92,246,.08); border:1px solid rgba(139,92,246,.2);
+            border-radius:var(--radius); color:var(--purple);
+            cursor:pointer; transition:var(--transition);
         }
-        .cmd-btn:hover { transform: translateY(-2px); background: #1976d2; }
-        .cmd-icon { font-size: 20px; }
-        .code-history { margin-top: 20px; padding: 15px; background: var(--bg-primary); border-radius: 10px; border: 2px solid var(--border-color); max-height: 150px; overflow-y: auto; }
-        .code-history h4 { color: var(--primary-color); margin-bottom: 10px; font-size: 1.1em; }
-        .history-item { padding: 8px; background: var(--bg-secondary); border-radius: 6px; margin-bottom: 8px; font-size: 13px; border-left: 3px solid var(--primary-color); }
-        .history-time { color: var(--text-secondary); font-size: 12px; }
-        .hint { background: var(--bg-primary); padding: 15px; border-radius: 10px; margin-top: 15px; border-left: 4px solid var(--primary-color); font-size: 14px; }
-        .hint h4 { color: var(--primary-color); margin-bottom: 8px; font-size: 1.1em; }
-        .hint p { margin: 6px 0; line-height: 1.5; }
-        /* ПЕСОЧНИЦА */
-        .sandbox-container {
-            background: var(--bg-secondary);
-            padding: 25px;
-            border-radius: 15px;
-            border: 3px solid #7e57c2;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
+        .cmd-btn:hover { background:rgba(139,92,246,.15); transform:translateY(-1px); }
+
+        .number-buttons {
+            display:flex; gap:4px; flex-wrap:wrap;
         }
+        .num-btn {
+            width:36px; height:36px;
+            display:flex; align-items:center; justify-content:center;
+            background:var(--bg-glass); border:1px solid var(--border-color);
+            border-radius:var(--radius); font-size:13px; font-weight:600;
+            cursor:pointer; transition:var(--transition);
+            color:var(--text-secondary); font-family:var(--font-code);
+        }
+        .num-btn:hover { border-color:var(--primary); color:var(--primary); }
+
+        /* Code editor */
+        .code-editor-wrap {
+            position:relative;
+        }
+        #code-input {
+            width:100%; min-height:120px; max-height:200px;
+            padding:14px 16px; font-size:14px; line-height:1.7;
+            font-family:var(--font-code);
+            background:var(--bg-secondary); color:var(--cyan);
+            border:1px solid var(--border-color); border-radius:var(--radius);
+            resize:vertical; transition:var(--transition);
+            outline:none;
+        }
+        #code-input::placeholder { color:var(--text-muted); font-style:italic; }
+        #code-input:focus { border-color:var(--primary); box-shadow:0 0 0 3px var(--primary-glow); }
+        #code-input.error { border-color:var(--error); box-shadow:0 0 0 3px var(--error-glow); }
+
+        #step-indicator {
+            position:absolute; bottom:8px; right:12px;
+            font-size:11px; color:var(--text-muted);
+            font-family:var(--font-code);
+        }
+
+        /* ===== MODALS ===== */
+        .modal-overlay {
+            position:fixed; inset:0;
+            background:rgba(0,0,0,0.7); backdrop-filter:blur(8px);
+            display:none; align-items:center; justify-content:center;
+            z-index:3000; padding:20px;
+        }
+        .modal-overlay.active { display:flex; }
+        .modal {
+            background:var(--bg-secondary);
+            border:1px solid var(--border-color);
+            border-radius:var(--radius-2xl);
+            padding:32px; max-width:500px; width:100%;
+            box-shadow:var(--shadow-lg);
+            animation:modalIn .3s ease;
+            max-height:90vh; overflow-y:auto;
+            position:relative;
+        }
+        .modal.wide { max-width:800px; }
+        .modal.full { max-width:1000px; }
+        @keyframes modalIn {
+            from{opacity:0;transform:scale(.95) translateY(10px)}
+            to{opacity:1;transform:scale(1) translateY(0)}
+        }
+        .modal-title {
+            font-size:1.4em; font-weight:800; margin-bottom:16px;
+            background:var(--gradient-gold);
+            -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+            background-clip:text; text-align:center;
+        }
+        .modal-close {
+            position:absolute; top:16px; right:16px;
+            width:32px; height:32px;
+            display:flex; align-items:center; justify-content:center;
+            background:var(--bg-glass); border:1px solid var(--border-color);
+            border-radius:50%; color:var(--text-muted);
+            cursor:pointer; transition:var(--transition);
+            font-size:16px;
+        }
+        .modal-close:hover { background:var(--error-glow); color:var(--error); }
+
+        /* Welcome modal */
+        .welcome-card {
+            text-align:center;
+        }
+        .welcome-card .subtitle { color:var(--text-secondary); margin-bottom:24px; }
+        .welcome-card .tg-box {
+            background:var(--bg-glass); border:1px solid var(--border-color);
+            border-radius:var(--radius); padding:14px; margin-bottom:20px;
+        }
+        .welcome-card .tg-link {
+            display:inline-block; padding:6px 16px;
+            background:var(--gradient-gold); color:#000;
+            border-radius:var(--radius); font-weight:700;
+            text-decoration:none; font-size:14px;
+        }
+        .input-group { margin-bottom:16px; text-align:left; }
+        .input-label {
+            display:block; font-size:11px; font-weight:700;
+            color:var(--text-muted); text-transform:uppercase;
+            letter-spacing:0.05em; margin-bottom:6px;
+        }
+        .input-field {
+            width:100%; padding:12px 16px; font-size:14px;
+            background:var(--bg-primary); color:var(--text-primary);
+            border:1px solid var(--border-color); border-radius:var(--radius);
+            font-family:var(--font-ui); transition:var(--transition);
+            outline:none;
+        }
+        .input-field:focus { border-color:var(--primary); box-shadow:0 0 0 3px var(--primary-glow); }
+        .input-error {
+            display:none; margin-top:8px; padding:8px 12px;
+            background:var(--error-glow); border:1px solid rgba(239,68,68,.3);
+            border-radius:var(--radius); color:var(--error);
+            font-size:13px;
+        }
+
+        .btn-primary {
+            width:100%; padding:14px;
+            background:var(--gradient-gold); color:#000;
+            border:none; border-radius:var(--radius);
+            font-size:15px; font-weight:700;
+            cursor:pointer; transition:var(--transition);
+            font-family:var(--font-ui);
+        }
+        .btn-primary:hover { box-shadow:0 6px 24px var(--primary-glow); transform:translateY(-1px); }
+
+        .btn-secondary {
+            padding:10px 20px;
+            background:var(--bg-glass); border:1px solid var(--border-color);
+            border-radius:var(--radius); color:var(--text-primary);
+            font-size:14px; font-weight:600;
+            cursor:pointer; transition:var(--transition);
+            font-family:var(--font-ui);
+        }
+        .btn-secondary:hover { background:var(--bg-glass-hover); }
+
+        /* Settings modal */
+        .settings-list { display:flex; flex-direction:column; gap:14px; }
+        .setting-row {
+            display:flex; justify-content:space-between; align-items:center;
+            padding:12px 16px;
+            background:var(--bg-glass); border:1px solid var(--border-color);
+            border-radius:var(--radius);
+        }
+        .setting-label { font-weight:600; font-size:14px; }
+        .toggle-switch {
+            position:relative; width:44px; height:24px;
+            background:var(--bg-tertiary); border-radius:12px;
+            cursor:pointer; transition:var(--transition);
+            border:1px solid var(--border-color);
+        }
+        .toggle-switch.active { background:var(--primary); border-color:var(--primary); }
+        .toggle-switch::after {
+            content:''; position:absolute;
+            top:2px; left:2px; width:18px; height:18px;
+            background:white; border-radius:50%;
+            transition:var(--transition);
+        }
+        .toggle-switch.active::after { left:22px; }
+
+        .speed-buttons { display:flex; gap:6px; }
+        .speed-btn {
+            padding:6px 12px; font-size:12px; font-weight:600;
+            background:var(--bg-glass); border:1px solid var(--border-color);
+            border-radius:var(--radius); color:var(--text-secondary);
+            cursor:pointer; transition:var(--transition);
+            font-family:var(--font-ui);
+        }
+        .speed-btn:hover { border-color:var(--primary); color:var(--primary); }
+        .speed-btn.active { background:var(--primary); color:#000; border-color:var(--primary); }
+
+        .mode-buttons { display:flex; gap:6px; }
+        .mode-btn {
+            flex:1; padding:10px; font-size:13px; font-weight:600;
+            background:var(--bg-glass); border:1px solid var(--border-color);
+            border-radius:var(--radius); color:var(--text-secondary);
+            cursor:pointer; transition:var(--transition);
+            font-family:var(--font-ui); text-align:center;
+        }
+        .mode-btn:hover { border-color:var(--primary); }
+        .mode-btn.active { background:var(--primary); color:#000; border-color:var(--primary); }
+        #mode-description { font-size:12px; color:var(--text-muted); margin-top:6px; text-align:center; }
+
+        /* Stats modal */
+        .stats-grid {
+            display:grid; grid-template-columns:repeat(2, 1fr);
+            gap:12px; margin-bottom:20px;
+        }
+        .stats-card {
+            padding:16px; text-align:center;
+            background:var(--bg-glass); border:1px solid var(--border-color);
+            border-radius:var(--radius);
+        }
+        .stats-card .value { font-size:1.8em; font-weight:800; color:var(--primary); }
+        .stats-card .label { font-size:11px; font-weight:600; color:var(--text-muted); text-transform:uppercase; }
+        .level-stats-list { display:flex; flex-direction:column; gap:8px; }
+        .level-stat-row {
+            display:flex; justify-content:space-between; align-items:center;
+            padding:10px 14px;
+            background:var(--bg-glass); border:1px solid var(--border-color);
+            border-radius:var(--radius);
+        }
+        .level-stat-row .stars { color:var(--primary); font-size:14px; }
+
+        /* ===== SANDBOX ===== */
         .sandbox-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 12px;
+            text-align:center; margin-bottom:20px;
+        }
+        .sandbox-header h2 {
+            background:var(--gradient-purple);
+            -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+            background-clip:text;
         }
         .sandbox-controls {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
+            display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px;
+            justify-content:center;
         }
-        .sandbox-btn {
-            padding: 10px 20px;
-            background: #7e57c2;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
+        .sandbox-grid-btn, .sandbox-obj-btn {
+            padding:8px 14px; font-size:13px; font-weight:600;
+            background:var(--bg-glass); border:1px solid var(--border-color);
+            border-radius:var(--radius); color:var(--text-secondary);
+            cursor:pointer; transition:var(--transition);
+            font-family:var(--font-ui);
         }
-        .sandbox-btn:hover {
-            transform: translateY(-2px);
-            background: #673ab7;
+        .sandbox-grid-btn:hover, .sandbox-obj-btn:hover { border-color:var(--primary); color:var(--primary); }
+        .sandbox-grid-btn.active, .sandbox-obj-btn.active { background:var(--primary); color:#000; border-color:var(--primary); }
+
+        .sandbox-actions {
+            display:flex; gap:8px; justify-content:center; flex-wrap:wrap;
+            margin-top:16px;
         }
-        .sandbox-btn.green {
-            background: var(--success-color);
-        }
-        .sandbox-btn.green:hover {
-            background: #388e3c;
-        }
-        .sandbox-btn.orange {
-            background: var(--warning-color);
-        }
-        .sandbox-btn.orange:hover {
-            background: #f57c00;
-        }
-        .sandbox-btn.red {
-            background: var(--error-color);
-        }
-        .sandbox-btn.red:hover {
-            background: #d32f2f;
-        }
-        .size-controls {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        .size-btn {
-            padding: 8px 12px;
-            background: var(--bg-primary);
-            border: 2px solid var(--border-color);
-            border-radius: 6px;
-            color: var(--text-primary);
-            cursor: pointer;
-            font-size: 13px;
-            transition: all 0.2s;
-        }
-        .size-btn.active {
-            background: var(--primary-color);
-            border-color: var(--primary-color);
-            color: white;
-        }
-        .size-btn:hover {
-            background: var(--bg-secondary);
-        }
-        .object-buttons {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
-            gap: 8px;
-            margin-bottom: 20px;
-        }
-        .obj-btn {
-            padding: 12px;
-            background: var(--bg-primary);
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.3s;
-            font-size: 14px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-            color: var(--text-primary);
-        }
-        .obj-btn:hover {
-            transform: scale(1.05);
-            background: var(--bg-secondary);
-        }
-        .obj-btn.active {
-            border-color: #7e57c2;
-            background: #ede7f6;
-            transform: scale(1.05);
-        }
+
         #sandbox-grid {
-            display: grid;
-            gap: 4px;
-            margin: 20px auto;
-            background: var(--bg-primary);
-            padding: 15px;
-            border-radius: 12px;
-            border: 2px solid var(--border-color);
-            touch-action: none;
-            position: relative;
-            justify-content: center;
+            display:grid; gap:2px;
+            background:var(--bg-secondary);
+            border:2px solid var(--border-color);
+            border-radius:var(--radius);
+            padding:3px; margin:0 auto;
+            max-width:500px;
         }
         .sandbox-cell {
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            background: var(--bg-secondary);
-            border: 2px solid var(--border-color);
-            user-select: none;
-            touch-action: none;
-            transition: all 0.2s;
-            font-size: 24px;
+            display:flex; align-items:center; justify-content:center;
+            background:var(--bg-tertiary); border-radius:4px;
+            cursor:pointer; transition:all .15s ease;
+            aspect-ratio:1;
         }
-        .sandbox-cell:hover {
-            transform: scale(1.05);
+        .sandbox-cell:hover { background:var(--bg-glass-hover); border:1px solid var(--border-glow); }
+
+        /* ===== AI CHAT ===== */
+        .ai-chat-fab {
+            position:fixed; bottom:20px; right:20px;
+            width:56px; height:56px;
+            background:var(--gradient-gold); border:none;
+            border-radius:50%; font-size:24px;
+            cursor:pointer; z-index:2000;
+            box-shadow:0 8px 24px var(--primary-glow);
+            transition:var(--transition);
+            display:flex; align-items:center; justify-content:center;
         }
-        .message-modal {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: var(--bg-secondary);
-            padding: 30px;
-            border-radius: 15px;
-            border: 3px solid var(--warning-color);
-            z-index: 1001;
-            min-width: 350px;
-            text-align: center;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-        }
-        .message-modal.active { display: block; animation: slideIn 0.3s; }
-        .message-title { font-size: 1.8em; color: var(--primary-color); margin-bottom: 15px; font-weight: 600; }
-        .message-text { line-height: 1.6; color: var(--text-secondary); margin-bottom: 20px; }
-        .ok-btn {
-            padding: 12px 30px;
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .ok-btn:hover { transform: translateY(-2px); background: #1976d2; }
-        .admin-btn-floating {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: #d32f2f;
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-size: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            z-index: 999;
-            transition: all 0.3s;
-            font-weight: bold;
-        }
-        .admin-btn-floating:hover { background: #b71c1c; transform: scale(1.1); box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4); }
-        .admin-btn-floating:active { transform: scale(0.95); }
-        @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-5px); } }
-        @keyframes wiggle { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
-        @keyframes glow { 0%, 100% { box-shadow: 0 0 10px #4caf50; } 50% { box-shadow: 0 0 20px #4caf50; } }
-        @keyframes sparkle { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(1.1); opacity: 0.8; } }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
-        @media (max-width: 768px) {
-            h1 { font-size: 1.8em; }
-            header { flex-direction: column; }
-            .game-layout { grid-template-columns: 1fr; }
-            #game-grid { grid-template-columns: repeat(8, 50px); grid-template-rows: repeat(8, 50px); gap: 3px; }
-            .cell { width: 50px; height: 50px; font-size: 24px; }
-            .stats { grid-template-columns: repeat(2, 1fr); }
-            .commands { grid-template-columns: repeat(2, 1fr); }
-            .arrow-controls { grid-template-columns: repeat(3, 1fr); }
-            .arrow-btn { min-width: 50px; min-height: 50px; font-size: 20px; }
-        }
-        /* АДМИН-ПАНЕЛЬ */
-        .admin-panel-content {
-            background: var(--bg-secondary);
-            border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-            max-width: 900px;
-            max-height: 80vh;
-            overflow-y: auto;
-            animation: slideIn 0.5s;
-        }
-        .admin-panel-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px;
-            border-bottom: 2px solid var(--border-color);
-        }
-        .admin-panel-header h2 {
-            font-size: 1.8em;
-            color: var(--primary-color);
-            margin: 0;
-        }
-        .close-btn {
-            background: none;
-            border: none;
-            font-size: 1.5em;
-            cursor: pointer;
-            color: var(--text-primary);
-            transition: all 0.3s;
-        }
-        .close-btn:hover {
-            transform: scale(1.2);
-            color: var(--error-color);
-        }
-        .admin-tabs {
-            display: flex;
-            gap: 8px;
-            padding: 12px 15px;
-            border-bottom: 2px solid var(--border-color);
-            flex-wrap: wrap;
-            overflow-x: auto;
-        }
-        .admin-tab-btn {
-            padding: 8px 15px;
-            background: var(--bg-primary);
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            color: var(--text-primary);
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 13px;
-            white-space: nowrap;
-            transition: all 0.3s;
-            flex-shrink: 0;
-        }
-        .admin-tab-btn.active {
-            background: var(--primary-color);
-            border-color: var(--primary-color);
-            color: white;
-        }
-        .admin-tab-btn:hover {
-            transform: translateY(-2px);
-        }
-        .admin-tab-content {
-            display: none;
-            padding: 20px;
-        }
-        .admin-tab-content.active {
-            display: block;
-        }
-        .admin-tab-content h3 {
-            font-size: 1.5em;
-            margin-bottom: 20px;
-            color: var(--primary-color);
-        }
-        .admin-section {
-            background: var(--bg-primary);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            border-left: 4px solid var(--primary-color);
-        }
-        .admin-section h4 {
-            font-size: 1.1em;
-            margin-bottom: 10px;
-            color: var(--text-primary);
-        }
-        .admin-section input[type="file"] {
-            margin-bottom: 10px;
-            padding: 10px;
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            width: 100%;
-        }
-        .admin-section button {
-            padding: 10px 20px;
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-            margin-right: 10px;
-        }
-        .admin-section button:hover {
-            transform: translateY(-2px);
-            background: #1976d2;
-        }
-        .admin-section label {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            font-size: 1.1em;
-        }
-        .admin-section input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-        }
-        .admin-level-item, .admin-user-item {
-            background: var(--bg-secondary);
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            border-left: 4px solid var(--success-color);
-        }
-        .admin-level-item strong, .admin-user-item strong {
-            font-size: 1.1em;
-            color: var(--primary-color);
-        }
-        .admin-level-item p, .admin-user-item p {
-            font-size: 0.9em;
-            color: var(--text-secondary);
-            margin: 5px 0;
-        }
-        .admin-level-item button, .admin-user-item button {
-            padding: 8px 15px;
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9em;
-            margin-right: 5px;
-            margin-top: 10px;
-            transition: all 0.3s;
-        }
-        .admin-level-item button:hover, .admin-user-item button:hover {
-            transform: translateY(-2px);
-            background: #1976d2;
-        }
-        /* Модальное окно админ-панели */
-        #admin-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-        }
-        #admin-modal.active {
-            display: flex;
-        }
-        /* Стили для уведомлений */
-        .admin-notification-item {
-            background: var(--bg-secondary);
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            border-left: 4px solid #2196F3;
-        }
-        .admin-notification-item strong {
-            color: #2196F3;
-            font-size: 1.1em;
-        }
-        .admin-notification-item p {
-            margin: 8px 0;
-            color: var(--text-primary);
-        }
-        .admin-notification-item small {
-            color: var(--text-secondary);
-        }
-        @keyframes slideInRight {
-            from {
-                transform: translateX(400px);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-        @keyframes slideOutRight {
-            from {
-                transform: translateX(0);
-                opacity: 1;
-            }
-            to {
-                transform: translateX(400px);
-                opacity: 0;
-            }
-        }
-        /* ИИ ЧАТ */
-        .ai-chat-btn {
-            position: fixed;
-            bottom: 90px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: #9c27b0;
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-size: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            z-index: 998;
-            transition: all 0.3s;
-            font-weight: bold;
-        }
-        .ai-chat-btn:hover {
-            background: #7b1fa2;
-            transform: scale(1.1);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
-        }
-        .ai-chat-btn:active {
-            transform: scale(0.95);
-        }
+        .ai-chat-fab:hover { transform:scale(1.1); box-shadow:0 12px 32px var(--primary-glow); }
         .ai-chat-widget {
-            position: fixed;
-            bottom: 90px;
-            right: 20px;
-            width: 350px;
-            height: 500px;
-            background: var(--bg-secondary);
-            border-radius: 15px;
-            border: 3px solid #9c27b0;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            z-index: 997;
-            display: none;
-            flex-direction: column;
-            animation: slideInRight 0.3s;
+            position:fixed; bottom:90px; right:20px;
+            width:360px; max-height:480px;
+            background:var(--bg-secondary); border:1px solid var(--border-color);
+            border-radius:var(--radius-xl); box-shadow:var(--shadow-lg);
+            display:none; flex-direction:column; z-index:2000;
+            overflow:hidden;
         }
-        .ai-chat-widget.active {
-            display: flex;
-        }
+        .ai-chat-widget.active { display:flex; }
         .ai-chat-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px;
-            border-bottom: 2px solid #9c27b0;
-            background: linear-gradient(135deg, #9c27b0, #7b1fa2);
-            color: white;
-            border-radius: 12px 12px 0 0;
+            padding:14px 18px;
+            background:var(--bg-card); border-bottom:1px solid var(--border-color);
+            display:flex; justify-content:space-between; align-items:center;
         }
-        .ai-chat-header h3 {
-            margin: 0;
-            font-size: 1.1em;
-        }
-        .ai-chat-close {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5em;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .ai-chat-close:hover {
-            transform: scale(1.2);
-        }
-        .ai-chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+        .ai-chat-header h4 { font-size:14px; color:var(--primary); }
+        #ai-chat-messages {
+            flex:1; overflow-y:auto; padding:16px;
+            display:flex; flex-direction:column; gap:10px;
+            min-height:200px; max-height:320px;
         }
         .ai-chat-message {
-            padding: 12px;
-            border-radius: 10px;
-            max-width: 90%;
-            word-wrap: break-word;
-            line-height: 1.4;
-            font-size: 14px;
+            padding:10px 14px; border-radius:var(--radius);
+            font-size:13px; line-height:1.5; max-width:85%;
         }
         .ai-chat-message.user {
-            align-self: flex-end;
-            background: #9c27b0;
-            color: white;
-            border-bottom-right-radius: 2px;
+            background:var(--gradient-gold); color:#000;
+            align-self:flex-end; border-bottom-right-radius:4px;
         }
         .ai-chat-message.assistant {
-            align-self: flex-start;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            border-bottom-left-radius: 2px;
-            border: 1px solid var(--border-color);
+            background:var(--bg-glass); border:1px solid var(--border-color);
+            color:var(--text-primary);
+            align-self:flex-start; border-bottom-left-radius:4px;
         }
-        .ai-chat-message.loading {
-            align-self: flex-start;
-            background: var(--bg-primary);
-            color: var(--text-secondary);
-            border: 1px solid var(--border-color);
-            font-style: italic;
-        }
+        .ai-chat-message.loading { color:var(--text-muted); font-style:italic; }
         .ai-chat-input-area {
-            display: flex;
-            gap: 8px;
-            padding: 12px;
-            border-top: 2px solid var(--border-color);
-            background: var(--bg-primary);
-            border-radius: 0 0 12px 12px;
+            padding:12px; border-top:1px solid var(--border-color);
+            display:flex; gap:8px;
         }
         #ai-chat-input {
-            flex: 1;
-            padding: 10px;
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            background: var(--bg-secondary);
-            color: var(--text-primary);
-            font-size: 13px;
-            transition: border-color 0.3s;
+            flex:1; padding:10px 14px; font-size:13px;
+            background:var(--bg-primary); color:var(--text-primary);
+            border:1px solid var(--border-color); border-radius:var(--radius);
+            font-family:var(--font-ui); outline:none;
         }
-        #ai-chat-input:focus {
-            outline: none;
-            border-color: #9c27b0;
+        #ai-chat-input:focus { border-color:var(--primary); }
+        .ai-send-btn {
+            padding:10px 16px;
+            background:var(--gradient-gold); color:#000;
+            border:none; border-radius:var(--radius);
+            font-weight:700; cursor:pointer; transition:var(--transition);
+            font-family:var(--font-ui); font-size:13px;
         }
-        .ai-chat-send {
-            padding: 10px 15px;
-            background: #9c27b0;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-            font-size: 14px;
+
+        /* ===== ADMIN ===== */
+        .admin-tabs { display:flex; gap:6px; margin-bottom:16px; flex-wrap:wrap; }
+        .admin-tab-btn {
+            padding:8px 14px; font-size:12px; font-weight:600;
+            background:var(--bg-glass); border:1px solid var(--border-color);
+            border-radius:var(--radius); color:var(--text-secondary);
+            cursor:pointer; transition:var(--transition);
+            font-family:var(--font-ui);
         }
-        .ai-chat-send:hover {
-            background: #7b1fa2;
-            transform: translateY(-2px);
+        .admin-tab-btn.active { background:var(--primary); color:#000; border-color:var(--primary); }
+        .admin-tab-content { display:none; }
+        .admin-tab-content.active { display:block; }
+
+        /* ===== TUTORIAL ===== */
+        .tutorial-steps { display:flex; flex-direction:column; gap:14px; }
+        .tutorial-step {
+            padding:16px;
+            background:var(--bg-glass); border:1px solid var(--border-color);
+            border-radius:var(--radius); display:flex; gap:14px;
         }
-        .ai-chat-send:active {
-            transform: translateY(0);
+        .tutorial-step .step-num {
+            width:32px; height:32px; min-width:32px;
+            display:flex; align-items:center; justify-content:center;
+            background:var(--gradient-gold); color:#000;
+            border-radius:50%; font-weight:800; font-size:14px;
         }
-        @media (max-width: 480px) {
-            .ai-chat-widget {
-                width: calc(100vw - 40px);
-                height: 400px;
-                bottom: 80px;
-            }
+        .tutorial-step code {
+            background:rgba(245,158,11,.1); color:var(--primary);
+            padding:2px 6px; border-radius:4px;
+            font-family:var(--font-code); font-size:13px;
         }
-        /* TUTORIAL STYLES */
-        .tutorial-cmd-btn {
-            padding: 15px;
-            background: var(--bg-primary);
-            border: 2px solid var(--primary-color);
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s;
-            color: var(--text-primary);
-            font-weight: 600;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
+
+        /* ===== STORY SELECTION ===== */
+        .story-grid {
+            display:grid; grid-template-columns:repeat(auto-fill, minmax(140px, 1fr));
+            gap:10px;
         }
-        .tutorial-cmd-btn:hover {
-            background: var(--primary-color);
-            color: white;
+        .story-card {
+            padding:16px; text-align:center;
+            background:var(--bg-glass); border:1px solid var(--border-color);
+            border-radius:var(--radius); cursor:pointer;
+            transition:var(--transition);
         }
-        .tutorial-cmd-btn:active {
-            transform: translateY(-3px);
-            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+        .story-card:hover { border-color:var(--border-glow); transform:translateY(-2px); }
+        .story-card:disabled, .story-card.locked { opacity:.4; cursor:not-allowed; transform:none !important; }
+        .story-card .story-icon { font-size:28px; margin-bottom:6px; }
+        .story-card .story-name { font-size:12px; font-weight:600; }
+
+        /* ===== RATING ===== */
+        .rating-stars { display:flex; gap:8px; justify-content:center; margin:20px 0; }
+        .rating-star {
+            font-size:32px; cursor:pointer;
+            transition:var(--transition); filter:grayscale(1);
         }
-        .tutorial-cmd-btn small {
-            font-size: 0.8em;
-            opacity: 0.8;
+        .rating-star:hover, .rating-star.active { filter:grayscale(0); transform:scale(1.2); }
+
+        /* ===== NEW LEVELS (published) ===== */
+        .published-levels-list { display:flex; flex-direction:column; gap:10px; }
+        .published-level-card {
+            padding:14px; display:flex; justify-content:space-between; align-items:center;
+            background:var(--bg-glass); border:1px solid var(--border-color);
+            border-radius:var(--radius);
         }
-        @keyframes tutorialMove {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
+
+        /* ===== FIREWORKS ===== */
+        #fireworks-container {
+            position:fixed; inset:0;
+            pointer-events:none; z-index:4000;
         }
-        .tutorial-tiger {
-            animation: tutorialMove 0.6s ease-in-out;
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 900px) {
+            .game-layout { grid-template-columns:1fr; }
         }
+        @media (max-width: 600px) {
+            .container { padding:10px 12px; }
+            header { padding:10px 14px; flex-wrap:wrap; gap:8px; }
+            .logo-icon { width:36px; height:36px; border-radius:10px; }
+            .logo-icon svg { width:22px; height:22px; }
+            .logo-title { font-size:1.2em; }
+            .logo-subtitle { font-size:0.55em; }
+            .header-btn { padding:6px 10px; font-size:12px; }
+            .nav-btn { padding:8px 12px; font-size:12px; }
+            .level-btn { padding:8px 12px; min-width:70px; }
+            .level-icon { font-size:18px; }
+            .board-panel, .code-panel { padding:14px; }
+            .stats-row { grid-template-columns:repeat(2, 1fr); }
+            .stat-value { font-size:1.1em; }
+            .modal { padding:20px; margin:10px; }
+            .ai-chat-widget { width:calc(100% - 40px); right:20px; }
+            .action-buttons { flex-wrap:wrap; }
+            .action-btn { min-width:calc(50% - 4px); }
+        }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar { width:6px; }
+        ::-webkit-scrollbar-track { background:transparent; }
+        ::-webkit-scrollbar-thumb { background:var(--border-color); border-radius:3px; }
+        ::-webkit-scrollbar-thumb:hover { background:var(--text-muted); }
     </style>
-    <script src="https://forms.yandex.ru/_static/embed.js"></script>
 </head>
 <body>
-<script>
-    // Clear corrupted stats on page load
-    try {
-        const stats = JSON.parse(localStorage.getItem('gameStats') || '{}');
-        let shouldClear = false;
-        
-        // Check for corrupted data
-        if (stats.levelStats) {
-            for (let i = 1; i <= 6; i++) {
-                if (stats.levelStats[i]) {
-                    if (stats.levelStats[i].time > 1000 || isNaN(stats.levelStats[i].time)) {
-                        shouldClear = true;
-                        break;
-                    }
-                }
-            }
-        }
-        
-        // Check for NaN in totals
-        if (isNaN(stats.totalAttempts) || isNaN(stats.totalScore) || isNaN(stats.totalSteps)) {
-            shouldClear = true;
-        }
-        
-        if (shouldClear) {
-            localStorage.clear();
-        }
-    } catch (e) {
-        localStorage.clear();
-    }
-</script>
-<script>
-console.log('✅ HTML загружен, начинаем загрузку скриптов');
-</script>
-<div id="welcome-modal" class="modal active" style="z-index: 1000;">
-    <div class="modal-content">
-        <h2>🐯 Вход в игру</h2>
-        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 15px; border-radius: 10px; margin-bottom: 20px;">
-            <p style="color: white; font-weight: 600; margin-bottom: 8px; font-size: 1.05em;">📱 Получите логин и пароль в Telegram боте:</p>
-            <a href="https://t.me/Tiger42bot" target="_blank" style="display: inline-block; background: white; color: #667eea; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 1.05em; transition: all 0.3s;" onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.2)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'">
-                🤖 @Tiger42bot
-            </a>
-        </div>
-        <p style="font-size: 0.9em; color: var(--text-secondary); font-weight: 600;">Логин:</p>
-        <input type="text" id="player-login" placeholder="Твой логин" maxlength="30">
-        <p style="font-size: 0.9em; color: var(--text-secondary); margin-top: 10px; font-weight: 600;">Пароль:</p>
-        <input type="password" id="player-password" placeholder="Твой пароль" maxlength="50">
-        <div id="login-error" style="color: #f44336; font-size: 0.9em; margin-top: 10px; display: none;"></div>
-        <button class="modal-btn" onclick="loginGame()" style="margin-top: 15px;">Войти 🎮</button>
-    </div>
-</div>
-<div id="tiger-name-modal" class="modal" style="z-index: 1001;">
-    <div class="modal-content">
-        <h2>🐯 Как зовут тигрёнка?</h2>
-        <p>Выбери имя для нашего маленького героя!</p>
-        <p style="font-size: 0.9em; color: var(--text-secondary);">Введи имя тигрёнка:</p>
-        <input type="text" id="tiger-name" placeholder="Имя тигрёнка" maxlength="30">
-        <button class="modal-btn" onclick="confirmTigerName()">Готово! 🎮</button>
-    </div>
-</div>
-<div id="story-selection-modal" class="modal" style="z-index: 4999;">
-    <div class="modal-content" style="max-width: 800px; max-height: 80vh; overflow-y: auto;">
-        <h2 style="text-align: center; margin-bottom: 30px;">📖 Выбери историю</h2>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
-            <button id="story-btn-intro" class="story-selection-btn" onclick="showStorySelectionDetail('intro')" style="padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 12px; cursor: pointer; font-size: 1.1em; font-weight: 600; transition: all 0.3s;">
-                <div style="font-size: 2em; margin-bottom: 10px;">🐯</div>
-                <div>Вводная история</div>
-                <small style="opacity: 0.8;">Встреча с тигрёнком</small>
-            </button>
-            <button id="story-btn-tutorial" class="story-selection-btn" onclick="showStorySelectionDetail('tutorial')" style="padding: 20px; background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%); color: white; border: none; border-radius: 12px; cursor: pointer; font-size: 1.1em; font-weight: 600; transition: all 0.3s;">
-                <div style="font-size: 2em; margin-bottom: 10px;">📚</div>
-                <div>Как играть?</div>
-                <small style="opacity: 0.8;">Обучение командам</small>
-            </button>
-            <button id="story-btn-level1" class="story-selection-btn" onclick="showStorySelectionDetail('level1')" style="padding: 20px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border: none; border-radius: 12px; cursor: pointer; font-size: 1.1em; font-weight: 600; transition: all 0.3s;">
-                <div style="font-size: 2em; margin-bottom: 10px;">🌱</div>
-                <div>Уровень 1</div>
-                <small style="opacity: 0.8;">Первые шаги</small>
-            </button>
-            <button id="story-btn-level2" class="story-selection-btn" onclick="showStorySelectionDetail('level2')" style="padding: 20px; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; border: none; border-radius: 12px; cursor: pointer; font-size: 1.1em; font-weight: 600; transition: all 0.3s;">
-                <div style="font-size: 2em; margin-bottom: 10px;">🍃</div>
-                <div>Уровень 2</div>
-                <small style="opacity: 0.8;">Обход дерева</small>
-            </button>
-            <button id="story-btn-level3" class="story-selection-btn" onclick="showStorySelectionDetail('level3')" style="padding: 20px; background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; border: none; border-radius: 12px; cursor: pointer; font-size: 1.1em; font-weight: 600; transition: all 0.3s;">
-                <div style="font-size: 2em; margin-bottom: 10px;">🌿</div>
-                <div>Уровень 3</div>
-                <small style="opacity: 0.8;">Лесная тропа</small>
-            </button>
-            <button id="story-btn-level4" class="story-selection-btn" onclick="showStorySelectionDetail('level4')" style="padding: 20px; background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white; border: none; border-radius: 12px; cursor: pointer; font-size: 1.1em; font-weight: 600; transition: all 0.3s;">
-                <div style="font-size: 2em; margin-bottom: 10px;">🌳</div>
-                <div>Уровень 4</div>
-                <small style="opacity: 0.8;">Вкусное мясо</small>
-            </button>
-            <button id="story-btn-level5" class="story-selection-btn" onclick="showStorySelectionDetail('level5')" style="padding: 20px; background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); color: white; border: none; border-radius: 12px; cursor: pointer; font-size: 1.1em; font-weight: 600; transition: all 0.3s;">
-                <div style="font-size: 2em; margin-bottom: 10px;">🔑</div>
-                <div>Уровень 5</div>
-                <small style="opacity: 0.8;">Волшебный ключ</small>
-            </button>
-            <button id="story-btn-level6" class="story-selection-btn" onclick="showStorySelectionDetail('level6')" style="padding: 20px; background: linear-gradient(135deg, #ff9a56 0%, #ff6a88 100%); color: white; border: none; border-radius: 12px; cursor: pointer; font-size: 1.1em; font-weight: 600; transition: all 0.3s;">
-                <div style="font-size: 2em; margin-bottom: 10px;">🏆</div>
-                <div>Уровень 6</div>
-                <small style="opacity: 0.8;">Большое приключение</small>
-            </button>
-            <button id="story-btn-ending" class="story-selection-btn" onclick="showStorySelectionDetail('ending')" style="padding: 20px; background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%); color: white; border: none; border-radius: 12px; cursor: pointer; font-size: 1.1em; font-weight: 600; transition: all 0.3s;">
-                <div style="font-size: 2em; margin-bottom: 10px;">🎉</div>
-                <div>Концовка</div>
-                <small style="opacity: 0.8;">Возвращение домой</small>
-            </button>
-        </div>
-        <div style="text-align: center; margin-top: 20px;">
-            <button class="modal-btn" onclick="closeStorySelection()" style="background: var(--primary-color); color: white; border: none; padding: 12px 30px; border-radius: 10px; font-size: 1em; font-weight: 600; cursor: pointer;">Закрыть</button>
-        </div>
-    </div>
-</div>
-<div id="tutorial-modal" class="modal" style="background: rgba(0, 0, 0, 0.95); z-index: 5001;">
-    <div class="modal-content" style="max-width: 90vw; max-height: 90vh; width: 90vw; height: 90vh; display: flex; flex-direction: column; padding: 30px; background: var(--bg-secondary); border: 3px solid var(--primary-color);">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h2 style="margin: 0; color: var(--primary-color); font-size: 2em;">📚 Как играть?</h2>
-            <button onclick="closeTutorial()" style="background: var(--success-color); color: white; border: none; padding: 12px 24px; border-radius: 10px; font-size: 1em; font-weight: 600; cursor: pointer; transition: all 0.3s;">Начать игру! 🎮</button>
-        </div>
-        
-        <p style="font-size: 1.1em; margin-bottom: 20px; color: var(--text-primary);">Нажми на команду, чтобы увидеть, как она работает:</p>
-        
-        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px;">
-            <button class="tutorial-cmd-btn" onclick="showTutorialDemo('right')">
-                <span style="font-size: 28px;">→</span>
-                <strong>вправо()</strong>
-                <small>Движение вправо</small>
-            </button>
-            <button class="tutorial-cmd-btn" onclick="showTutorialDemo('left')">
-                <span style="font-size: 28px;">←</span>
-                <strong>влево()</strong>
-                <small>Движение влево</small>
-            </button>
-            <button class="tutorial-cmd-btn" onclick="showTutorialDemo('up')">
-                <span style="font-size: 28px;">↑</span>
-                <strong>вверх()</strong>
-                <small>Движение вверх</small>
-            </button>
-            <button class="tutorial-cmd-btn" onclick="showTutorialDemo('down')">
-                <span style="font-size: 28px;">↓</span>
-                <strong>вниз()</strong>
-                <small>Движение вниз</small>
-            </button>
-            <button class="tutorial-cmd-btn" onclick="showTutorialDemo('eat')">
-                <span style="font-size: 28px;">🍖</span>
-                <strong>есть()</strong>
-                <small>Съесть мясо</small>
-            </button>
-            <button class="tutorial-cmd-btn" onclick="showTutorialDemo('take')">
-                <span style="font-size: 28px;">🔑</span>
-                <strong>взять()</strong>
-                <small>Взять ключ</small>
-            </button>
-            <button class="tutorial-cmd-btn" onclick="showTutorialDemo('open')">
-                <span style="font-size: 28px;">🚪</span>
-                <strong>открыть()</strong>
-                <small>Открыть дверь</small>
-            </button>
-            <button class="tutorial-cmd-btn" onclick="showTutorialDemo('number')">
-                <span style="font-size: 28px; background: #ff9800; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">3</span>
-                <strong>вправо(3)</strong>
-                <small>Повторить 3 раза</small>
-            </button>
-        </div>
-        
-        <div id="tutorial-demo" style="display: none; background: var(--bg-primary); padding: 20px; border-radius: 10px; flex: 1; text-align: center; overflow-y: auto; margin-bottom: 20px;">
-            <div id="tutorial-grid" style="display: grid; grid-template-columns: repeat(8, 50px); grid-template-rows: repeat(8, 50px); gap: 3px; margin: 0 auto 15px; background: var(--bg-secondary); padding: 15px; border-radius: 8px; width: fit-content;"></div>
-            <p id="tutorial-text" style="color: var(--text-primary); font-weight: 600; font-size: 1.2em; margin: 0 0 15px 0;"></p>
-            <div id="tutorial-info" style="color: var(--text-secondary); font-size: 0.95em; line-height: 1.6; margin-top: 15px; padding: 15px; background: rgba(0,0,0,0.1); border-radius: 8px;"></div>
-        </div>
-    </div>
-</div>
-<div id="message-modal" class="message-modal">
-    <div class="message-title" id="msg-title">УРА! 🎉</div>
-    <div class="message-text" id="msg-text"></div>
-    <button class="ok-btn" onclick="closeMessage()">Понятно!</button>
-</div>
+    <div id="particles-bg"></div>
+    <div id="fireworks-container"></div>
 
-<!-- Statistics Modal -->
-<div id="stats-modal" class="modal" style="z-index: 5500;">
-    <div class="modal-content" style="max-width: 700px; max-height: 80vh; overflow-y: auto; background: var(--bg-secondary);">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h2 style="color: var(--primary-color); margin: 0;">📊 Статистика</h2>
-            <button class="close-btn" onclick="closeStats()">✕</button>
-        </div>
-        <div id="stats-content"></div>
-    </div>
-</div>
-
-<!-- Rating Modal for Sandbox Levels -->
-<div id="rating-modal" class="modal" style="z-index: 3000;">
-    <div class="modal-content" style="max-width: 500px; background: var(--bg-secondary);">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h2 style="color: var(--primary-color); margin: 0;">⭐ Оцени уровень</h2>
-            <button class="close-btn" onclick="document.getElementById('rating-modal').classList.remove('active')">✕</button>
-        </div>
-        <div style="text-align: center; padding: 20px;">
-            <p id="rating-level-name" style="font-size: 1.2em; font-weight: 600; margin-bottom: 20px;"></p>
-            <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 20px;">
-                <button onclick="setRating(1)" style="font-size: 2em; background: none; border: none; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">☆</button>
-                <button onclick="setRating(2)" style="font-size: 2em; background: none; border: none; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">☆</button>
-                <button onclick="setRating(3)" style="font-size: 2em; background: none; border: none; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">☆</button>
-                <button onclick="setRating(4)" style="font-size: 2em; background: none; border: none; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">☆</button>
-                <button onclick="setRating(5)" style="font-size: 2em; background: none; border: none; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">☆</button>
-            </div>
-            <button onclick="document.getElementById('rating-modal').classList.remove('active')" style="padding: 12px 30px; background: var(--primary-color); color: white; border: none; border-radius: 10px; font-size: 1em; font-weight: 600; cursor: pointer;">Готово</button>
-        </div>
-    </div>
-</div>
-
-<!-- Settings Modal -->
-<div id="settings-modal" class="modal" style="z-index: 3000;">
-    <div class="modal-content" style="max-width: 500px; background: var(--bg-secondary);">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h2 style="color: var(--primary-color); margin: 0;">⚙️ Настройки</h2>
-            <button class="close-btn" onclick="document.getElementById('settings-modal').classList.remove('active')">✕</button>
-        </div>
-        <div style="padding: 20px;">
-            <div style="background: var(--bg-primary); padding: 15px; border-radius: 10px; margin-bottom: 15px;">
-                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 1.1em;">
-                    <input type="checkbox" id="theme-toggle" onchange="toggleTheme()" style="width: 20px; height: 20px; cursor: pointer;">
-                    ☀️ Свет / 🌙 Темно
-                </label>
-            </div>
-            
-            <div style="background: var(--bg-primary); padding: 15px; border-radius: 10px; margin-bottom: 15px;">
-                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 1.1em;">
-                    <input type="checkbox" id="sound-toggle" checked onchange="toggleSound()" style="width: 20px; height: 20px; cursor: pointer;">
-                    <span id="sound-label">🔊 Звук включен</span>
-                </label>
-            </div>
-            
-            <div style="background: var(--bg-primary); padding: 15px; border-radius: 10px; margin-bottom: 15px;">
-                <label style="display: block; font-size: 1.1em; margin-bottom: 10px;">🎮 Режим игры:</label>
-                <div style="display: flex; gap: 10px;">
-                    <button onclick="setGameMode('tutorial')" style="flex: 1; padding: 10px; background: var(--bg-secondary); border: 2px solid var(--primary-color); border-radius: 8px; color: var(--text-primary); font-weight: 600; cursor: pointer; transition: all 0.3s;" id="mode-tutorial">📚 Обучающий</button>
-                    <button onclick="setGameMode('advanced')" style="flex: 1; padding: 10px; background: var(--bg-secondary); border: 2px solid var(--primary-color); border-radius: 8px; color: var(--text-primary); font-weight: 600; cursor: pointer; transition: all 0.3s;" id="mode-advanced">🎯 Продвинутый</button>
+    <div class="container">
+        <!-- HEADER -->
+        <header>
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Tiger face -->
+                        <circle cx="50" cy="52" r="32" fill="#1a1a2e" stroke="#0a0e17" stroke-width="2"/>
+                        <!-- Ears -->
+                        <path d="M25 30 L18 12 L38 24 Z" fill="#f59e0b" stroke="#d97706" stroke-width="1.5"/>
+                        <path d="M75 30 L82 12 L62 24 Z" fill="#f59e0b" stroke="#d97706" stroke-width="1.5"/>
+                        <path d="M27 28 L22 15 L36 25 Z" fill="#fbbf24"/>
+                        <path d="M73 28 L78 15 L64 25 Z" fill="#fbbf24"/>
+                        <!-- Stripes -->
+                        <path d="M30 35 Q35 30 33 40" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round"/>
+                        <path d="M70 35 Q65 30 67 40" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round"/>
+                        <path d="M28 45 Q33 42 31 50" stroke="#f59e0b" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M72 45 Q67 42 69 50" stroke="#f59e0b" stroke-width="2" stroke-linecap="round"/>
+                        <!-- Eyes -->
+                        <ellipse cx="40" cy="48" rx="5" ry="5.5" fill="#10b981"/>
+                        <ellipse cx="60" cy="48" rx="5" ry="5.5" fill="#10b981"/>
+                        <ellipse cx="40" cy="48" rx="2.2" ry="4" fill="#0a0e17"/>
+                        <ellipse cx="60" cy="48" rx="2.2" ry="4" fill="#0a0e17"/>
+                        <circle cx="42" cy="46" r="1.5" fill="white" opacity="0.9"/>
+                        <circle cx="62" cy="46" r="1.5" fill="white" opacity="0.9"/>
+                        <!-- Nose -->
+                        <path d="M47 57 L50 54 L53 57 Z" fill="#f59e0b"/>
+                        <!-- Mouth -->
+                        <path d="M50 57 Q50 62 44 63" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+                        <path d="M50 57 Q50 62 56 63" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+                        <!-- Whiskers -->
+                        <line x1="22" y1="55" x2="36" y2="57" stroke="#f59e0b" stroke-width="1" opacity="0.6"/>
+                        <line x1="22" y1="60" x2="36" y2="60" stroke="#f59e0b" stroke-width="1" opacity="0.6"/>
+                        <line x1="64" y1="57" x2="78" y2="55" stroke="#f59e0b" stroke-width="1" opacity="0.6"/>
+                        <line x1="64" y1="60" x2="78" y2="60" stroke="#f59e0b" stroke-width="1" opacity="0.6"/>
+                        <!-- Cheeks -->
+                        <circle cx="36" cy="60" r="4" fill="#fbbf24" opacity="0.15"/>
+                        <circle cx="64" cy="60" r="4" fill="#fbbf24" opacity="0.15"/>
+                    </svg>
                 </div>
-                <div style="font-size: 0.9em; color: var(--text-secondary); margin-top: 10px;">
+                <div class="logo-text">
+                    <span class="logo-title">Tigerinthewood</span>
+                    <span class="logo-subtitle">Learn Programming</span>
+                </div>
+            </div>
+            <div class="header-actions">
+                <span id="player-info" class="header-btn">Игрок: Гость</span>
+                <button class="header-btn" onclick="showChangePasswordModal()">🔒 Пароль</button>
+                <button class="header-btn" onclick="openSettingsModal()">⚙️ Настройки</button>
+            </div>
+        </header>
+
+        <!-- NAV BAR -->
+        <nav class="nav-bar">
+            <button class="nav-btn" onclick="showStorySelection()">📖 Истории</button>
+            <button class="nav-btn" onclick="openTutorialModal()">🎓 Туториал</button>
+            <button class="nav-btn" onclick="openStatsModal()">📊 Статистика</button>
+            <button class="nav-btn" onclick="showSandboxRating()">⭐ Рейтинг</button>
+            <button class="nav-btn" onclick="showPublishedLevels()">🚀 Новые уровни</button>
+            <button class="nav-btn" onclick="showDevelopersModal()">👨‍💻 Разработчики</button>
+            <button class="nav-btn danger" onclick="changePlayer()">🔄 Сменить</button>
+        </nav>
+
+        <!-- TABS -->
+        <div class="tabs-bar">
+            <button class="tab-btn active" onclick="switchTab('levels')">🎮 Уровни</button>
+            <button class="tab-btn" onclick="switchTab('userlevels')">👤 Мои уровни</button>
+            <button class="tab-btn" onclick="switchTab('sandbox')">🏗️ Песочница</button>
+        </div>
+
+        <!-- TAB: LEVELS -->
+        <div id="levels" class="tab-content active">
+            <div id="level-buttons" class="level-selector"></div>
+
+            <div class="game-layout">
+                <!-- Board Panel -->
+                <div class="board-panel">
+                    <div class="stats-row">
+                        <div class="stat-card"><div class="stat-value" id="score">0</div><div class="stat-label">Очки</div></div>
+                        <div class="stat-card"><div class="stat-value" id="steps">0</div><div class="stat-label">Шаги</div></div>
+                        <div class="stat-card"><div class="stat-value" id="meat">0/0</div><div class="stat-label">Мясо</div></div>
+                        <div class="stat-card"><div class="stat-value" id="keys">0</div><div class="stat-label">Ключи</div></div>
+                    </div>
+                    <div class="lives-row"><div id="lives-display">∞</div><div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;font-weight:600;">Попытки</div></div>
+                    <div id="game-grid"></div>
+                </div>
+
+                <!-- Code Panel -->
+                <div class="code-panel">
+                    <div class="task-box">
+                        <div class="task-label">Задание</div>
+                        <div class="task-text" id="task-text">Загрузка...</div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="action-btn run" id="run-btn" onclick="runCode()">▶ ЗАПУСТИТЬ</button>
+                        <button class="action-btn secondary" id="undo-btn" onclick="undoLastCommand()" disabled>↩ Undo</button>
+                        <button class="action-btn reset" onclick="resetTiger()">🐅 Вернуть</button>
+                        <button class="action-btn clear" onclick="clearCode()">🗑 Очистить</button>
+                    </div>
+
+                    <div class="controls-grid">
+                        <div class="arrow-row">
+                            <button class="arrow-btn" onclick="addCommand('вверх()')">↑</button>
+                        </div>
+                        <div class="arrow-row">
+                            <button class="arrow-btn" onclick="addCommand('влево()')">←</button>
+                            <button class="arrow-btn" onclick="addCommand('вниз()')">↓</button>
+                            <button class="arrow-btn" onclick="addCommand('вправо()')">→</button>
+                        </div>
+                    </div>
+
+                    <div class="cmd-buttons">
+                        <button class="cmd-btn" onclick="addCommand('есть()')">🍖 есть()</button>
+                        <button class="cmd-btn" onclick="addCommand('взять()')">🔑 взять()</button>
+                        <button class="cmd-btn" onclick="addCommand('открыть()')">🚪 открыть()</button>
+                    </div>
+
+                    <div class="number-buttons" id="number-buttons">
+                        <button class="num-btn" onclick="addNumber(1)">1</button>
+                        <button class="num-btn" onclick="addNumber(2)">2</button>
+                        <button class="num-btn" onclick="addNumber(3)">3</button>
+                        <button class="num-btn" onclick="addNumber(4)">4</button>
+                        <button class="num-btn" onclick="addNumber(5)">5</button>
+                        <button class="num-btn" onclick="addNumber(6)">6</button>
+                        <button class="num-btn" onclick="addNumber(7)">7</button>
+                        <button class="num-btn" onclick="addNumber(8)">8</button>
+                        <button class="num-btn" onclick="addNumber(9)">9</button>
+                        <button class="num-btn" onclick="addNumber(0)">0</button>
+                    </div>
+
+                    <div class="code-editor-wrap">
+                        <textarea id="code-input" placeholder="Напиши программу для тигрёнка..." spellcheck="false"></textarea>
+                        <div id="step-indicator"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: USER LEVELS -->
+        <div id="userlevels" class="tab-content">
+            <div style="text-align:center;padding:40px 20px;">
+                <h2 style="margin-bottom:16px;color:var(--primary);">👤 Мои уровни</h2>
+                <div id="user-levels-content">
+                    <p style="color:var(--text-secondary);">У вас нет опубликованных уровней</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: SANDBOX -->
+        <div id="sandbox" class="tab-content">
+            <div class="sandbox-header">
+                <h2>🏗️ Конструктор уровней</h2>
+                <p style="color:var(--text-secondary);margin-top:4px;font-size:14px;">Создай свой уровень и поделись с друзьями</p>
+            </div>
+
+            <div class="sandbox-controls">
+                <span style="font-size:12px;font-weight:600;color:var(--text-muted);align-self:center;">Размер:</span>
+                <button class="sandbox-grid-btn" onclick="setSandboxSize(4)">4x4</button>
+                <button class="sandbox-grid-btn" onclick="setSandboxSize(6)">6x6</button>
+                <button class="sandbox-grid-btn active" onclick="setSandboxSize(8)">8x8</button>
+                <button class="sandbox-grid-btn" onclick="setSandboxSize(10)">10x10</button>
+                <button class="sandbox-grid-btn" onclick="setSandboxSize(12)">12x12</button>
+            </div>
+
+            <div class="sandbox-controls">
+                <span style="font-size:12px;font-weight:600;color:var(--text-muted);align-self:center;">Объекты:</span>
+                <button class="sandbox-obj-btn active" onclick="selectSandboxObject('tiger')">🐅 Тигр</button>
+                <button class="sandbox-obj-btn" onclick="selectSandboxObject('exit')">🟢 Выход</button>
+                <button class="sandbox-obj-btn" onclick="selectSandboxObject('wall')">🧱 Стена</button>
+                <button class="sandbox-obj-btn" onclick="selectSandboxObject('tree')">🌳 Дерево</button>
+                <button class="sandbox-obj-btn" onclick="selectSandboxObject('meat')">🍖 Мясо</button>
+                <button class="sandbox-obj-btn" onclick="selectSandboxObject('key')">🔑 Ключ</button>
+                <button class="sandbox-obj-btn" onclick="selectSandboxObject('door')">🚪 Дверь</button>
+                <button class="sandbox-obj-btn" onclick="selectSandboxObject('erase')">❌ Ластик</button>
+            </div>
+
+            <div id="sandbox-grid"></div>
+
+            <div class="sandbox-actions">
+                <button class="btn-primary" style="max-width:160px;" onclick="playSandboxLevel()">▶ Играть</button>
+                <button class="btn-secondary" onclick="downloadSandboxLevel()">💾 Сохранить</button>
+                <button class="btn-secondary" onclick="uploadSandboxLevel()">📤 Загрузить</button>
+                <button class="btn-secondary" onclick="clearSandbox()">🗑 Очистить</button>
+                <button class="btn-secondary" onclick="publishSandboxLevel()">🚀 Опубликовать</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODALS ===== -->
+
+    <!-- Welcome Modal -->
+    <div id="welcome-modal" class="modal-overlay active">
+        <div class="modal">
+            <div class="welcome-card">
+                <div class="modal-title">Tigerinthewood</div>
+                <p class="subtitle">Учись программировать через приключения</p>
+                <div class="tg-box">
+                    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:8px;">Получи логин через Telegram бот:</p>
+                    <a href="https://t.me/Tiger42bot" target="_blank" class="tg-link">@Tiger42bot</a>
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Логин</label>
+                    <input type="text" id="player-login" class="input-field" placeholder="Твой логин">
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Пароль</label>
+                    <input type="password" id="player-password" class="input-field" placeholder="Твой пароль">
+                </div>
+                <div id="login-error" class="input-error"></div>
+                <button class="btn-primary" onclick="loginGame()" style="margin-top:8px;">Войти в игру</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tiger Name Modal -->
+    <div id="tiger-name-modal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-title">🐯 Назови своего тигрёнка</div>
+            <p style="text-align:center;color:var(--text-secondary);margin-bottom:20px;">Выбери имя для своего лесного друга</p>
+            <div class="input-group">
+                <label class="input-label">Имя тигрёнка</label>
+                <input type="text" id="tiger-name" class="input-field" placeholder="Тигра" value="Тигра">
+            </div>
+            <button class="btn-primary" onclick="confirmTigerName()" style="margin-top:8px;">Начать приключение!</button>
+        </div>
+    </div>
+
+    <!-- Message Modal -->
+    <div id="message-modal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-title" id="msg-title"></div>
+            <div id="msg-text" style="text-align:center;color:var(--text-secondary);margin-bottom:20px;line-height:1.7;"></div>
+            <div style="text-align:center;">
+                <button class="btn-primary ok-btn" onclick="closeMessage()" style="max-width:200px;margin:0 auto;">Понятно!</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal-overlay">
+        <div class="modal">
+            <button class="modal-close" onclick="closeModal('settings-modal')">&times;</button>
+            <div class="modal-title">⚙️ Настройки</div>
+            <div class="settings-list">
+                <div class="setting-row">
+                    <span class="setting-label">🌙 Тёмная / Светлая тема</span>
+                    <div id="theme-toggle" class="toggle-switch" onclick="toggleTheme()"></div>
+                </div>
+                <div class="setting-row">
+                    <span class="setting-label" id="sound-label">🔊 Звук</span>
+                    <div id="sound-toggle" class="toggle-switch active" onclick="toggleSound()"></div>
+                </div>
+                <div class="setting-row" style="flex-direction:column;align-items:stretch;gap:8px;">
+                    <span class="setting-label">⚡ Скорость анимации</span>
+                    <div class="speed-buttons">
+                        <button class="speed-btn" onclick="changeSpeed(500)">🐢 Медленно</button>
+                        <button class="speed-btn active" onclick="changeSpeed(300)">🐾 Нормально</button>
+                        <button class="speed-btn" onclick="changeSpeed(100)">⚡ Быстро</button>
+                    </div>
+                </div>
+                <div class="setting-row" style="flex-direction:column;align-items:stretch;gap:8px;">
+                    <span class="setting-label">🎮 Режим игры</span>
+                    <div class="mode-buttons">
+                        <button class="mode-btn active" id="mode-tutorial" onclick="setGameMode('tutorial')">📚 Обучающий</button>
+                        <button class="mode-btn" id="mode-advanced" onclick="setGameMode('advanced')">🎯 Продвинутый</button>
+                    </div>
                     <div id="mode-description">📚 Обучающий: бесконечные попытки</div>
                 </div>
+                <div class="setting-row" style="flex-direction:column;align-items:stretch;gap:8px;">
+                    <span class="setting-label">🤖 ИИ помощник</span>
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        <div id="ai-toggle" class="toggle-switch active" onclick="toggleAIChat()"></div>
+                        <span style="font-size:13px;color:var(--text-secondary);" id="ai-status">Включен</span>
+                    </div>
+                </div>
             </div>
-            
-            <div style="background: var(--bg-primary); padding: 15px; border-radius: 10px; margin-bottom: 15px;">
-                <label style="display: block; font-size: 1.1em; margin-bottom: 10px;">🐢 Скорость движения тигра:</label>
-                <select id="speed-select" onchange="changeSpeed(this.value)" style="width: 100%; padding: 10px; border: 2px solid var(--primary-color); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary); font-size: 1em;">
-                    <option value="100">⚡ Быстро</option>
-                    <option value="300" selected>🐢 Нормально</option>
-                    <option value="600">🐌 Медленно</option>
-                </select>
-            </div>
-            
-            <button onclick="document.getElementById('settings-modal').classList.remove('active')" style="width: 100%; padding: 12px; background: var(--primary-color); color: white; border: none; border-radius: 10px; font-size: 1em; font-weight: 600; cursor: pointer;">Закрыть</button>
         </div>
     </div>
-</div>
 
-<!-- Developers Modal -->
-<div id="developers-modal" class="modal" style="z-index: 3000;">
-    <div class="modal-content" style="max-width: 700px; background: var(--bg-secondary);">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h2 style="color: var(--primary-color); margin: 0;">👨‍💻 О разработчиках</h2>
-            <button class="close-btn" onclick="document.getElementById('developers-modal').classList.remove('active')">✕</button>
-        </div>
-        <div style="padding: 20px; max-height: 80vh; overflow-y: auto;">
-            <p style="font-size: 1.1em; margin-bottom: 20px; color: var(--text-primary);">Спасибо за использование нашей игры! Если у вас есть предложения или вы хотите поделиться своим мнением, заполните форму ниже:</p>
-            
-            <div id="developers-form-container" style="background: var(--bg-primary); padding: 20px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: center;">
-                <iframe src="https://forms.yandex.ru/cloud/6996561e84227c1b49d425c1?iframe=1" frameborder="0" name="ya-form-6996561e84227c1b49d425c1" width="650" height="600" style="border-radius: 10px; border: none;"></iframe>
-            </div>
-            
-            <button onclick="document.getElementById('developers-modal').classList.remove('active')" style="width: 100%; padding: 12px; background: var(--primary-color); color: white; border: none; border-radius: 10px; font-size: 1em; font-weight: 600; cursor: pointer;">Закрыть</button>
+    <!-- Stats Modal -->
+    <div id="stats-modal" class="modal-overlay">
+        <div class="modal wide">
+            <button class="modal-close" onclick="closeModal('stats-modal')">&times;</button>
+            <div class="modal-title">📊 Статистика игры</div>
+            <div id="stats-content"></div>
         </div>
     </div>
-</div>
 
-<!-- Change Password Modal -->
-<div id="change-password-modal" class="modal" style="z-index: 3000;">
-    <div class="modal-content" style="max-width: 500px; background: var(--bg-secondary);">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h2 style="color: var(--primary-color); margin: 0;">🔒 Смена пароля</h2>
-            <button class="close-btn" onclick="document.getElementById('change-password-modal').classList.remove('active')">✕</button>
-        </div>
-        <div style="padding: 20px;">
-            <div style="background: var(--bg-primary); padding: 15px; border-radius: 10px; margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 5px; font-weight: 600;">Старый пароль:</label>
-                <input type="password" id="old-password" placeholder="Введи старый пароль" style="width: 100%; padding: 10px; border: 2px solid var(--primary-color); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary); box-sizing: border-box;">
+    <!-- Tutorial Modal -->
+    <div id="tutorial-modal" class="modal-overlay">
+        <div class="modal wide">
+            <button class="modal-close" onclick="closeModal('tutorial-modal')">&times;</button>
+            <div class="modal-title">🎓 Как играть</div>
+            <div class="tutorial-steps">
+                <div class="tutorial-step"><div class="step-num">1</div><div><strong>Выбери уровень</strong><br>Начни с первого уровня и продвигайся дальше</div></div>
+                <div class="tutorial-step"><div class="step-num">2</div><div><strong>Напиши программу</strong><br>Используй кнопки-стрелки или введи команды: <code>вправо()</code> <code>влево()</code> <code>вверх()</code> <code>вниз()</code></div></div>
+                <div class="tutorial-step"><div class="step-num">3</div><div><strong>Двигай с числами</strong><br>Повтори движение: <code>вправо(3)</code> = три шага вправо</div></div>
+                <div class="tutorial-step"><div class="step-num">4</div><div><strong>Собирай предметы</strong><br><code>есть()</code> — съесть мясо 🍖 &nbsp; <code>взять()</code> — поднять ключ 🔑 &nbsp; <code>открыть()</code> — открыть дверь 🚪</div></div>
+                <div class="tutorial-step"><div class="step-num">5</div><div><strong>Запусти!</strong><br>Нажми <strong>▶ ЗАПУСТИТЬ</strong> и смотри как тигрёнок выполняет твою программу</div></div>
+                <div class="tutorial-step"><div class="step-num">6</div><div><strong>Дойди до выхода</strong><br>Приведи тигрёнка 🐅 к зелёному кругу 🟢 — это выход из леса!</div></div>
             </div>
-            
-            <div style="background: var(--bg-primary); padding: 15px; border-radius: 10px; margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 5px; font-weight: 600;">Новый пароль:</label>
-                <input type="password" id="new-password" placeholder="Введи новый пароль" style="width: 100%; padding: 10px; border: 2px solid var(--primary-color); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary); box-sizing: border-box;">
-            </div>
-            
-            <div style="background: var(--bg-primary); padding: 15px; border-radius: 10px; margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 5px; font-weight: 600;">Подтверди новый пароль:</label>
-                <input type="password" id="confirm-password" placeholder="Повтори новый пароль" style="width: 100%; padding: 10px; border: 2px solid var(--primary-color); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary); box-sizing: border-box;">
-            </div>
-            
-            <div id="change-password-error" style="color: #f44336; font-size: 0.9em; margin-bottom: 15px; display: none;"></div>
-            
-            <button onclick="changePassword()" style="width: 100%; padding: 12px; background: var(--success-color); color: white; border: none; border-radius: 10px; font-size: 1em; font-weight: 600; cursor: pointer; margin-bottom: 10px;">Сменить пароль</button>
-            <button onclick="document.getElementById('change-password-modal').classList.remove('active')" style="width: 100%; padding: 12px; background: var(--text-secondary); color: white; border: none; border-radius: 10px; font-size: 1em; font-weight: 600; cursor: pointer;">Отмена</button>
         </div>
     </div>
-</div>
 
-<div class="container">
-    <header>
-        <h1>Тигрёнок в лесу</h1>
-        <div style="display: flex; align-items: center; gap: 15px; position: absolute; top: 20px; right: 20px;">
-            <div class="player-info" id="player-info" style="font-size: 1.1em; padding: 12px 25px;">Игрок: Гость</div>
-            <button class="theme-btn" onclick="showChangePasswordModal()" title="Сменить пароль" style="padding: 12px 25px; font-size: 1em;">🔒 Сменить пароль</button>
-            <button class="theme-btn" onclick="document.getElementById('settings-modal').classList.add('active')" title="Настройки" style="padding: 12px 25px; font-size: 1em;">⚙️ Настройки</button>
-        </div>
-    </header>
-    
-    <div class="button-row">
-        <button class="theme-btn" onclick="showStorySelection()" title="Смотреть истории">📖 Истории</button>
-        <button class="theme-btn" onclick="document.getElementById('tutorial-modal').classList.add('active')" title="Как играть">📚 Как играть?</button>
-        <button class="theme-btn" onclick="showStats()" title="Статистика">📊 Статистика</button>
-        <button class="theme-btn" onclick="showSandboxRating()" title="Рейтинг песочницы">🏗️ Рейтинг</button>
-        <button class="theme-btn" onclick="showPublishedLevels()" title="Опубликованные уровни">🚀 Новые уровни</button>
-        <button class="theme-btn" onclick="showDevelopersModal()" title="О разработчиках">👨‍💻 Разработчики</button>
-        <button class="theme-btn" onclick="resetGameProgress()" title="Очистить прогресс" style="background: #ff9800; color: white; border-color: #ff9800;">🔄 Сброс прогресса</button>
-    </div>
-    
-    <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('levels')">🎮 Уровни</button>
-        <button class="tab-btn" onclick="switchTab('user-levels')">📤 Уровни пользователей</button>
-        <button class="tab-btn" onclick="switchTab('sandbox')">🏗️ Песочница</button>
-    </div>
-    <div id="levels" class="tab-content active">
-        <div class="levels" id="level-buttons"></div>
-        <div class="game-layout">
-            <div class="game-board">
-                <div class="stats">
-                    <div class="stat"><div class="stat-value" id="score">0</div><div>Очки</div></div>
-                    <div class="stat"><div class="stat-value" id="steps">0</div><div>Шаги</div></div>
-                    <div class="stat"><div class="stat-value" id="meat">0/0</div><div>Мясо 🍖</div></div>
-                    <div class="stat"><div class="stat-value" id="keys">0</div><div>Ключи 🔑</div></div>
-                    <div class="stat"><div style="font-size: 32px; font-weight: bold; color: var(--primary-color); line-height: 1;" id="lives-display">∞</div><div>Попытки</div></div>
-                </div>
-                <div id="game-grid"></div>
+    <!-- Story Selection Modal -->
+    <div id="story-selection-modal" class="modal-overlay">
+        <div class="modal wide">
+            <button class="modal-close" onclick="closeModal('story-selection-modal')">&times;</button>
+            <div class="modal-title">📖 Истории</div>
+            <div class="story-grid">
+                <button class="story-card" id="story-btn-intro" onclick="showStorySelectionDetail('intro')"><div class="story-icon">🌟</div><div class="story-name">Вступление</div></button>
+                <button class="story-card" id="story-btn-tutorial" onclick="showStorySelectionDetail('tutorial')"><div class="story-icon">🎓</div><div class="story-name">Туториал</div></button>
+                <button class="story-card" id="story-btn-level1" onclick="showStorySelectionDetail('level1')"><div class="story-icon">🌱</div><div class="story-name">Уровень 1</div></button>
+                <button class="story-card" id="story-btn-level2" onclick="showStorySelectionDetail('level2')"><div class="story-icon">🍃</div><div class="story-name">Уровень 2</div></button>
+                <button class="story-card" id="story-btn-level3" onclick="showStorySelectionDetail('level3')"><div class="story-icon">🌿</div><div class="story-name">Уровень 3</div></button>
+                <button class="story-card" id="story-btn-level4" onclick="showStorySelectionDetail('level4')"><div class="story-icon">🌳</div><div class="story-name">Уровень 4</div></button>
+                <button class="story-card" id="story-btn-level5" onclick="showStorySelectionDetail('level5')"><div class="story-icon">🔑</div><div class="story-name">Уровень 5</div></button>
+                <button class="story-card" id="story-btn-level6" onclick="showStorySelectionDetail('level6')"><div class="story-icon">🏆</div><div class="story-name">Уровень 6</div></button>
+                <button class="story-card" id="story-btn-ending" onclick="showStorySelectionDetail('ending')"><div class="story-icon">🎉</div><div class="story-name">Концовка</div></button>
             </div>
-            <div class="code-panel">
-                <div class="level-task" id="level-task"><h4>📋 Задание:</h4><div id="task-text"></div></div>
-                <div style="background: var(--bg-primary); padding: 10px; border-radius: 8px; margin-bottom: 15px; text-align: center; font-weight: 600; color: var(--primary-color); font-size: 1.1em;">
-                    <span id="current-step-indicator"></span>
-                </div>
-                <div class="controls">
-                    <button class="button run-btn" id="run-btn" onclick="runCode()">▶ ЗАПУСТИТЬ</button>
-                    <button class="button undo-btn" id="undo-btn" onclick="undoCommand()" disabled>↶ Отменить шаг</button>
-                    <button class="button reset-btn" id="reset-btn" onclick="resetGame()">🔄 Вернуть тигра</button>
-                    <button class="button" style="background: #9c27b0;" onclick="clearCode()">🗑️ Очистить программу</button>
-                </div>
-                <div class="arrow-controls">
-                    <div></div>
-                    <button class="arrow-btn" onclick="addCommand('вверх()')" title="вверх()"><span style="font-size: 28px;">↑</span></button>
-                    <div></div>
-                    <button class="arrow-btn" onclick="addCommand('влево()')" title="влево()"><span style="font-size: 28px;">←</span></button>
-                    <button class="arrow-btn" onclick="addCommand('вниз()')" title="вниз()"><span style="font-size: 28px;">↓</span></button>
-                    <button class="arrow-btn" onclick="addCommand('вправо()')" title="вправо()"><span style="font-size: 28px;">→</span></button>
-                </div>
-                <div class="number-buttons">
-                    <button class="num-btn" onclick="addNumber('1')">1</button>
-                    <button class="num-btn" onclick="addNumber('2')">2</button>
-                    <button class="num-btn" onclick="addNumber('3')">3</button>
-                    <button class="num-btn" onclick="addNumber('4')">4</button>
-                    <button class="num-btn" onclick="addNumber('5')">5</button>
-                    <button class="num-btn" onclick="addNumber('6')">6</button>
-                    <button class="num-btn" onclick="addNumber('7')">7</button>
-                    <button class="num-btn" onclick="addNumber('8')">8</button>
-                    <button class="num-btn" onclick="addNumber('9')">9</button>
-                    <button class="num-btn" onclick="addNumber('0')">0</button>
-                </div>
-                <textarea id="code-input" placeholder="Или напиши программу вручную..."></textarea>
-                <div class="commands">
-                    <button class="cmd-btn" onclick="addCommand('есть()')"><span class="cmd-icon">🍖</span><span>есть()</span></button>
-                    <button class="cmd-btn" onclick="addCommand('взять()')"><span class="cmd-icon">🔑</span><span>взять()</span></button>
-                    <button class="cmd-btn" onclick="addCommand('открыть()')"><span class="cmd-icon">🚪</span><span>открыть()</span></button>
-                </div>
-                <div class="code-history" id="code-history"><h4>📜 История попыток:</h4><div id="history-list"></div></div>
-                <div class="hint">
-                    <h4>💡 Все команды:</h4>
-                    <p><strong>Движение:</strong></p>
-                    <p>• <code>вправо()</code> - на 1 клетку вправо</p>
-                    <p>• <code>вправо(3)</code> - на 3 клетки вправо</p>
-                    <p>• <code>влево()</code>, <code>вверх()</code>, <code>вниз()</code> - аналогично</p>
-                    <p><strong>Действия:</strong></p>
-                    <p>• <code>🍖 есть()</code> - съесть мясо</p>
-                    <p>• <code>🔑 взять()</code> - взять ключ</p>
-                    <p>• <code>🚪 открыть()</code> - открыть дверь</p>
+        </div>
+    </div>
+
+    <!-- Developers Modal -->
+    <div id="developers-modal" class="modal-overlay">
+        <div class="modal">
+            <button class="modal-close" onclick="closeModal('developers-modal')">&times;</button>
+            <div class="modal-title">👨‍💻 Разработчики</div>
+            <div style="text-align:center;">
+                <div style="font-size:64px;margin-bottom:12px;">🐯</div>
+                <h3>Tigerinthewood</h3>
+                <p style="color:var(--text-secondary);margin:8px 0;">Образовательная игра для обучения программированию</p>
+                <div style="padding:14px;background:var(--bg-glass);border:1px solid var(--border-color);border-radius:var(--radius);margin-top:16px;">
+                    <p style="font-weight:600;">Создатель проекта</p>
+                    <p style="color:var(--primary);font-weight:700;">kheymer17reg</p>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Вкладка Песочница -->
-    <div id="sandbox" class="tab-content">
-        <div class="sandbox-container">
-            <div class="sandbox-header">
-                <h2 style="color: #7e57c2; font-size: 24px;">🏗️ Конструктор уровней</h2>
-                <div class="sandbox-controls">
-                    <button class="sandbox-btn" onclick="uploadSandboxLevel()">📤 Загрузить файл</button>
-                    <button class="sandbox-btn" onclick="downloadSandboxLevel()">📥 Скачать</button>
-                    <button class="sandbox-btn orange" onclick="playSandboxLevel()">▶ Играть</button>
-                    <button class="sandbox-btn red" onclick="clearSandbox()">🗑️ Очистить</button>
-                </div>
+
+    <!-- Change Password Modal -->
+    <div id="change-password-modal" class="modal-overlay">
+        <div class="modal">
+            <button class="modal-close" onclick="closeModal('change-password-modal')">&times;</button>
+            <div class="modal-title">🔒 Смена пароля</div>
+            <div class="input-group">
+                <label class="input-label">Старый пароль</label>
+                <input type="password" id="old-password" class="input-field" placeholder="Введи старый пароль">
             </div>
-            <div class="size-controls">
-                <span>Размер поля:</span>
-                <button class="size-btn" onclick="setSandboxSize(4)">4x4</button>
-                <button class="size-btn" onclick="setSandboxSize(6)">6x6</button>
-                <button class="size-btn active" onclick="setSandboxSize(8)">8x8</button>
-                <button class="size-btn" onclick="setSandboxSize(10)">10x10</button>
-                <button class="size-btn" onclick="setSandboxSize(12)">12x12</button>
+            <div class="input-group">
+                <label class="input-label">Новый пароль</label>
+                <input type="password" id="new-password" class="input-field" placeholder="Введи новый пароль">
             </div>
-            <div class="object-buttons">
-                <button class="obj-btn active" onclick="selectSandboxObject('tiger')">🐯<span>Тигрёнок</span></button>
-                <button class="obj-btn" onclick="selectSandboxObject('exit')">🟢<span>Выход</span></button>
-                <button class="obj-btn" onclick="selectSandboxObject('wall')">🧱<span>Стена</span></button>
-                <button class="obj-btn" onclick="selectSandboxObject('tree')">🌳<span>Дерево</span></button>
-                <button class="obj-btn" onclick="selectSandboxObject('meat')">🍖<span>Мясо</span></button>
-                <button class="obj-btn" onclick="selectSandboxObject('key')">🔑<span>Ключ</span></button>
-                <button class="obj-btn" onclick="selectSandboxObject('door')">🚪<span>Дверь</span></button>
-                <button class="obj-btn" onclick="selectSandboxObject('empty')">🧹<span>Очистить</span></button>
+            <div class="input-group">
+                <label class="input-label">Подтверди пароль</label>
+                <input type="password" id="confirm-password" class="input-field" placeholder="Повтори новый пароль">
             </div>
-            <div style="text-align: center; margin-bottom: 15px; color: var(--text-secondary); font-size: 14px;">
-                <small>💡 Зажми левую кнопку мыши и тяни, чтобы рисовать несколько клеток!</small>
-            </div>
-            <div id="sandbox-grid"></div>
-            <div class="hint">
-                <h4>🎯 Как пользоваться конструктором:</h4>
-                <p>1. Выбери размер поля и объект для размещения</p>
-                <p>2. Кликни на клетку или зажми мышь и тяни</p>
-                <p>3. Нажми "Играть" чтобы протестировать уровень</p>
-                <p>4. Нажми "Скачать" чтобы сохранить уровень в файл</p>
+            <div id="change-password-error" class="input-error"></div>
+            <button class="btn-primary" onclick="changePassword()" style="margin-top:8px;">Сменить пароль</button>
+        </div>
+    </div>
+
+    <!-- Rating Modal -->
+    <div id="rating-modal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-title">⭐ Оцени уровень</div>
+            <p style="text-align:center;color:var(--text-secondary);margin-bottom:8px;" id="rating-level-name"></p>
+            <div class="rating-stars">
+                <span class="rating-star" onclick="setRating(1)">⭐</span>
+                <span class="rating-star" onclick="setRating(2)">⭐</span>
+                <span class="rating-star" onclick="setRating(3)">⭐</span>
+                <span class="rating-star" onclick="setRating(4)">⭐</span>
+                <span class="rating-star" onclick="setRating(5)">⭐</span>
             </div>
         </div>
     </div>
-    <!-- Вкладка Уровни пользователей -->
-    <div id="user-levels" class="tab-content">
-        <div style="background: var(--bg-secondary); padding: 25px; border-radius: 15px; border: 3px solid #9c27b0; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);">
-            <h2 style="color: #9c27b0; font-size: 24px; margin-bottom: 20px;">📤 Уровни пользователей</h2>
-            <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
-                <button class="sandbox-btn" style="background: #9c27b0;" onclick="showUserLevelCreator()">➕ Создать уровень</button>
-                <button class="sandbox-btn" style="background: #9c27b0;" onclick="showUserLevelsTab()">📋 Мои уровни</button>
+
+    <!-- Admin Modal -->
+    <div id="admin-modal" class="modal-overlay">
+        <div class="modal full">
+            <button class="modal-close" onclick="closeAdminPanel()">&times;</button>
+            <div class="modal-title">🔐 Админ-панель</div>
+            <div class="admin-tabs">
+                <button class="admin-tab-btn active" onclick="switchAdminTab('levels')">📋 Уровни</button>
+                <button class="admin-tab-btn" onclick="switchAdminTab('users')">👥 Пользователи</button>
+                <button class="admin-tab-btn" onclick="switchAdminTab('moderation')">📝 Модерация</button>
+                <button class="admin-tab-btn" onclick="switchAdminTab('stats')">📊 Статистика</button>
+                <button class="admin-tab-btn" onclick="switchAdminTab('settings')">⚙️ Настройки</button>
             </div>
-            <div id="user-levels-content"></div>
-        </div>
-    </div>
-</div>
-<!-- Модальное окно админ-панели -->
-<div id="admin-modal" class="modal">
-    <div class="admin-panel-content">
-        <div class="admin-panel-header">
-            <h2>⚙️ Админ-панель</h2>
-            <button class="close-btn" onclick="closeAdminPanel()">✕</button>
-        </div>
-        <div class="admin-tabs">
-            <button class="admin-tab-btn active" onclick="switchAdminTab('levels')">📋 Уровни</button>
-            <button class="admin-tab-btn" onclick="switchAdminTab('edit-levels')">✏️ Редактирование</button>
-            <button class="admin-tab-btn" onclick="switchAdminTab('moderation')">📋 Модерация</button>
-            <button class="admin-tab-btn" onclick="switchAdminTab('users')">👥 Пользователи</button>
-            <button class="admin-tab-btn" onclick="switchAdminTab('notifications')">📢 Уведомления</button>
-            <button class="admin-tab-btn" onclick="switchAdminTab('stats')">📊 Статистика</button>
-            <button class="admin-tab-btn" onclick="switchAdminTab('settings')">⚙️ Настройки</button>
-        </div>
-        <div id="admin-levels-tab" class="admin-tab-content active">
-            <h3>📋 Управление уровнями</h3>
-            <div class="admin-section">
-                <h4>Загрузить уровень</h4>
-                <input type="file" id="admin-level-upload" accept=".json" />
-                <button onclick="adminUploadLevel()">Загрузить</button>
-            </div>
-            <div class="admin-section">
-                <h4>Загруженные уровни</h4>
+            <div id="admin-levels-tab" class="admin-tab-content active">
                 <div id="admin-user-levels-list"></div>
+                <input type="file" id="admin-level-upload" accept=".json" style="display:none;" onchange="adminUploadLevel()">
+                <button class="btn-secondary" onclick="document.getElementById('admin-level-upload').click()" style="margin-top:12px;">📤 Загрузить уровень</button>
             </div>
-        </div>
-        <div id="admin-edit-levels-tab" class="admin-tab-content">
-            <h3>✏️ Редактирование встроенных уровней</h3>
-            <div class="admin-section">
-                <h4>Выбери уровень для редактирования</h4>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; margin-bottom: 20px;">
-                    <button class="size-btn" onclick="editLevelFull(1)">Уровень 1</button>
-                    <button class="size-btn" onclick="editLevelFull(2)">Уровень 2</button>
-                    <button class="size-btn" onclick="editLevelFull(3)">Уровень 3</button>
-                    <button class="size-btn" onclick="editLevelFull(4)">Уровень 4</button>
-                    <button class="size-btn" onclick="editLevelFull(5)">Уровень 5</button>
-                    <button class="size-btn" onclick="editLevelFull(6)">Уровень 6</button>
-                </div>
-            </div>
-            <div id="level-edit-form" style="display: none;">
-                <div class="admin-section">
-                    <h4 id="edit-level-title">Редактирование уровня 1</h4>
-                    
-                    <label>Название уровня:</label>
-                    <input type="text" id="edit-level-name" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 2px solid var(--border-color); border-radius: 8px; background: var(--bg-primary); color: var(--text-primary);">
-                    
-                    <label>Описание задания:</label>
-                    <textarea id="edit-level-task" style="width: 100%; height: 60px; padding: 10px; margin-bottom: 10px; border: 2px solid var(--border-color); border-radius: 8px; background: var(--bg-primary); color: var(--text-primary); resize: vertical;"></textarea>
-                    
-                    <label>Выбери объект для расстановки:</label>
-                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px;">
-                        <button class="obj-btn" onclick="selectEditObject('tiger')" style="padding: 10px; background: var(--bg-primary); border: 2px solid var(--border-color); border-radius: 8px; cursor: pointer;">🐯 Тигр</button>
-                        <button class="obj-btn" onclick="selectEditObject('exit')" style="padding: 10px; background: var(--bg-primary); border: 2px solid var(--border-color); border-radius: 8px; cursor: pointer;">🟢 Выход</button>
-                        <button class="obj-btn" onclick="selectEditObject('meat')" style="padding: 10px; background: var(--bg-primary); border: 2px solid var(--border-color); border-radius: 8px; cursor: pointer;">🍖 Мясо</button>
-                        <button class="obj-btn" onclick="selectEditObject('key')" style="padding: 10px; background: var(--bg-primary); border: 2px solid var(--border-color); border-radius: 8px; cursor: pointer;">🔑 Ключ</button>
-                        <button class="obj-btn" onclick="selectEditObject('tree')" style="padding: 10px; background: var(--bg-primary); border: 2px solid var(--border-color); border-radius: 8px; cursor: pointer;">🌳 Дерево</button>
-                        <button class="obj-btn" onclick="selectEditObject('wall')" style="padding: 10px; background: var(--bg-primary); border: 2px solid var(--border-color); border-radius: 8px; cursor: pointer;">🧱 Стена</button>
-                        <button class="obj-btn" onclick="selectEditObject('door')" style="padding: 10px; background: var(--bg-primary); border: 2px solid var(--border-color); border-radius: 8px; cursor: pointer;">🚪 Дверь</button>
-                        <button class="obj-btn" onclick="selectEditObject('empty')" style="padding: 10px; background: var(--bg-primary); border: 2px solid var(--border-color); border-radius: 8px; cursor: pointer;">🧹 Очистить</button>
-                    </div>
-                    
-                    <label>Сетка уровня (кликни для расстановки):</label>
-                    <div id="edit-level-grid" style="display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; margin-bottom: 15px; background: var(--bg-primary); padding: 10px; border-radius: 8px; width: fit-content;"></div>
-                    
-                    <label>Сложность (1-5):</label>
-                    <input type="number" id="edit-level-difficulty" min="1" max="5" style="width: 100%; padding: 10px; margin-bottom: 15px; border: 2px solid var(--border-color); border-radius: 8px; background: var(--bg-primary); color: var(--text-primary);">
-                    
-                    <div style="display: flex; gap: 10px; margin-top: 15px;">
-                        <button onclick="saveLevelEditFull()" style="flex: 1; padding: 12px; background: var(--success-color); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">💾 Сохранить</button>
-                        <button onclick="downloadEditedLevel()" style="flex: 1; padding: 12px; background: #2196f3; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">📥 Скачать</button>
-                        <button onclick="resetLevelEditFull()" style="flex: 1; padding: 12px; background: var(--warning-color); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">🔄 Сбросить</button>
-                        <button onclick="cancelLevelEditFull()" style="flex: 1; padding: 12px; background: var(--error-color); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">✕ Отмена</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div id="admin-moderation-tab" class="admin-tab-content">
-            <h3>📋 Модерация уровней пользователей</h3>
-            <div class="admin-section">
-                <h4>Ожидающие модерации</h4>
-                <div id="admin-pending-levels"></div>
-            </div>
-            <div class="admin-section">
-                <h4>Одобренные уровни</h4>
-                <div id="admin-approved-levels"></div>
-            </div>
-            <div class="admin-section">
-                <h4>Отклоненные уровни</h4>
-                <div id="admin-rejected-levels"></div>
-            </div>
-        </div>
-        <div id="admin-users-tab" class="admin-tab-content">
-            <h3>👥 Активные пользователи</h3>
-            <div class="admin-section">
+            <div id="admin-users-tab" class="admin-tab-content">
                 <div id="admin-users-list"></div>
             </div>
-        </div>
-        <div id="admin-notifications-tab" class="admin-tab-content">
-            <h3>📢 Отправить уведомление</h3>
-            <div class="admin-section">
-                <h4>Новое уведомление</h4>
-                <input type="text" id="notification-title" placeholder="Заголовок уведомления" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 2px solid var(--border-color); border-radius: 8px; background: var(--bg-primary); color: var(--text-primary);">
-                <textarea id="notification-text" placeholder="Текст уведомления" style="width: 100%; height: 100px; padding: 10px; margin-bottom: 10px; border: 2px solid var(--border-color); border-radius: 8px; background: var(--bg-primary); color: var(--text-primary); resize: vertical;"></textarea>
-                <button onclick="sendNotificationToAll()">📤 Отправить всем</button>
+            <div id="admin-moderation-tab" class="admin-tab-content">
+                <div id="admin-moderation-content"></div>
             </div>
-            <div class="admin-section">
-                <h4>История уведомлений</h4>
-                <div id="admin-notifications-list"></div>
+            <div id="admin-stats-tab" class="admin-tab-content">
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+                    <div class="stats-card"><div class="value" id="admin-total-users">0</div><div class="label">Игроков</div></div>
+                    <div class="stats-card"><div class="value" id="admin-total-levels">0</div><div class="label">Уровней</div></div>
+                    <div class="stats-card"><div class="value" id="admin-completed-levels">0</div><div class="label">Пройдено</div></div>
+                </div>
             </div>
-        </div>
-        <div id="admin-stats-tab" class="admin-tab-content">
-            <h3>📊 Статистика</h3>
-            <div class="admin-section">
-                <p>Всего пользователей: <strong id="admin-total-users">0</strong></p>
-                <p>Всего уровней: <strong id="admin-total-levels">0</strong></p>
-                <p>Пройдено уровней: <strong id="admin-completed-levels">0</strong></p>
-            </div>
-        </div>
-        <div id="admin-settings-tab" class="admin-tab-content">
-            <h3>⚙️ Настройки</h3>
-            <div class="admin-section">
-                <label>
-                    <input type="checkbox" id="ai-enabled-checkbox" onchange="toggleAIChat(this.checked)">
-                    Включить ИИ помощник для пользователей
-                </label>
+            <div id="admin-settings-tab" class="admin-tab-content">
+                <div class="setting-row">
+                    <span class="setting-label">🤖 ИИ помощник</span>
+                    <input type="checkbox" id="ai-enabled-checkbox" onchange="toggleAIChatAdmin()">
+                </div>
+                <div style="margin-top:16px;">
+                    <button class="btn-secondary" onclick="openAdminPanel()">🔄 Обновить данные</button>
+                    <button class="btn-secondary" style="margin-left:8px;" onclick="resetGameProgress()">🗑 Сбросить прогресс</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- ИИ Чат -->
-<div id="ai-chat-widget" class="ai-chat-widget">
-    <div class="ai-chat-header">
-        <h3>🤖 ИИ Помощник</h3>
-        <button class="ai-chat-close" onclick="toggleAIChatWidget()">✕</button>
+    <!-- AI Chat Widget -->
+    <button class="ai-chat-fab" onclick="toggleAIChatWidget()">🤖</button>
+    <div id="ai-chat-widget" class="ai-chat-widget">
+        <div class="ai-chat-header">
+            <h4>🤖 ИИ Помощник</h4>
+            <button style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:14px;" onclick="clearAIChatHistory()">🗑</button>
+        </div>
+        <div id="ai-chat-messages"></div>
+        <div class="ai-chat-input-area">
+            <input type="text" id="ai-chat-input" placeholder="Спроси совет...">
+            <button class="ai-send-btn" onclick="sendAIChatMessage()">➤</button>
+        </div>
     </div>
-    <div class="ai-chat-messages" id="ai-chat-messages"></div>
-    <div class="ai-chat-input-area">
-        <input type="text" id="ai-chat-input" placeholder="Задай вопрос помощнику..." maxlength="500">
-        <button class="ai-chat-send" onclick="sendAIChatMessage()">📤</button>
-    </div>
-</div>
 
-<button class="ai-chat-btn" onclick="toggleAIChatWidget()" title="ИИ Помощник">🤖</button>
-<button class="admin-btn-floating" onclick="openAdminPanel()" title="Админ-панель (🔐)">🔐</button>
-<script>
-console.log('✅ Начинаем загрузку скриптов');
-</script>
-<script src="test_game.js?v=24"></script>
-<script>console.log('✅ test_game.js загружен');</script>
-<script src="improved_levels.js?v=2"></script>
-<script>console.log('✅ improved_levels.js загружен');</script>
-<script src="auth.js?v=2"></script>
-<script>console.log('✅ auth.js загружен');</script>
-<script src="test_story.js?v=10"></script>
-<script>console.log('✅ test_story.js загружен');</script>
-<script src="test_admin_panel.js?v=11"></script>
-<script>console.log('✅ test_admin_panel.js загружен');</script>
-<script src="moderation_system.js?v=2"></script>
-<script>console.log('✅ moderation_system.js загружен');</script>
-<script src="ai_chat.js?v=8"></script>
-<script>console.log('✅ ai_chat.js загружен');</script>
-<script src="stats_system.js?v=18"></script>
-<script>console.log('✅ stats_system.js загружен');</script>
-<script src="game_modes.js?v=4"></script>
-<script>console.log('✅ game_modes.js загружен');</script>
-<script src="achievements_display.js?v=2"></script>
-<script>console.log('✅ achievements_display.js загружен');</script>
-<script src="levels_admin.js?v=5"></script>
-<script>console.log('✅ levels_admin.js загружен');</script>
+    <!-- Story Modal (rendered by story-system.js) -->
+    <div id="story-modal"></div>
+
+    <!-- Load scripts -->
+    <script src="game-engine.js"></script>
+    <script src="levels.js"></script>
+    <script src="sound-system.js"></script>
+    <script src="code-editor.js"></script>
+    <script src="ui-controller.js"></script>
+    <script src="sandbox.js"></script>
+    <script src="story-system.js"></script>
+    <script src="stats-achievements.js"></script>
+    <script src="admin-panel.js"></script>
+    <script src="ai-chat.js"></script>
+    <script src="auth.js"></script>
+
+    <!-- Particle initialization -->
+    <script>
+    (function(){
+        const c = document.getElementById('particles-bg');
+        const colors = ['rgba(16,185,129,.25)','rgba(245,158,11,.2)','rgba(139,92,246,.15)','rgba(52,211,153,.2)'];
+        for(let i=0;i<30;i++){
+            const p=document.createElement('div');
+            p.className='particle';
+            const s=2+Math.random()*4;
+            p.style.width=s+'px';p.style.height=s+'px';
+            p.style.left=Math.random()*100+'%';
+            p.style.background=colors[Math.floor(Math.random()*colors.length)];
+            p.style.animationDuration=(15+Math.random()*25)+'s';
+            p.style.animationDelay=Math.random()*20+'s';
+            c.appendChild(p);
+        }
+    })();
+    </script>
 </body>
 </html>

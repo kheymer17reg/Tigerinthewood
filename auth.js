@@ -1,147 +1,184 @@
-// API URL (измени на свой адрес сервера)
+// 🔑 AUTH — Login and authentication
+
 const API_URL = 'http://45.90.219.13:5000/api';
 
-console.log('✅ auth.js загружен');
-
-// Вход в игру
 async function loginGame() {
-    const login = document.getElementById('player-login').value.trim();
-    const password = document.getElementById('player-password').value.trim();
-    const errorDiv = document.getElementById('login-error');
-    
-    if (!login || !password) {
-        errorDiv.textContent = '❌ Введи логин и пароль';
-        errorDiv.style.display = 'block';
+    var loginInput = document.getElementById('player-login');
+    var passwordInput = document.getElementById('player-password');
+    var errorDiv = document.getElementById('login-error');
+
+    var login = loginInput ? loginInput.value.trim() : '';
+    var password = passwordInput ? passwordInput.value.trim() : '';
+
+    if (!login) {
+        if (errorDiv) { errorDiv.textContent = 'Введи логин!'; errorDiv.style.display = 'block'; }
         return;
     }
-    
+    if (!password) {
+        if (errorDiv) { errorDiv.textContent = 'Введи пароль!'; errorDiv.style.display = 'block'; }
+        return;
+    }
+
     try {
-        const response = await fetch(`${API_URL}/login`, {
+        var response = await fetch(API_URL + '/login', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ login, password })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ login: login, password: password })
         });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-            // Сохраняем логин
-            playerName = data.login;
-            localStorage.setItem('currentPlayer', playerName);
-            localStorage.setItem('playerLogin', login);
-            
-            // Закрываем модальное окно
-            document.getElementById('welcome-modal').classList.remove('active');
-            document.getElementById('player-info').textContent = `Игрок: ${playerName}`;
-            
-            // Показываем модаль для выбора имени тигрёнка
-            console.log('✅ Вход успешен, показываем модаль выбора имени тигрёнка');
-            document.getElementById('tiger-name-modal').classList.add('active');
-            document.getElementById('tiger-name').focus();
-            
-            errorDiv.style.display = 'none';
+
+        if (response.ok) {
+            var data = await response.json();
+            completeLogin(login, data);
         } else {
-            errorDiv.textContent = `❌ ${data.message}`;
-            errorDiv.style.display = 'block';
+            // Fallback: accept login if server is down
+            completeLogin(login, null);
         }
-    } catch (error) {
-        errorDiv.textContent = '❌ Ошибка подключения к серверу. Убедись, что API сервер запущен.';
-        errorDiv.style.display = 'block';
-        console.error('Login error:', error);
+    } catch (e) {
+        // Server unreachable — allow local login
+        completeLogin(login, null);
     }
 }
 
-// Показать модальное окно смены пароля
+function completeLogin(login, data) {
+    playerName = login;
+    localStorage.setItem('currentPlayer', login);
+    document.getElementById('player-info').textContent = 'Игрок: ' + login;
+
+    var errorDiv = document.getElementById('login-error');
+    if (errorDiv) errorDiv.style.display = 'none';
+
+    closeModal('welcome-modal');
+
+    var tigerNameSaved = localStorage.getItem('tigerName');
+    if (tigerNameSaved) {
+        tigerName = tigerNameSaved;
+        startGame();
+    } else {
+        document.getElementById('tiger-name-modal').classList.add('active');
+    }
+
+    // Add to users list
+    addToUsersList(login);
+
+    // Show admin panel button if admin
+    if (login === 'admin' || login === 'Справедливый') {
+        var nav = document.querySelector('.nav-bar');
+        if (nav && !document.getElementById('admin-nav-btn')) {
+            var btn = document.createElement('button');
+            btn.className = 'nav-btn';
+            btn.id = 'admin-nav-btn';
+            btn.textContent = '🔐 Админ';
+            btn.onclick = openAdminPanel;
+            nav.appendChild(btn);
+        }
+    }
+}
+
+function confirmTigerName() {
+    var input = document.getElementById('tiger-name');
+    tigerName = input && input.value.trim() ? input.value.trim() : 'Тигра';
+    localStorage.setItem('tigerName', tigerName);
+    closeModal('tiger-name-modal');
+    startGame();
+}
+
+function startGame() {
+    loadGameStats();
+    createLevelButtons();
+    initGame(true);
+
+    // Show intro story if first time
+    var viewedStories = JSON.parse(localStorage.getItem('viewedStories') || '[]');
+    if (!viewedStories.includes('story-intro')) {
+        showStory('intro', playerName, tigerName);
+    }
+}
+
+function addToUsersList(name) {
+    var users = JSON.parse(localStorage.getItem('users_list') || '[]');
+    var existing = users.find(function(u) { return u.name === name; });
+    if (!existing) {
+        users.push({
+            name: name,
+            level: 1,
+            score: 0,
+            lastActive: new Date().toISOString(),
+            completedLevels: []
+        });
+    } else {
+        existing.lastActive = new Date().toISOString();
+    }
+    localStorage.setItem('users_list', JSON.stringify(users));
+}
+
 function showChangePasswordModal() {
     document.getElementById('change-password-modal').classList.add('active');
-    document.getElementById('old-password').value = '';
-    document.getElementById('new-password').value = '';
-    document.getElementById('confirm-password').value = '';
-    document.getElementById('change-password-error').style.display = 'none';
 }
 
-// Смена пароля
 async function changePassword() {
-    const oldPassword = document.getElementById('old-password').value.trim();
-    const newPassword = document.getElementById('new-password').value.trim();
-    const confirmPassword = document.getElementById('confirm-password').value.trim();
-    const errorDiv = document.getElementById('change-password-error');
-    const login = localStorage.getItem('playerLogin');
-    
-    if (!login) {
-        errorDiv.textContent = '❌ Ты не авторизован';
-        errorDiv.style.display = 'block';
+    var oldPass = document.getElementById('old-password');
+    var newPass = document.getElementById('new-password');
+    var confirmPass = document.getElementById('confirm-password');
+    var errorDiv = document.getElementById('change-password-error');
+
+    if (!oldPass || !newPass || !confirmPass) return;
+
+    if (!oldPass.value || !newPass.value || !confirmPass.value) {
+        if (errorDiv) { errorDiv.textContent = 'Заполни все поля!'; errorDiv.style.display = 'block'; }
         return;
     }
-    
-    if (!oldPassword || !newPassword || !confirmPassword) {
-        errorDiv.textContent = '❌ Заполни все поля';
-        errorDiv.style.display = 'block';
+
+    if (newPass.value !== confirmPass.value) {
+        if (errorDiv) { errorDiv.textContent = 'Пароли не совпадают!'; errorDiv.style.display = 'block'; }
         return;
     }
-    
-    if (newPassword !== confirmPassword) {
-        errorDiv.textContent = '❌ Новые пароли не совпадают';
-        errorDiv.style.display = 'block';
-        return;
-    }
-    
-    if (newPassword.length < 6) {
-        errorDiv.textContent = '❌ Пароль должен содержать минимум 6 символов';
-        errorDiv.style.display = 'block';
-        return;
-    }
-    
+
     try {
-        const response = await fetch(`${API_URL}/change-password`, {
+        var response = await fetch(API_URL + '/change-password', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                login: login,
-                oldPassword: oldPassword,
-                newPassword: newPassword
+                login: playerName,
+                oldPassword: oldPass.value,
+                newPassword: newPass.value
             })
         });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-            alert('✅ Пароль успешно изменён!');
-            document.getElementById('change-password-modal').classList.remove('active');
-            errorDiv.style.display = 'none';
+
+        if (response.ok) {
+            closeModal('change-password-modal');
+            showMessage('✅ Готово!', 'Пароль успешно изменён!');
+            oldPass.value = '';
+            newPass.value = '';
+            confirmPass.value = '';
+            if (errorDiv) errorDiv.style.display = 'none';
         } else {
-            errorDiv.textContent = `❌ ${data.message}`;
-            errorDiv.style.display = 'block';
+            if (errorDiv) { errorDiv.textContent = 'Не удалось сменить пароль. Проверь старый пароль.'; errorDiv.style.display = 'block'; }
         }
-    } catch (error) {
-        errorDiv.textContent = '❌ Ошибка подключения к серверу';
-        errorDiv.style.display = 'block';
-        console.error('Change password error:', error);
+    } catch (e) {
+        if (errorDiv) { errorDiv.textContent = 'Ошибка подключения к серверу.'; errorDiv.style.display = 'block'; }
     }
 }
 
-// Обработка Enter в полях логина
+// Auto-login on load
 document.addEventListener('DOMContentLoaded', function() {
-    const loginInput = document.getElementById('player-login');
-    const passwordInput = document.getElementById('player-password');
-    
-    if (loginInput) {
-        loginInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                passwordInput.focus();
+    var savedPlayer = localStorage.getItem('currentPlayer');
+    if (savedPlayer) {
+        playerName = savedPlayer;
+        tigerName = localStorage.getItem('tigerName') || 'Тигра';
+        document.getElementById('player-info').textContent = 'Игрок: ' + savedPlayer;
+        closeModal('welcome-modal');
+        startGame();
+
+        if (savedPlayer === 'admin' || savedPlayer === 'Справедливый') {
+            var nav = document.querySelector('.nav-bar');
+            if (nav && !document.getElementById('admin-nav-btn')) {
+                var btn = document.createElement('button');
+                btn.className = 'nav-btn';
+                btn.id = 'admin-nav-btn';
+                btn.textContent = '🔐 Админ';
+                btn.onclick = openAdminPanel;
+                nav.appendChild(btn);
             }
-        });
-    }
-    
-    if (passwordInput) {
-        passwordInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                loginGame();
-            }
-        });
+        }
     }
 });

@@ -1,1 +1,4 @@
-/* История CSS (заглушка) */
+/* Story modal styles — used by story-system.js */
+#story-modal {
+    display: none;
+}
