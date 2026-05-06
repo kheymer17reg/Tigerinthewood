@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Эрудит — Проверь свои знания</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <canvas id="particles"></canvas>
+
+    <div id="app">
+        <!-- HOME SCREEN -->
+        <section id="home-screen" class="screen active">
+            <header class="home-header">
+                <div class="logo-container">
+                    <div class="logo-icon">E</div>
+                    <h1 class="logo-text">ЭРУДИТ</h1>
+                </div>
+                <p class="tagline">Проверь свои знания о мире</p>
+            </header>
+
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <span class="stat-value" id="total-questions-stat">10 000+</span>
+                    <span class="stat-label">Вопросов</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="categories-stat">11</span>
+                    <span class="stat-label">Категорий</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="user-score-stat">0</span>
+                    <span class="stat-label">Очков</span>
+                </div>
+            </div>
+
+            <div class="game-modes">
+                <h2 class="section-title">Режимы игры</h2>
+                <div class="modes-grid">
+                    <button class="mode-card" data-mode="classic" onclick="startMode('classic')">
+                        <div class="mode-icon">🎯</div>
+                        <h3>Классика</h3>
+                        <p>20 вопросов из разных категорий</p>
+                    </button>
+                    <button class="mode-card" data-mode="marathon" onclick="startMode('marathon')">
+                        <div class="mode-icon">🏃</div>
+                        <h3>Марафон</h3>
+                        <p>Отвечай пока не ошибёшься</p>
+                    </button>
+                    <button class="mode-card" data-mode="timed" onclick="startMode('timed')">
+                        <div class="mode-icon">⏱️</div>
+                        <h3>На время</h3>
+                        <p>Максимум ответов за 3 минуты</p>
+                    </button>
+                    <button class="mode-card" data-mode="expert" onclick="startMode('expert')">
+                        <div class="mode-icon">🧠</div>
+                        <h3>Эксперт</h3>
+                        <p>Только сложные вопросы</p>
+                    </button>
+                </div>
+            </div>
+
+            <div class="categories-section">
+                <h2 class="section-title">Категории</h2>
+                <div class="categories-grid" id="categories-grid"></div>
+            </div>
+
+            <nav class="bottom-nav">
+                <button class="nav-btn active" onclick="showScreen('home-screen')">
+                    <span class="nav-icon">🏠</span>
+                    <span>Главная</span>
+                </button>
+                <button class="nav-btn" onclick="showScreen('stats-screen')">
+                    <span class="nav-icon">📊</span>
+                    <span>Статистика</span>
+                </button>
+                <button class="nav-btn" onclick="showScreen('wiki-screen')">
+                    <span class="nav-icon">📚</span>
+                    <span>Знания</span>
+                </button>
+                <button class="nav-btn" onclick="showScreen('settings-screen')">
+                    <span class="nav-icon">⚙️</span>
+                    <span>Настройки</span>
+                </button>
+            </nav>
+        </section>
+
+        <!-- QUIZ SCREEN -->
+        <section id="quiz-screen" class="screen">
+            <div class="quiz-header">
+                <button class="back-btn" onclick="exitQuiz()">← Выход</button>
+                <div class="quiz-info">
+                    <span id="quiz-category-label"></span>
+                    <span id="quiz-mode-label"></span>
+                </div>
+                <div class="quiz-progress-info">
+                    <span id="quiz-counter">1/20</span>
+                </div>
+            </div>
+
+            <div class="quiz-progress-bar">
+                <div class="quiz-progress-fill" id="quiz-progress-fill"></div>
+            </div>
+
+            <div class="quiz-timer-bar" id="quiz-timer-bar" style="display:none;">
+                <div class="quiz-timer-fill" id="quiz-timer-fill"></div>
+                <span class="quiz-timer-text" id="quiz-timer-text">3:00</span>
+            </div>
+
+            <div class="quiz-content">
+                <div class="difficulty-badge" id="difficulty-badge">Лёгкий</div>
+                <div class="question-card" id="question-card">
+                    <p class="question-text" id="question-text"></p>
+                </div>
+
+                <div class="options-container" id="options-container"></div>
+
+                <div class="quiz-score-bar">
+                    <div class="score-item correct-count">
+                        <span>✓</span>
+                        <span id="correct-count">0</span>
+                    </div>
+                    <div class="score-item streak-count">
+                        <span>🔥</span>
+                        <span id="streak-count">0</span>
+                    </div>
+                    <div class="score-item wrong-count">
+                        <span>✗</span>
+                        <span id="wrong-count">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Wiki Explanation Popup -->
+            <div class="wiki-overlay" id="wiki-overlay">
+                <div class="wiki-popup">
+                    <div class="wiki-result" id="wiki-result-icon"></div>
+                    <h3 id="wiki-result-text"></h3>
+                    <p class="wiki-correct-answer" id="wiki-correct-answer"></p>
+                    <div class="wiki-explanation" id="wiki-explanation"></div>
+                    <button class="wiki-next-btn" id="wiki-next-btn" onclick="nextQuestion()">Далее →</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- RESULTS SCREEN -->
+        <section id="results-screen" class="screen">
+            <div class="results-container">
+                <div class="results-header">
+                    <div class="results-icon" id="results-icon">🏆</div>
+                    <h2 id="results-title">Отличный результат!</h2>
+                    <p id="results-subtitle"></p>
+                </div>
+
+                <div class="results-stats">
+                    <div class="result-stat">
+                        <div class="result-circle" id="result-circle">
+                            <svg viewBox="0 0 100 100">
+                                <circle cx="50" cy="50" r="45" class="result-circle-bg"/>
+                                <circle cx="50" cy="50" r="45" class="result-circle-fill" id="result-circle-fill"/>
+                            </svg>
+                            <span class="result-percent" id="result-percent">0%</span>
+                        </div>
+                        <span>Правильных</span>
+                    </div>
+                    <div class="result-details">
+                        <div class="detail-row">
+                            <span>Правильных ответов</span>
+                            <span id="result-correct">0</span>
+                        </div>
+                        <div class="detail-row">
+                            <span>Неправильных</span>
+                            <span id="result-wrong">0</span>
+                        </div>
+                        <div class="detail-row">
+                            <span>Макс. серия</span>
+                            <span id="result-streak">0</span>
+                        </div>
+                        <div class="detail-row">
+                            <span>Очки</span>
+                            <span id="result-score">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="results-actions">
+                    <button class="btn-primary" onclick="retryQuiz()">Играть снова</button>
+                    <button class="btn-secondary" onclick="showScreen('home-screen')">На главную</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- STATS SCREEN -->
+        <section id="stats-screen" class="screen">
+            <div class="screen-header">
+                <button class="back-btn" onclick="showScreen('home-screen')">← Назад</button>
+                <h2>Статистика</h2>
+            </div>
+
+            <div class="stats-container">
+                <div class="stats-overview">
+                    <div class="overview-card">
+                        <span class="overview-value" id="stats-total-played">0</span>
+                        <span class="overview-label">Игр сыграно</span>
+                    </div>
+                    <div class="overview-card">
+                        <span class="overview-value" id="stats-total-correct">0</span>
+                        <span class="overview-label">Правильных</span>
+                    </div>
+                    <div class="overview-card">
+                        <span class="overview-value" id="stats-accuracy">0%</span>
+                        <span class="overview-label">Точность</span>
+                    </div>
+                    <div class="overview-card">
+                        <span class="overview-value" id="stats-best-streak">0</span>
+                        <span class="overview-label">Лучшая серия</span>
+                    </div>
+                </div>
+
+                <h3 class="stats-section-title">По категориям</h3>
+                <div class="category-stats" id="category-stats"></div>
+
+                <button class="btn-danger" onclick="resetStats()">Сбросить статистику</button>
+            </div>
+
+            <nav class="bottom-nav">
+                <button class="nav-btn" onclick="showScreen('home-screen')">
+                    <span class="nav-icon">🏠</span>
+                    <span>Главная</span>
+                </button>
+                <button class="nav-btn active" onclick="showScreen('stats-screen')">
+                    <span class="nav-icon">📊</span>
+                    <span>Статистика</span>
+                </button>
+                <button class="nav-btn" onclick="showScreen('wiki-screen')">
+                    <span class="nav-icon">📚</span>
+                    <span>Знания</span>
+                </button>
+                <button class="nav-btn" onclick="showScreen('settings-screen')">
+                    <span class="nav-icon">⚙️</span>
+                    <span>Настройки</span>
+                </button>
+            </nav>
+        </section>
+
+        <!-- WIKI/KNOWLEDGE SCREEN -->
+        <section id="wiki-screen" class="screen">
+            <div class="screen-header">
+                <button class="back-btn" onclick="showScreen('home-screen')">← Назад</button>
+                <h2>База знаний</h2>
+            </div>
+
+            <div class="wiki-container">
+                <div class="wiki-search">
+                    <input type="text" id="wiki-search-input" placeholder="Поиск по базе знаний..." oninput="searchWiki(this.value)">
+                </div>
+                <div class="wiki-filters">
+                    <button class="wiki-filter active" data-filter="all" onclick="filterWiki('all', this)">Все</button>
+                    <button class="wiki-filter" data-filter="learned" onclick="filterWiki('learned', this)">Изученные</button>
+                    <button class="wiki-filter" data-filter="wrong" onclick="filterWiki('wrong', this)">Ошибки</button>
+                </div>
+                <div class="wiki-list" id="wiki-list"></div>
+            </div>
+
+            <nav class="bottom-nav">
+                <button class="nav-btn" onclick="showScreen('home-screen')">
+                    <span class="nav-icon">🏠</span>
+                    <span>Главная</span>
+                </button>
+                <button class="nav-btn" onclick="showScreen('stats-screen')">
+                    <span class="nav-icon">📊</span>
+                    <span>Статистика</span>
+                </button>
+                <button class="nav-btn active" onclick="showScreen('wiki-screen')">
+                    <span class="nav-icon">📚</span>
+                    <span>Знания</span>
+                </button>
+                <button class="nav-btn" onclick="showScreen('settings-screen')">
+                    <span class="nav-icon">⚙️</span>
+                    <span>Настройки</span>
+                </button>
+            </nav>
+        </section>
+
+        <!-- SETTINGS SCREEN -->
+        <section id="settings-screen" class="screen">
+            <div class="screen-header">
+                <button class="back-btn" onclick="showScreen('home-screen')">← Назад</button>
+                <h2>Настройки</h2>
+            </div>
+
+            <div class="settings-container">
+                <div class="setting-group">
+                    <h3>Игра</h3>
+                    <div class="setting-item">
+                        <span>Показывать объяснения</span>
+                        <label class="toggle">
+                            <input type="checkbox" id="setting-explanations" checked onchange="saveSetting('showExplanations', this.checked)">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <span>Звуковые эффекты</span>
+                        <label class="toggle">
+                            <input type="checkbox" id="setting-sounds" checked onchange="saveSetting('sounds', this.checked)">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <span>Вибрация</span>
+                        <label class="toggle">
+                            <input type="checkbox" id="setting-vibration" checked onchange="saveSetting('vibration', this.checked)">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <h3>Сложность по умолчанию</h3>
+                    <div class="difficulty-selector">
+                        <button class="diff-btn active" data-diff="all" onclick="setDifficulty('all', this)">Все</button>
+                        <button class="diff-btn" data-diff="1" onclick="setDifficulty('1', this)">Лёгкий</button>
+                        <button class="diff-btn" data-diff="2" onclick="setDifficulty('2', this)">Средний</button>
+                        <button class="diff-btn" data-diff="3" onclick="setDifficulty('3', this)">Сложный</button>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <h3>О проекте</h3>
+                    <p class="about-text">
+                        <strong>Эрудит</strong> — масштабный проект для улучшения эрудиции. Более 10 000 вопросов по истории, географии, науке, культуре и многим другим темам. Учись, играя!
+                    </p>
+                    <p class="version-text">Версия 1.0.0</p>
+                </div>
+            </div>
+
+            <nav class="bottom-nav">
+                <button class="nav-btn" onclick="showScreen('home-screen')">
+                    <span class="nav-icon">🏠</span>
+                    <span>Главная</span>
+                </button>
+                <button class="nav-btn" onclick="showScreen('stats-screen')">
+                    <span class="nav-icon">📊</span>
+                    <span>Статистика</span>
+                </button>
+                <button class="nav-btn" onclick="showScreen('wiki-screen')">
+                    <span class="nav-icon">📚</span>
+                    <span>Знания</span>
+                </button>
+                <button class="nav-btn active" onclick="showScreen('settings-screen')">
+                    <span class="nav-icon">⚙️</span>
+                    <span>Настройки</span>
+                </button>
+            </nav>
+        </section>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/data/history.js"></script>
+    <script src="js/data/geography.js"></script>
+    <script src="js/data/personalities.js"></script>
+    <script src="js/data/culture.js"></script>
+    <script src="js/data/biology.js"></script>
+    <script src="js/data/chemistry.js"></script>
+    <script src="js/data/physics.js"></script>
+    <script src="js/data/math.js"></script>
+    <script src="js/data/everyday.js"></script>
+    <script src="js/data/sports.js"></script>
+    <script src="js/data/technology.js"></script>
+    <script src="js/engine.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
