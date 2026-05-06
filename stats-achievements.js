@@ -102,35 +102,52 @@ function getEarnedAchievements() {
     var earned = [];
     var totalTime = gameStats.startTime ? (Date.now() - gameStats.startTime) / 1000 : Infinity;
 
+    var totalLevels = Object.keys(levels).length;
+
     // Speedrunner
-    if (gameStats.levelsCompleted === 6 && totalTime < 300) {
-        earned.push({ id: 'speedrunner', title: '⚡ Спидраннер', description: 'Пройти все уровни за 5 минут', icon: '⚡' });
+    if (gameStats.levelsCompleted === totalLevels && totalTime < 600) {
+        earned.push({ id: 'speedrunner', title: '⚡ Спидраннер', description: 'Пройти все ' + totalLevels + ' уровней за 10 минут', icon: '⚡' });
     }
 
     // Perfectionist
     var allMeat = true;
-    for (var i = 1; i <= 6; i++) {
+    for (var i = 1; i <= totalLevels; i++) {
         if (!levels[i]) continue;
         var totalMeatL = levels[i].objects.filter(function(o) { return o.type === 'meat'; }).length;
         var ls = gameStats.levelStats[i];
         if (totalMeatL > 0 && (!ls || ls.meatCollected < totalMeatL)) { allMeat = false; break; }
     }
-    if (gameStats.levelsCompleted === 6 && allMeat) {
+    if (gameStats.levelsCompleted === totalLevels && allMeat) {
         earned.push({ id: 'perfectionist', title: '💎 Перфекционист', description: 'Собрать все мясо на всех уровнях', icon: '💎' });
     }
 
     // Efficient
-    if (gameStats.levelsCompleted === 6 && gameStats.totalSteps / 6 <= 12) {
+    if (gameStats.levelsCompleted === totalLevels && gameStats.totalSteps / totalLevels <= 12) {
         earned.push({ id: 'efficient', title: '🎯 Эффективный', description: 'Средний минимум шагов за уровень', icon: '🎯' });
     }
 
     // Master
     var all5 = true;
-    for (var j = 1; j <= 6; j++) {
+    for (var j = 1; j <= totalLevels; j++) {
         if (calculateLevelRating(j) < 5) { all5 = false; break; }
     }
-    if (gameStats.levelsCompleted === 6 && all5) {
+    if (gameStats.levelsCompleted === totalLevels && all5) {
         earned.push({ id: 'master', title: '👑 Мастер', description: '5 звёзд на всех уровнях', icon: '👑' });
+    }
+
+    // Halfway
+    if (gameStats.levelsCompleted >= Math.ceil(totalLevels / 2)) {
+        earned.push({ id: 'halfway', title: '🚀 На полпути', description: 'Пройти половину уровней', icon: '🚀' });
+    }
+
+    // Explorer
+    if (gameStats.levelsCompleted >= 3) {
+        earned.push({ id: 'explorer', title: '🗺️ Исследователь', description: 'Пройти 3 уровня', icon: '🗺️' });
+    }
+
+    // Veteran
+    if (gameStats.levelsCompleted >= 10) {
+        earned.push({ id: 'veteran', title: '🎖️ Ветеран', description: 'Пройти 10 уровней', icon: '🎖️' });
     }
 
     // Builder
@@ -146,8 +163,9 @@ function showStats() {
     var content = document.getElementById('stats-content');
     if (!content) return;
 
+    var totalLevels = Object.keys(levels).length;
     var html = '<div class="stats-grid">' +
-        '<div class="stats-card"><div class="value">' + gameStats.levelsCompleted + '/6</div><div class="label">Пройдено</div></div>' +
+        '<div class="stats-card"><div class="value">' + gameStats.levelsCompleted + '/' + totalLevels + '</div><div class="label">Пройдено</div></div>' +
         '<div class="stats-card"><div class="value">' + gameStats.totalScore + '</div><div class="label">Очки</div></div>' +
         '<div class="stats-card"><div class="value">' + gameStats.totalSteps + '</div><div class="label">Шагов</div></div>' +
         '<div class="stats-card"><div class="value">' + gameStats.totalAttempts + '</div><div class="label">Попыток</div></div>' +
@@ -155,7 +173,7 @@ function showStats() {
 
     html += '<h3 style="margin:20px 0 12px;color:var(--primary);">По уровням</h3>';
     html += '<div class="level-stats-list">';
-    for (var i = 1; i <= 6; i++) {
+    for (var i = 1; i <= totalLevels; i++) {
         var ls = gameStats.levelStats[i] || {};
         var stars = calculateLevelRating(i);
         var starsHtml = '';

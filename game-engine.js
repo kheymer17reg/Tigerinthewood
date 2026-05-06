@@ -373,10 +373,12 @@ function createLevelButtons() {
     const container = document.getElementById('level-buttons');
     if (!container) return;
     container.innerHTML = '';
-    const icons = ['🌱', '🍃', '🌿', '🌳', '🔑', '🏆'];
+    const totalLevels = Object.keys(levels).length;
     const completedLevels = JSON.parse(localStorage.getItem('completedLevels') || '[]');
 
-    for (let i = 1; i <= 6; i++) {
+    for (let i = 1; i <= totalLevels; i++) {
+        const lvlData = levels[i];
+        if (!lvlData) continue;
         const btn = document.createElement('button');
         btn.className = 'level-btn' + (i === 1 ? ' active' : '');
         if (completedLevels.includes(i)) btn.classList.add('completed');
@@ -385,7 +387,8 @@ function createLevelButtons() {
             btn.disabled = true;
             btn.title = 'Пройди уровень ' + (i - 1) + ', чтобы разблокировать';
         }
-        btn.innerHTML = '<span class="level-icon">' + icons[i - 1] + '</span><span>Уровень ' + i + '</span>';
+        const icon = lvlData.name ? lvlData.name.split(' ')[0] : '🎮';
+        btn.innerHTML = '<span class="level-icon">' + icon + '</span><span>Уровень ' + i + '</span>';
         btn.onclick = (function(num) { return function() { loadLevel(num); }; })(i);
         container.appendChild(btn);
     }
@@ -473,7 +476,8 @@ function checkWin() {
 
     setTimeout(function() {
         const msg = 'Тигрёнок прошёл уровень!<br><br>🍖 Мяса: ' + game.meatCollected + '/' + game.totalMeat + '<br>🐾 Шагов: ' + game.steps + '<br>⭐ Бонусы: +' + totalBonus + '<br>🏆 Всего: ' + game.score;
-        if (game.level < 6) {
+        var totalLevels = Object.keys(levels).length;
+        if (game.level < totalLevels) {
             showVictoryMessage('Молодец, ' + playerName + '! 🎉', msg, game.level + 1);
         } else {
             showMessage('Молодец, ' + playerName + '! 🎉', msg);
@@ -482,7 +486,7 @@ function checkWin() {
 
     updateLevelButtons();
 
-    if (game.completedLevels.size === 6) {
+    if (game.completedLevels.size === Object.keys(levels).length) {
         setTimeout(function() {
             if (typeof showFinalStats === 'function') showFinalStats();
         }, 2000);
